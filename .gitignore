@@ -1,0 +1,12 @@
+storage/
+*/storage
+models-all/
+Template/
+*.aux
+*.log
+*.bbl
+*.blg
+*.txt
+*.out
+*.synctex.gz
+*.gz
