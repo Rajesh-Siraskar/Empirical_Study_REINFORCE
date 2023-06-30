@@ -7,7 +7,7 @@
 
 \usepackage[pass]{geometry}
 \usepackage{graphicx}
-\graphicspath{ {./images/} } % Images folder
+\graphicspath{{./images/}} % Images folder
 
 %\usepackage{csquotes} 	% Quotes
 \usepackage[table]{xcolor} %
@@ -262,24 +262,134 @@ except for the optimizer and learning rate that were taken from Stable Baselines
 
 
 \section{Empirical results}
-%\begin{figure}[ht]
-%	\begin{subfigure}{.5\textwidth}
-	%		\centering
-	%		% include first image
-	%		\includegraphics[width=.8\linewidth]{images\Dasic_HighNBD_Avg_episode_rewards.png}  
-	%		\caption{Put your sub-caption here}
-	%		\label{fig:sub-first}
-	%	\end{subfigure}
-%	\begin{subfigure}{.5\textwidth}
-	%		\centering
-	%		% include second image
-	%		\includegraphics[width=.8\linewidth]{images\Dasic_HighNBD_Avg_episode_rewards.png}  
-	%		\caption{Put your sub-caption here}
-	%		\label{fig:sub-second}
-	%	\end{subfigure}
-%	\caption{Put your caption here}
-%	\label{fig:fig}
-%\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+	\centering
+	\includegraphics[width=\linewidth]{Overall_Pr.pdf}  
+	\caption{Precision}
+	\label{fig:tr-ovr-pr}
+	\end{subfigure} \par\smallskip
+
+	\begin{subfigure}{\textwidth}
+	\centering
+	\includegraphics[width=\linewidth]{Overall_Rc.pdf}  
+	\caption{Recall}
+	\label{fig:tr-ovr-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Overall_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-ovr-f1}
+	\end{subfigure} \par\smallskip
+
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Overall_F05.pdf}  
+		\caption{F1-beta (0.5)}
+		\label{fig:tr-ovr-f05}
+	\end{subfigure}
+	\caption{Overall performance -- Metrics across 10 rounds of model training}
+	\label{fig:tr-overall}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_Pr.pdf}  
+		\caption{Precision}
+		\label{fig:tr-sim-pr}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_Rc.pdf}  
+		\caption{Recall}
+		\label{fig:tr-sim-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-sim-f1}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_F05.pdf}  
+		\caption{F1-beta (0.5)}
+		\label{fig:tr-sim-f05}
+	\end{subfigure}
+	\caption{Simulated environment -- Metrics across 10 rounds of model training}
+	\label{fig:tr-sim-env}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_Pr.pdf}  
+		\caption{Precision}
+		\label{fig:tr-ss-pr}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_Rc.pdf}  
+		\caption{Recall}
+		\label{fig:tr-ss-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-ss-f1}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_F05.pdf}  
+		\caption{F1-beta (0.5)}
+		\label{fig:tr-ss-f05}
+	\end{subfigure}
+	\caption{Singe-variable state environment -- Metrics across 10 rounds of model training}
+	\label{fig:tr-ss-env}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_Pr.pdf}  
+		\caption{Precision}
+		\label{fig:tr-ms-pr}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_Rc.pdf}  
+		\caption{Recall}
+		\label{fig:tr-ms-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-ms-f1}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_F05.pdf}  
+		\caption{F1-beta (0.5)}
+		\label{fig:tr-ms-f05}
+	\end{subfigure}
+	\caption{Multi-variate state environment -- Metrics across 10 rounds of model training}
+	\label{fig:tr-ms-env}
+\end{figure}
 
 
 \subsection{Detailed metrics}
