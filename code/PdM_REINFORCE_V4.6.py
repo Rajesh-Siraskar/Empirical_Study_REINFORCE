@@ -4,12 +4,18 @@
 # Milling Tool Wear Maintenance Policy using the REINFORCE algorithm
 # V.3.0: Add cleaning up files. If the performance is not satisfactory -
 #           delete the files, also do not train and test SB models
+START_ROUND = 0
 TRAINING_ROUNDS = 5
+EXPTS_SETTINGS = 'Experiments_V91.csv'
 MIN_MODEL_PERFORMANCE = -1.0
 SB3_EPISODES = 10_000
 
 print ('\n ====== REINFORCE for Predictive Maintenance ======')
-print ('        V.4.3 01-Jul-2023 -- SS expts. Round col. added. Look Ahead Factor -- do not apply when testing the model \n')
+print ('        V.4.6 06-Jul-2023 -- Expts V9')
+print (120*'-')
+print (f'* Experiments file: {EXPTS_SETTINGS} -- Rounds {TRAINING_ROUNDS}')
+print (120*'=')
+
 print ('- Loading packages...')
 from datetime import datetime
 import time
@@ -28,10 +34,10 @@ from reinforce_classes import PolicyNetwork, Agent
 
 experiment_summary = []
 
-for n_tr_round in range(TRAINING_ROUNDS):
+for n_tr_round in range(START_ROUND, TRAINING_ROUNDS):
     # Auto experiment file structure
     print ('- Loading Experiments...')
-    df_expts = pd.read_csv('Experiments_SS.csv')
+    df_expts = pd.read_csv(EXPTS_SETTINGS)
 
     # Add round number column to Experiments files
     df_expts['Round'] = n_tr_round
@@ -100,8 +106,8 @@ for n_tr_round in range(TRAINING_ROUNDS):
         CONSOLIDATED_METRICS_FILE = f'{RESULTS_FOLDER}/TEST_CONSOLIDATED_METRICS.csv'
         RESULTS_FILE = f'{RESULTS_FOLDER}/{VERSION}_test_results_{dt_m}.csv'
         METRICS_FILE = f'{RESULTS_FOLDER}/{VERSION}_metrics.csv'
-        # EXPTS_REPORT = f'{RESULTS_FOLDER}/Experiment_Results_{dt_d}_{dt_m}.csv'
-        EXPTS_REPORT = f'{RESULTS_FOLDER}/Experiment_Results_{n_tr_round}_{n_expt}.csv'
+        END_ROUND = START_ROUND + TRAINING_ROUNDS
+        EXPTS_REPORT = f'{RESULTS_FOLDER}/Experiment_Results_{START_ROUND}_{END_ROUND}_{n_tr_round}.csv'
 
         logdir = './tensorboard/'
 
@@ -152,12 +158,12 @@ for n_tr_round in range(TRAINING_ROUNDS):
             print(f'* Separate test data provided: {TEST_FILE} - ({len(df_test.index)} records).')
 
         n_records = len(df_train.index)
-        # x = [n for n in range(n_records)]
-        # y1 = df_train['tool_wear']
-        # y2 = df_train['ACTION_CODE']
-        # wear_plot = f'{RESULTS_FOLDER}/{VERSION}_wear_plot.png'
-        # title=f'Tool Wear (mm) data\n{VERSION}'
-        # two_axes_plot(x, y1, y2, title=title, x_label='Time', y1_label='Tool Wear (mm)', y2_label='Action code (1=Replace)', xticks=20, file=wear_plot, threshold_org = WEAR_THRESHOLD_ORG_NORMALIZED, threshold=WEAR_THRESHOLD_NORMALIZED)
+        x = [n for n in range(n_records)]
+        y1 = df_train['tool_wear']
+        y2 = df_train['ACTION_CODE']
+        wear_plot = f'{RESULTS_FOLDER}/{VERSION}_wear_plot.png'
+        title=f'Tool Wear (mm) data\n{VERSION}'
+        two_axes_plot(x, y1, y2, title=title, x_label='Time', y1_label='Tool Wear (mm)', y2_label='Action code (1=Replace)', xticks=20, file=wear_plot, threshold_org = WEAR_THRESHOLD_ORG_NORMALIZED, threshold=WEAR_THRESHOLD_NORMALIZED)
 
 
         # ## Milling Tool Environment -
@@ -319,16 +325,9 @@ for n_tr_round in range(TRAINING_ROUNDS):
                 df_expts.loc[n_expt, time_column] = time_SB
 
                 SB_agents.append(agent_SB)
-                print(f'- Save Stable-Baselines-3 model')
-                model_file_SB = f'models/{VERSION}_{SB_ALGO}_{dt_m}.mdl'
-                agent_SB.save(model_file_SB)
-
             n = 0
             for agent_SB in SB_agents:
                 print(f'- Testing Stable-Baselines-3 {agent_SB} model...')
-                # print(80*'-')
-                # print(f'Algo.\tNormal\tErr.%\tReplace\tErr.%\tOverall err.%')
-                # print(80*'-')
                 for test_round in range(TEST_ROUNDS):
                     # Create test cases
                     idx_replace_cases = np.random.choice(idx_replace_cases, int(TEST_CASES/2), replace=False)
@@ -338,6 +337,14 @@ for n_tr_round in range(TRAINING_ROUNDS):
                                           agent_SB, test_cases, TEST_INFO, DATA_FILE, WEAR_THRESHOLD, RESULTS_FILE)
                     write_test_results(results, RESULTS_FILE)
                     # end test loop
+
+                # Save SB model with results appended
+                sb_Pr = results[14]
+                sb_Rc = results[15]
+                sb_F1 = results[18]
+                model_file_SB = f'models/{VERSION}_{algos[n]}_{dt_m}_{sb_Pr:.2f}_{sb_Rc:.2f}_{sb_F1:.2f}.mdl'
+                print(f'- Save Stable-Baselines-3 model: {model_file_SB}')
+                agent_SB.save(model_file_SB)
 
                 n += 1
                 # end SB agents loop
