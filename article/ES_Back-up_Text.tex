@@ -106,35 +106,9 @@ Reinforcement learning (RL) is an artificial intelligence technique inspired by 
 	\label{fig:RL-loop}
 \end{figure}
 
-Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is considered as a basic reinforcement learning algorithm. It is a policy-based, on-policy algorithm, capable of handling both discrete and continuous observation and action domains. In practice the REINFORCE algorithm is considered as a ``weak" algorithm and superseded by several algorithms developed since. Most notably the Q-Learning and its deep-neural network version, the DQN \citep{DQN-mnih2013}, followed by Actor-Critic \citep{A2C-mnih2016} and one of the most robust modern-day algorithms, the PPO \citep{PPO-schulman2017}.
+Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is considered as a basic reinforcement learning algorithm. It is a policy-based, on-policy algorithm, capable of handling both discrete and continuous observation and action domains.
 
-While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance" policy as the baseline for comparing the RL algorithm policy. 
-
-Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. We use  Particularly, we show that naive Bayes works best in
-two cases: completely independent features (as expected) and
-functionally dependent features (which is less obvious), while
-reaching its worst performance between these extremes.
- Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. 
-
-We also show that, surprisingly, the accuracy of naive
-Bayes is not directly correlated with the degree of feature dependencies
-measured as the class-conditional mutual information
-between the features,. Instead, our experiments reveal
-that a better predictor of naive Bayes accuracy can be
-41
-the loss of information that features contain about the class
-when assuming naive Bayes model, namely 	, where is the mutual information between
-features and class under naive Bayes assumption.
-
-
-This paper is structured as follows. In the next section we
-provide necessary background and definitions. Section 3 discusses
-naive Bayes performance for nearly-deterministic dependencies,
-while Section 4 demonstrates that the “information
-loss” criterion can be a better error predictor than the
-strength of feature dependencies. A summary and conclusions
-are given in Section 5.
-
+In practice the REINFORCE algorithm is considered as a ``weak" learner and superseded by several algorithms developed since. Most notably the Q-Learning and its deep-neural network version, the DQN \citep{DQN-mnih2013}, followed by Actor-Critic \citep{A2C-mnih2016} and one of the most robust modern-day algorithms, the PPO \citep{PPO-schulman2017}.
 
 \subsection{Stable-Baselines3}
 Stable-Baselines3 \cite{SB3-paper}, is Open Source and very popular among the RL community\footnote{As of 27-Jun-2023, it had 6k+ stars and 424 closed pull requests}. Stable-Baselines3 was initially based on the Open AI baselines \citep{OpenAI-baselines} and is completely rewritten using PyTorch. 
@@ -180,50 +154,8 @@ Friedrich, J. Torzewski, J.  Verl, A.
 
 \section{Literature Review}
 
-\cite{sandeep2022experimental} - \textcolor{red}{**VERY RELEVANT* Experimental Evaluation of Reinforcement Learning Algorithms} -- three policy based learning algorithms(PPO, SAC, DDPG) OpenAI Gym on Bipedal Walker, Bipedal
-Walker Hardcore, Lunar Landing, Mountain Car
-and Pendulum and (2)A2C on the Atari 2600 environments MuZero on custom 6x6 Go environmen
-
-\cite{Krishna2020} - \textcolor{red}{**VERY RELEVANT*  Comparison of Reinforcement Learning Algorithms} -- 
-
-\cite{dulac2020empirical} \textcolor{red}{***} An empirical investigation of the challenges of real-world reinforcement learning -- Distributional Maximum a Posteriori Policy Optimization (DMPO) [Abdolmaleki et al. 2018a] and Distributed Distributional Deterministic Policy Gradient (D4PG) [(DMPO is an EM-style policy iteration algorithm with a stochastic policy and D4PG is a deterministic policy gradient algorithm) D4PG is a modified version of Deep Deterministic Policy Gradients (DDPG) MPO [Abdolmaleki et al. 2018b] is an RL method that combines the sample efficiency of off-policy
-methods with the scalability and hyperparameter robustness of on-policy methods -- envs cartpole:swingup, walker:walk,
-quadruped:walk and humanoid:walk tasks from the realworldrl-suite
-
-\cite{duan2016benchmarking} cart-pole swing-up, tasks with very high state and action dimensionality such as 3D humanoid
-locomotion, tasks with partial observations -- algorithms: (1) batch alsogs REINFORCE, Truncated Natural Policy Gradient (TNPG) (impoorves RF), Reward-Weighted Regression (RWR) Relative Entropy Policy Search (REPS) Trust Region Policy Optimization (TRPO) Cross Entropy Method (CEM) ---- (2) ONLINE algorithms: Deep Deterministic Policy Gradient (DDPG).Compared to batch algorithms, the DDPG
-algorithm continuously improves the policy as it explores
-the environment.\textcolor{red}{*OBSERVATION**}REINFORCE: Despite its simplicity, REINFORCE is an
-effective algorithm in optimizing deep neural network policies
-in most basic and locomotion tasks. Even for high-
-DOF tasks like Ant, REINFORCE can achieve competitive
-results. However we observe that REINFORCE sometimes
-suffers from premature convergence to local optima
-as noted by Peters  Schaal (2008), which explains the performance
-gaps between REINFORCE and TNPG on tasks
-such as Walker (Figure 3(a)). By visualizing the final policies,
-we can see that REINFORCE results in policies that
-tend to jump forward and fall over to maximize short-term
-return instead of acquiring a stable walking gait to maximize
-long-term return. In Figure 3(b), we can observe
-that even with a small learning rate, steps taken by REINFORCE
-can sometimes result in large changes to policy
-distribution, which may explain the fast convergence to local
-optima.
 
 
-\cite{henderson2018deep} \textcolor{red}{**VERY REINFORCELEVANT Deep Reinforcement Learning that Matters --	Peter Henderson*}
-DDPG ACKTR TRPO PPO - ON mujoco envs - HalfCheetah-v1 ,Hopper-v1 , Walker2d-v1 and Swimmer-v1
-We investigate the OpenAI baselines implementation of TRPO and DDPG and rllab implementation of TRPO we generally use the OpenAI Baselines2
-implementations of the following algorithms: ACKTR (Wu
-et al. 2017), PPO (Schulman et al. 2017), DDPG (Plappert et
-al. 2017), TRPO (Schulman et al. 2017). We use the Hopperv1 and HalfCheetah-v1 MuJoCo (Todorov, Erez, and Tassa
-2012) environments from OpenAI Gym (Brock
-
-
-\cite{ford2022cognitive} - compares DQN A2C AND PPO FOR cognition in sensing systems to the choice of operational radio frequency (RF) mode (active, bistatic receive, electronic surveillance (ES), electronic protection measure (EPM)) for a multi-function RF system (MFRFS) -- suggest ppo is best
-
-\cite{dulac2021} taks of real word problem challenges
 
 \section{Method}
 
