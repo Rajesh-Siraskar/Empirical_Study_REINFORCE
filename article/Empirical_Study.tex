@@ -110,56 +110,11 @@ Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is co
 
 While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance" policy as the baseline for comparing the RL algorithm policy. 
 
-Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. We use  Particularly, we show that naive Bayes works best in
-two cases: completely independent features (as expected) and
-functionally dependent features (which is less obvious), while
-reaching its worst performance between these extremes.
- Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. 
+Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.
 
-We also show that, surprisingly, the accuracy of naive
-Bayes is not directly correlated with the degree of feature dependencies
-measured as the class-conditional mutual information
-between the features,. Instead, our experiments reveal
-that a better predictor of naive Bayes accuracy can be
-41
-the loss of information that features contain about the class
-when assuming naive Bayes model, namely 	, where is the mutual information between
-features and class under naive Bayes assumption.
+This paper is structured as follows: \textcolor{red}{In the next section we provide necessary background and definitions. Section 3 discusses xxx, while Section 4 xxx demonstrates. A summary and conclusions are given in Section 5.}
 
-
-This paper is structured as follows. In the next section we
-provide necessary background and definitions. Section 3 discusses
-naive Bayes performance for nearly-deterministic dependencies,
-while Section 4 demonstrates that the “information
-loss” criterion can be a better error predictor than the
-strength of feature dependencies. A summary and conclusions
-are given in Section 5.
-
-
-\subsection{Stable-Baselines3}
-Stable-Baselines3 \cite{SB3-paper}, is Open Source and very popular among the RL community\footnote{As of 27-Jun-2023, it had 6k+ stars and 424 closed pull requests}. Stable-Baselines3 was initially based on the Open AI baselines \citep{OpenAI-baselines} and is completely rewritten using PyTorch. 
-
- for  , implementation s  the advanced algorithms -- DQN, A2C and PPO and compare its performance to a na\"ive custom implementation of the REINFORCE algorithm. We use Stable-Baselines3 (SB3), the highly popular and reliable implementations of DQN, A2C and PPO. As of 27-Jun-2023, the REINFORCE was not implemented by Stable-Baselines and we therefore custom implemented a basic version. 
-
-\subsection{DQN}
-Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) \citep{riedmiller2005neural} and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping.
-
-%SB3 settings > classstable_baselines3.dqn.DQN(policy, env, learning_rate=0.0001, buffer_size=1000000, learning_starts=50000, batch_size=32, tau=1.0, gamma=0.99, train_freq=4, gradient_steps=1, replay_buffer_class=None, replay_buffer_kwargs=None, optimize_memory_usage=False, target_update_interval=10000, exploration_fraction=0.1, exploration_initial_eps=1.0, exploration_final_eps=0.05, max_grad_norm=10, stats_window_size=100, tensorboard_log=None, policy_kwargs=None, verbose=0, seed=None, device='auto', _init_setup_model=True) %https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html
-
-\subsection{REINFORCE}
-sB-3 dOES NOT IMPLEMENT THE REINFORCE	 --- https://stable-baselines3.readthedocs.io/en/master/guide/algos.html
-
-Model Free --> Policy Gradient/Actor-Critic --> REINFORCE)
-REINFORCE (Monte-Carlo policy gradient) 
-
-
-IEEE NUAA Ideahouse dataset has been used in this paper for the RUL estimation of the milling cutter. \cite{NUAA-data-set}
-
-
-
-Tool wear modeling is the first step to assist in predicting 
-
-
+\section{Related Work}
 Literature search conducted on the Scopus\texttrademark{} and Web Of Science\texttrademark{} did not return any articles for the application of reinforcement learning for predictive maintenance of milling machines. Search strings we tried -- \texttt{``reinforcement learning AND tool wear AND maintenance", RL + milling + policy, RL + milling + maintenance, RL + tool wear + policy, RL + tool wear + maintenance"} 
 
 Running the search \texttt{``reinforcement learning AND milling AND tool wear"} using the Scopus\texttrademark{} and Web Of Science\texttrademark{} services 
@@ -176,10 +131,6 @@ No results for "reinforcement learning" AND "milling machine" AND "tool wear" - 
 Friedrich, J. Torzewski, J.  Verl, A.
 
 "reinforcement learning" AND "tool wear" - 10 results
-
-
-\section{Literature Review}
-
 \cite{sandeep2022experimental} - \textcolor{red}{**VERY RELEVANT* Experimental Evaluation of Reinforcement Learning Algorithms} -- three policy based learning algorithms(PPO, SAC, DDPG) OpenAI Gym on Bipedal Walker, Bipedal
 Walker Hardcore, Lunar Landing, Mountain Car
 and Pendulum and (2)A2C on the Atari 2600 environments MuZero on custom 6x6 Go environmen
@@ -225,59 +176,277 @@ al. 2017), TRPO (Schulman et al. 2017). We use the Hopperv1 and HalfCheetah-v1 M
 
 \cite{dulac2021} taks of real word problem challenges
 
-\section{Method}
 
-\textit{The methodology explains in detail what the researcher did to undertake the research. Various aspects of the research have to be outlined: The overall structure and operation of the experiment or observational experience. The groups studied in the research including the size of each group and any features of the subjects which may be relevant to the topic being researched. The variables that were changed between groups and the variables measured as a result of the changes. The conditions under which the research was undertaken and any factors or variations in conditions which may have an impact on the results. The methods of data analysis used in order to analyse and collate the results. \textcolor{red}{***}Any limitations of the data collected.}
-We normalize the tool wear and other state features, $x \in [0,\;1] \subset \mathbb{R} $. This allows for adding white noise of similar magnitudes across experiments of different data-sets
-\subsection{RL environment description}
-\subsection{Data description}
-\subsection{Procedure}
- -- training \\
- -- selecting the model\\
- -- conducting the experiments\\
- 
-\subsection{Evaluation method}
-\subsection{Tools}
-2 different laptops
-
+\section{Technical Background}
+\subsection{Algorithms}
+\textbf{Algorithm timelines}
 \begin{itemize}
-	\item why classifction metrics
-	\item why F1beta	
+	\item 1947: Monte Carlo Sampling
+	\item 1959: Temporal Difference Learning
+	\item 1989: Q-Learning
+	\item 1992: REINFORCE
+	\item 2013: DQN
+	\item 2016: A3C
+	\item 2017: PPO 
 \end{itemize}
 
-\subsection{Method - training and testing}
-\subsection{Precision or Recall?}
-- Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized \\
-- Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
-\subsection{Hyper-parameters for Precision or Recall control}
+\section{The core elements of the 4 algorithms}
+The core elements of the 4 algorithms. \citep{graesser2019} \\
 
+\textbf{REINFORCE}: Paper \citep{REINFORCE-williams1992}
+\begin{equation}
+	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
+	\label{eq:REINFORCE}
+\end{equation}
+
+\textbf{DQN}:
+Learning Q-function in DQN. Paper \citep{DQN-mnih2013}. Implementation notes: "\textcolor{red}{*SB3 says:*} Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping" 
+\begin{equation}
+	Q^\pi (s, a) = r + \gamma  \max_{a'} Q^\pi (s', a')
+	\label{eq:DQN}
+\end{equation}
+
+\textbf{A2C}: Actors learn parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in Equation \ref{eq:A2C}. "\textcolor{red}{*SB3 says:*} A synchronous, deterministic variant of Asynchronous Advantage Actor Critic (A3C). It uses multiple workers to avoid the use of a replay buffer.". Paper \citep{A2C-mnih2016} 
+
+\begin{equation}
+	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; A^\pi_t \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
+	\label{eq:A2C}
+\end{equation}
+
+Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the action is w.r.t. policy's average, for a particular state using Equation \ref{eq:A2CAF}
+
+\begin{equation}
+	A^\pi_t (s_t, a_t) = Q^\pi (s_t, a_t) - V^\pi (s_t)
+	\label{eq:A2CAF}
+\end{equation}
+
+\textbf{PPO}: " \textcolor{red}{*SB3 says:*} The Proximal Policy Optimization algorithm combines ideas from A2C (having multiple workers) and TRPO (it uses a trust region to improve the actor). The main idea is that after an update, the new policy should be not too far from the old policy. For that, ppo uses clipping to avoid too large update.". Paper \citep{PPO-schulman2017}
+
+
+\begin{equation}
+	J^{CLIP} (\theta) = \mathbb{E}_t \; [ \; min (r_t(\theta) A^{\pi_{\theta_{old}}}_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon) A^{\pi_{\theta_{old}}}_t)]
+	\label{eq:PPO}
+\end{equation}
+
+\section{The REINFORCE algorithm}
+Three key features of any RL algorithm:
+\begin{enumerate}
+	\item Policy: $\pi_\theta$ = Probablities of all actions, given a state. Parameterized by $\theta$
+	\item Objective function:
+	\begin{equation}
+		\max_{\theta} J(\pi_{\theta}) = \mathop{\mathbb{E}}_{\tau \sim \pi_\theta} [R(\tau)]
+	\end{equation}
+	\item Method: Way to udate the parameters = Policy Gradient
+	
+\end{enumerate}
+
+\subsection{Policy gradient numerical computation}
+
+\begin{enumerate}
+	\item Plain vanilla: 
+	\begin{equation}
+		\nabla_ \theta J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \; [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
+	\end{equation}
+	\item With Monte Carlo sampling and approximation: $\nabla_\theta J(\pi_\theta) \approx [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
+	\item With baseline: $\nabla_\theta J(\theta) \approx [ \; \sum_{t=0}^T (R_t(\tau) - b(s_t)) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
+	\item Where, baseline does not change per time-step, it is for the entire trajectory
+	\item One baseline option: $V^\pi$ - leads to Actor-Critic algorithm
+	\item Simpler option: Average returns over trajectory: $b = \frac{1}{T}\sum_{t=0}^T R_t(\tau) $
+\end{enumerate}
+
+Algorithm
+%1. Initialize $\alpha$, $\gamma$ and $\theta$ i.e. weigths of the NN
+%2. for episodes = 0 to MAX_EPISODES:
+%- sample trajectory $\tau$
+%- set $\nabla_\theta J(\pi_{\theta})$ = 0
+%- for t=0 to T:
+%- $R_t(\tau) = \sum_{t'=t}^{T} \gamma^{t'-t} r'_t$
+%- $\nabla_\theta J(\pi_\theta)  = \mathbb{E}_{\tau \sim \pi_\theta} \; [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
+%- end for sampled trajectory
+%- $\theta = \theta + \alpha \nabla_\theta J(\pi_\theta) $
+%3. end for all episodes 
+%
+%Implementation notes:
+%1. Code is inspired by Laura Graesser's (LG, 2020 book) implementation, however with large modifications
+%2. We use the concept of Agent (instead of 'pi' or '$policy_pi$') and a separate network class (i.e. how the function approximator is implemented, it could well be a linear regression)
+%3. **Important concept**: "Loss" in the implementation below, is the "objective" $J$. In our algorithm, we want to **maximize** it. PyTorch's optimizer, by default, MINIMIZES it (as it is called "loss"), we therefore add "-" negate it, so as to maximize it. 
+%4. Also in the final plot, notice "loss" is RISING and follows the rewards, which is expected as "loss" is really being maximized.  
+%5. self.pd.probs = prob. distribution of all actions
+%6. Sum of all possible action probabilities = 1.0
+%7. Note that episodes > 300 start showing repeated patterns. Rewards drop and rise in cylces. 300 is ideal and hence suggested in LG (2020)
+
+
+
+
+\subsubsection{Stable-Baselines3}
+Stable-Baselines3 \cite{SB3-paper}, is Open Source and very popular among the RL community\footnote{As of 27-Jun-2023, it had 6k+ stars and 424 closed pull requests}. Stable-Baselines3 was initially based on the Open AI baselines \citep{OpenAI-baselines} and is completely rewritten using PyTorch. 
+
+ for  , implementation s  the advanced algorithms -- DQN, A2C and PPO and compare its performance to a na\"ive custom implementation of the REINFORCE algorithm. We use Stable-Baselines3 (SB3), the highly popular and reliable implementations of DQN, A2C and PPO. As of 27-Jun-2023, the REINFORCE was not implemented by Stable-Baselines and we therefore custom implemented a basic version. 
+
+\subsubsection{DQN}
+Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) \citep{riedmiller2005neural} and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping.
+
+%SB3 settings > classstable_baselines3.dqn.DQN(policy, env, learning_rate=0.0001, buffer_size=1000000, learning_starts=50000, batch_size=32, tau=1.0, gamma=0.99, train_freq=4, gradient_steps=1, replay_buffer_class=None, replay_buffer_kwargs=None, optimize_memory_usage=False, target_update_interval=10000, exploration_fraction=0.1, exploration_initial_eps=1.0, exploration_final_eps=0.05, max_grad_norm=10, stats_window_size=100, tensorboard_log=None, policy_kwargs=None, verbose=0, seed=None, device='auto', _init_setup_model=True) %https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html
+
+\subsubsection{REINFORCE}
+sB-3 dOES NOT IMPLEMENT THE REINFORCE	 --- https://stable-baselines3.readthedocs.io/en/master/guide/algos.html
+
+Model Free --> Policy Gradient/Actor-Critic --> REINFORCE)
+REINFORCE (Monte-Carlo policy gradient) 
+IEEE NUAA Ideahouse dataset has been used in this paper for the RUL estimation of the milling cutter. \cite{NUAA-data-set} Tool wear modeling is the first step to assist in predicting. 
+
+\subsection{Implementation details}
+xx\\
+
+\subsection{Data description}
+- Simulated\\
+- PHM\\
+\subsection{Environment design}
+we follow the procedure in \cite{graesser2019} pg 289 Part iv, ch14-15.
+\section{Environment description}
+
+\subsection{simulated data}
+\citep{davsic2006}. eq 16 from the paper 
+parameters b0, b1, b2 and a under the form of a
+complex power-exponential regression equation
+power functions as approximating
+functions of cutting tool wear, we proposed is powerexponential
+function form
+
+tool
+flank wear VB
+\[ VB = a \cdot t^{b_1} \cdot e^{b_2 \cdot t} \Big|_{t=t_0}^{t=t_1} \]
+
+% \[ \evu{\frac{1}{5} \tan \theta}{\pi}{0} \]
+b0	-2.4941	
+b1	0.3342	
+b2	0.03147	
+a	0.08257	
+Determination of Complex Power-
+Exponential Regression Equation for
+Functional Dependence between Tool Wear
+and Cutting Time for
+Cutting Speed v=79.2 [m/min]
+Parameter calculation b0, b1 and b2 of the linear
+regression for the mentioned example is consisted in
+the solving of the normal system equation (12) with
+the following shape:
+
+%on the base of which is: b0=-2.4941; b1=0.3342;
+%b2=0.03147 and a=0.08257.
+%From that point the equation of the complex
+%power-exponential regression equation has the shape:
+%VB = 0.08257 ⋅ t0.3342 ⋅ e0.03147⋅t
+
+
+\textbf{Implementation details}: Normalization
+
+init \\
+reset \\
+reward function \\
+
+degradation model as exponential
+\begin{equation}\label{eq:DegradationModel}
+	H(t) = 1 - D_0 - {\rm e}^{(at^b)},
+\end{equation}
+where, $D_0$ is the initial degradation state while $a$ and $b$ are wear-rate coefficients that depend on the effect of temperature, vibration and other system stress parameters
+
+
+\[
+X(m,n) = \left\{\begin{array}{lr}
+	x(n), & \text{for } 0\leq n\leq 1\\
+	x(n-1), & \text{for } 0\leq n\leq 1\\
+	x(n-1), & \text{for } 0\leq n\leq 1
+\end{array}\right\} = xy
+\]
+
+
+\begin{equation}
+	R_t =
+	\begin{cases}
+		\; 0, &  \quad \text{if}\; U(s_t) = U(s_{t+1}) = 0 \\
+		\; -1.0, & \quad \text{if}\; U(s_t) = 0, U(s_{t+1}) = 1 \\
+		\; R_{ff}, & \quad \text{if}\; U(s_t) = 1\\
+	\end{cases}
+	\label{eq:RewardFunction}
+\end{equation}
+
+\subsection{SS}
+\begin{verbatim}
+	def _get_observation(self, index):
+	next_state = np.array([
+	self.df['time'][index],
+	self.df['tool_wear'][index]
+	], dtype=np.float32)
+	
+	return next_state
+\end{verbatim}
+
+\subsection{MS}
+\begin{verbatim}
+	def _get_observation(self, index):
+	next_state = np.array([
+	self.df['tool_wear'][index],
+	self.df['force_x'][index],
+	self.df['force_y'][index],
+	self.df['force_z'][index],
+	self.df['vibration_x'][index],
+	self.df['vibration_y'][index],
+	self.df['vibration_z'][index],
+	self.df['acoustic_emission_rms'][index]
+	], dtype=np.float32)
+	
+	return next_state
+\end{verbatim}
+
+\begin{verbatim}
+	# Machine data frame properties
+	self.df = df
+	self.df_length = len(self.df.index)
+	self.df_index = 0
+	
+	# Milling operation and tool parameters
+	self.wear_threshold = wear_threshold
+	self.max_operations = max_operations
+	self.breakdown_chance = breakdown_chance
+	self.add_noise = add_noise
+	self.R1 = R1
+	self.R2 = R2
+	self.R3 = R3
+	self.reward = 0.0
+\end{verbatim}
+
+\subsection{main env}
+\begin{verbatim}
+	env = MillingTool_SS_NT(df_train, WEAR_THRESHOLD_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
+\end{verbatim}
+
+\subsection{test env}
+\begin{verbatim}
+	env_test = MillingTool_SS_NT(df_test, WEAR_THRESHOLD_ORG_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
+\end{verbatim}
+
+
+
+- SS\\
+- MS\\
+- States: We normalize the tool wear and other state features, $x \in [0,\;1] \subset \mathbb{R} $. This allows for adding white noise of similar magnitudes across experiments of different data-sets
+
+- Actions\\
+- Reward signal\\
 \begin{itemize}
 	\item R1 = +1 
 	\item R2 = -1
-	\item R3 = -100 => higher neg. Improve recall. Lower neg. Improve precision
+	\item R3 = -100 => higher neg. Improve recall. Lower neg. Improve precision. 
+	\item Hyper-parameters for Precision or Recall control: 
+	\item Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized. 
+	\item - Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
 	\item \textbf{LOOK AHEAD PARAM}: 
 \end{itemize}
 
-\begin{itemize}
-	\item Training: SB3 - 10 k eps. 3 times. Average their outputs
-	\item Testing: 
-	\begin{itemize}
-		\item Avg. over 5 rounds.
-		\item Each round - avg over 40 test cases x 10 test rounds
-		\item Total: 40 x 10 x 5 = 2000 cases
-		\item Avgs over: 10 rounds (of 40 cases each) X 5 rounds of \textbf{re-trained} SB3 agents = 50 rounds 
-	\end{itemize}
-\end{itemize}
+- Transition function \citep{graesser2019}: pg333 "Transition function  - also known as model. can be learnt or programmed programmable rules are common and lead to increasing complexity. \textcolor{red}{***} We use a hybrid model - partly learnt and partly programmed": \textbf{Noise and breakdown}\\
 
-\subsection{Inference}
-\begin{itemize}
-	\item Training: SB3 is also unstable - show examples of results such as A2C/DQN 0.00 
-	\item Training: SB3 is also unstable - SHOW SB3 tensorboard plots
-	\item Training: SB3 is also unstable - EXCEL plots of results over the 10 rounds 	
-\end{itemize}
-
-
-\section{Network architecture and basic hyper-parameters}
+\subsection{Network architecture and basic hyper-parameters}
 
 \begin{table*}\centering
 	\sffamily
@@ -296,35 +465,29 @@ We normalize the tool wear and other state features, $x \in [0,\;1] \subset \mat
 		\bottomrule
 	\end{tabular}
 	\caption{Comparing the network architecture and basic hyper-parameters across algorithms}
-	\label{tbl:hyperparameters}
+	\label{tbl:network-architecture}
 \end{table*}
 
-
-
-
-soure of ppo implementation details \url{https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/}
-
-source of SB3 network mp : \url{https://github.com/openai/baselines/blob/ea25b9e8b234e6ee1bca43083f8f3cf974143998/baselines/common/models.py#L75-L103}
-
-\subsection{PPO hyperparms}
-
+\subsubsection{PPO hyperparms}
+- soure of ppo implementation details \url{https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/}\\
+- source of SB3 network mp : \url{https://github.com/openai/baselines/blob/ea25b9e8b234e6ee1bca43083f8f3cf974143998/baselines/common/models.py#L75-L103}\\
 implementation guide source >> https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/
 
 By default, PPO uses a simple MLP network consisting of two layers of 64 neurons and Hyperbolic Tangent as the activation function. Then PPO builds a policy head and value head that share the outputs of the MLP network. Below is a pseudocode:
 %\textt{
-%network = Sequential(
-%layer_init(Linear(np.array(envs.single_observation_space.shape).prod(), 64)),
-%Tanh(),
-%layer_init(Linear(64, 64)),
-%Tanh(),
-%)
-%value_head = layer_init(Linear(64, 1), std=1.0)
-%policy_head = layer_init(Linear(64, envs.single_action_space.n), std=0.01)
-%hidden = network(observation)
-%value = value_head(hidden)
-%action = Categorical(policy_head(hidden)).sample()}
+	%network = Sequential(
+	%layer_init(Linear(np.array(envs.single_observation_space.shape).prod(), 64)),
+	%Tanh(),
+	%layer_init(Linear(64, 64)),
+	%Tanh(),
+	%)
+	%value_head = layer_init(Linear(64, 1), std=1.0)
+	%policy_head = layer_init(Linear(64, envs.single_action_space.n), std=0.01)
+	%hidden = network(observation)
+	%value = value_head(hidden)
+	%action = Categorical(policy_head(hidden)).sample()}
 
-\subsection{dqn hyperparms}
+\subsubsection{dqn hyperparms}
 
 
 default hyperparms : \url{https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/policies.html}
@@ -336,7 +499,56 @@ Default hyperparameters are taken from the Nature paper,
 except for the optimizer and learning rate that were taken from Stable Baselines defaults
 
 
-\section{Empirical results}
+
+\subsection{Hyper-parameters for Precision or Recall control}
+- xxx\\
+
+
+
+
+\section{Methodology}
+
+\textit{The methodology explains in detail what the researcher did to undertake the research. Various aspects of the research have to be outlined: The overall structure and operation of the experiment or observational experience. The groups studied in the research including the size of each group and any features of the subjects which may be relevant to the topic being researched. The variables that were changed between groups and the variables measured as a result of the changes. The conditions under which the research was undertaken and any factors or variations in conditions which may have an impact on the results. The methods of data analysis used in order to analyse and collate the results. \textcolor{red}{***}Any limitations of the data collected.}
+
+\subsection{Training}
+ \textbf{training}
+ \begin{itemize}
+ 	\item Training: SB3 - 10 k eps. 3 times. Average their outputs
+ 	\item Testing: 
+ 	\begin{itemize}
+ 		\item Avg. over 5 rounds.
+ 		\item Each round - avg over 40 test cases x 10 test rounds
+ 		\item Total: 40 x 10 x 5 = 2000 cases
+ 		\item Avgs over: 10 rounds (of 40 cases each) X 5 rounds of \textbf{re-trained} SB3 agents = 50 rounds 
+ 	\end{itemize}
+ \end{itemize}
+ -- selecting the model\\
+ -- conducting the experiments\\
+\subsection{Testing}
+- Testing \texttt{env-test = wear threshold original}	\\
+- Experiment file\\
+- Rounds\\
+
+\subsection{Evaluation method}
+-pr, rc, f1, f1-beta
+
+\begin{itemize}
+	\item why classifction metrics
+	\item why F1beta	
+\end{itemize}
+
+
+\subsection{Inference}
+\begin{itemize}
+	\item Training: SB3 is also unstable - show examples of results such as A2C/DQN 0.00 
+	\item Training: SB3 is also unstable - SHOW SB3 tensorboard plots
+	\item Training: SB3 is also unstable - EXCEL plots of results over the 10 rounds 	
+\end{itemize}
+
+
+
+
+\section{Results}
 
 \begin{figure}[ht]
 	\begin{subfigure}{\textwidth}
@@ -466,12 +678,7 @@ except for the optimizer and learning rate that were taken from Stable Baselines
 	\label{fig:tr-ms-env}
 \end{figure}
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{Model_training_time.pdf}  
-	\caption{Training time. Across 10 rounds and all environment variants.}
-	\label{fig:tr-time}
-\end{figure}
+
 
 \subsection{Detailed metrics}
 xx
@@ -690,258 +897,15 @@ xx
 
 
 \subsection{Training times}
-
-%\begin{table*}[hbt!]\centering
-%	\sffamily
-%	\rowspace{1.3}
-%	\begin{tabular}{@{}l r r r r@{}}
-%		\arrayrulecolor{black!40}\toprule
-%		\textbf{Environment} &\textbf{REINFORCE} &\textbf{A2C}&\textbf{DQN}&\textbf{PPO}\\ \midrule
-%		Simulated  - No noise &214.23 &41.19&4.03&41.13\\
-%		Simulated  - Low noise &199.89 &41.52&3.55&40.66\\
-%		Simulated  - High noise &134.16 &17.88&1.53&20.90\\ \midrule
-%		
-%		PHM C01 SS - No noise &330.54 &18.85&2.08&32.65\\
-%		PHM C01 SS - Low noise &426.79 &30.66&3.69&38.59\\
-%		PHM C01 SS - High noise &333.13 &17.58&1.80&19.16\\ \midrule
-%		
-%		PHM C04 SS - No noise &299.31 &19.56&1.86&19.64\\
-%		PHM C04 SS - Low noise &264.90 &18.27&2.00&19.69\\
-%		PHM C04 SS - High noise &256.44 &17.65&1.58&19.11\\ \hdashline
-%		
-%		PHM C06 SS - No noise &339.65 &17.64&2.26&19.50\\
-%		PHM C06 SS - Low noise &266.98 &19.33&1.84&19.19\\
-%		PHM C06 SS - High noise &308.20 &34.21&4.18&30.94\\ \hdashline
-%		
-%		PHM C01 MS - No noise &655.21 &38.55&4.96&42.21\\
-%		PHM C04 MS - No noise &615.58 &33.85&7.36&43.49\\
-%		PHM C06 MS - No noise &625.37 &39.30&5.85&41.68\\  \midrule
-%		
-%		Overall average (s) &351.36 &27.07&3.24&29.90\\
-%		\bottomrule
-%\end{tabular}
-%\caption{Training time for each model, across different environments. Averaged over 3 runs. Time is in seconds (s).}
-%\label{tbl:TrainingTimes}
-%\end{table*}
-
-%\subsection{Algorithm timelines}
-%\begin{itemize}
-%	\item 1947: Monte Carlo Sampling
-%	\item 1959: Temporal Difference Learning
-%	\item 1989: Q-Learning
-%	\item 1992: REINFORCE
-%	\item 2013: DQN
-%	\item 2016: A3C
-%	\item 2017: PPO 
-%\end{itemize}
-
-\section{Environment description}
-
-\subsection{simulated data}
-\citep{davsic2006}. eq 16 from the paper 
-parameters b0, b1, b2 and a under the form of a
-complex power-exponential regression equation
-power functions as approximating
-functions of cutting tool wear, we proposed is powerexponential
-function form
-
-tool
-flank wear VB
-\[ VB = a \cdot t^{b_1} \cdot e^{b_2 \cdot t} \Big|_{t=t_0}^{t=t_1} \]
-
-% \[ \evu{\frac{1}{5} \tan \theta}{\pi}{0} \]
-b0	-2.4941	
-b1	0.3342	
-b2	0.03147	
-a	0.08257	
-Determination of Complex Power-
-Exponential Regression Equation for
-Functional Dependence between Tool Wear
-and Cutting Time for
-Cutting Speed v=79.2 [m/min]
-Parameter calculation b0, b1 and b2 of the linear
-regression for the mentioned example is consisted in
-the solving of the normal system equation (12) with
-the following shape:
-
-%on the base of which is: b0=-2.4941; b1=0.3342;
-%b2=0.03147 and a=0.08257.
-%From that point the equation of the complex
-%power-exponential regression equation has the shape:
-%VB = 0.08257 ⋅ t0.3342 ⋅ e0.03147⋅t
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{Model_training_time.pdf}  
+	\caption{Training time. Across 10 rounds and all environment variants.}
+	\label{fig:tr-time}
+\end{figure}
 
 
-\textbf{Implementation details}: Normalization
 
-init \\
-reset \\
-reward function \\
-
-degradation model as exponential
-\begin{equation}\label{eq:DegradationModel}
-	H(t) = 1 - D_0 - {\rm e}^{(at^b)},
-\end{equation}
-where, $D_0$ is the initial degradation state while $a$ and $b$ are wear-rate coefficients that depend on the effect of temperature, vibration and other system stress parameters
-
-
-\[
-X(m,n) = \left\{\begin{array}{lr}
-	x(n), & \text{for } 0\leq n\leq 1\\
-	x(n-1), & \text{for } 0\leq n\leq 1\\
-	x(n-1), & \text{for } 0\leq n\leq 1
-\end{array}\right\} = xy
-\]
-
-
-\begin{equation}
-R_t =
-\begin{cases}
-		\; 0, &  \quad \text{if}\; U(s_t) = U(s_{t+1}) = 0 \\
-	\; -1.0, & \quad \text{if}\; U(s_t) = 0, U(s_{t+1}) = 1 \\
-	\; R_{ff}, & \quad \text{if}\; U(s_t) = 1\\
-\end{cases}
-\label{eq:RewardFunction}
-\end{equation}
-
-\subsection{SS}
-\begin{verbatim}
-	def _get_observation(self, index):
-	next_state = np.array([
-	self.df['time'][index],
-	self.df['tool_wear'][index]
-	], dtype=np.float32)
-	
-	return next_state
-\end{verbatim}
-
-\subsection{MS}
-\begin{verbatim}
-	def _get_observation(self, index):
-		next_state = np.array([
-		self.df['tool_wear'][index],
-		self.df['force_x'][index],
-		self.df['force_y'][index],
-		self.df['force_z'][index],
-		self.df['vibration_x'][index],
-		self.df['vibration_y'][index],
-		self.df['vibration_z'][index],
-		self.df['acoustic_emission_rms'][index]
-		], dtype=np.float32)
-	
-	return next_state
-\end{verbatim}
-
-\begin{verbatim}
-	# Machine data frame properties
-	self.df = df
-	self.df_length = len(self.df.index)
-	self.df_index = 0
-	
-	# Milling operation and tool parameters
-	self.wear_threshold = wear_threshold
-	self.max_operations = max_operations
-	self.breakdown_chance = breakdown_chance
-	self.add_noise = add_noise
-	self.R1 = R1
-	self.R2 = R2
-	self.R3 = R3
-	self.reward = 0.0
-\end{verbatim}
-
-\subsection{main env}
-\begin{verbatim}
-	env = MillingTool_SS_NT(df_train, WEAR_THRESHOLD_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
-\end{verbatim}
-
-\subsection{test env}
-\begin{verbatim}
-	env_test = MillingTool_SS_NT(df_test, WEAR_THRESHOLD_ORG_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
-\end{verbatim}
-
-\section{The core elements of the 4 algorithms}
-The core elements of the 4 algorithms. \citep{graesser2019} \\
-
-\textbf{REINFORCE}: Paper \citep{REINFORCE-williams1992}
-\begin{equation}
-	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
-	\label{eq:REINFORCE}
-\end{equation}
-
-\textbf{DQN}:
-Learning Q-function in DQN. Paper \citep{DQN-mnih2013}. Implementation notes: "\textcolor{red}{*SB3 says:*} Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping" 
-\begin{equation}
-	Q^\pi (s, a) = r + \gamma  \max_{a'} Q^\pi (s', a')
-	\label{eq:DQN}
-\end{equation}
-
-\textbf{A2C}: Actors learn parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in Equation \ref{eq:A2C}. "\textcolor{red}{*SB3 says:*} A synchronous, deterministic variant of Asynchronous Advantage Actor Critic (A3C). It uses multiple workers to avoid the use of a replay buffer.". Paper \citep{A2C-mnih2016} 
-
-\begin{equation}
-	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; A^\pi_t \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
-	\label{eq:A2C}
-\end{equation}
-
-Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the action is w.r.t. policy's average, for a particular state using Equation \ref{eq:A2CAF}
-
-\begin{equation}
-	A^\pi_t (s_t, a_t) = Q^\pi (s_t, a_t) - V^\pi (s_t)
-	\label{eq:A2CAF}
-\end{equation}
-
-\textbf{PPO}: " \textcolor{red}{*SB3 says:*} The Proximal Policy Optimization algorithm combines ideas from A2C (having multiple workers) and TRPO (it uses a trust region to improve the actor). The main idea is that after an update, the new policy should be not too far from the old policy. For that, ppo uses clipping to avoid too large update.". Paper \citep{PPO-schulman2017}
-
-
-\begin{equation}
-	J^{CLIP} (\theta) = \mathbb{E}_t \; [ \; min (r_t(\theta) A^{\pi_{\theta_{old}}}_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon) A^{\pi_{\theta_{old}}}_t)]
-	\label{eq:PPO}
-\end{equation}
-
-\section{The REINFORCE algorithm}
-Three key features of any RL algorithm:
-\begin{enumerate}
-	\item Policy: $\pi_\theta$ = Probablities of all actions, given a state. Parameterized by $\theta$
-	\item Objective function:
-	\begin{equation}
-		\max_{\theta} J(\pi_{\theta}) = \mathop{\mathbb{E}}_{\tau \sim \pi_\theta} [R(\tau)]
-	\end{equation}
-	\item Method: Way to udate the parameters = Policy Gradient
-
-\end{enumerate}
-
-\subsection{Policy gradient numerical computation}
-
-\begin{enumerate}
-	\item Plain vanilla: 
-	\begin{equation}
-		\nabla_ \theta J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \; [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
-	\end{equation}
-	\item With Monte Carlo sampling and approximation: $\nabla_\theta J(\pi_\theta) \approx [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
-	\item With baseline: $\nabla_\theta J(\theta) \approx [ \; \sum_{t=0}^T (R_t(\tau) - b(s_t)) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
-	\item Where, baseline does not change per time-step, it is for the entire trajectory
-	\item One baseline option: $V^\pi$ - leads to Actor-Critic algorithm
-	\item Simpler option: Average returns over trajectory: $b = \frac{1}{T}\sum_{t=0}^T R_t(\tau) $
-\end{enumerate}
-
-Algorithm
-%1. Initialize $\alpha$, $\gamma$ and $\theta$ i.e. weigths of the NN
-%2. for episodes = 0 to MAX_EPISODES:
-%- sample trajectory $\tau$
-%- set $\nabla_\theta J(\pi_{\theta})$ = 0
-%- for t=0 to T:
-%- $R_t(\tau) = \sum_{t'=t}^{T} \gamma^{t'-t} r'_t$
-%- $\nabla_\theta J(\pi_\theta)  = \mathbb{E}_{\tau \sim \pi_\theta} \; [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
-%- end for sampled trajectory
-%- $\theta = \theta + \alpha \nabla_\theta J(\pi_\theta) $
-%3. end for all episodes 
-%
-%Implementation notes:
-%1. Code is inspired by Laura Graesser's (LG, 2020 book) implementation, however with large modifications
-%2. We use the concept of Agent (instead of 'pi' or '$policy_pi$') and a separate network class (i.e. how the function approximator is implemented, it could well be a linear regression)
-%3. **Important concept**: "Loss" in the implementation below, is the "objective" $J$. In our algorithm, we want to **maximize** it. PyTorch's optimizer, by default, MINIMIZES it (as it is called "loss"), we therefore add "-" negate it, so as to maximize it. 
-%4. Also in the final plot, notice "loss" is RISING and follows the rewards, which is expected as "loss" is really being maximized.  
-%5. self.pd.probs = prob. distribution of all actions
-%6. Sum of all possible action probabilities = 1.0
-%7. Note that episodes > 300 start showing repeated patterns. Rewards drop and rise in cylces. 300 is ideal and hence suggested in LG (2020)
 
 
 
