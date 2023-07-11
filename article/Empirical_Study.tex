@@ -92,16 +92,24 @@ For reproducibility, model training and testing code, data and the trained REINF
 \end{table*}
 
 \newpage
-\section{Introduction}
-\epigraph{"Plurality should not be posited without necessity" -- Of two competing theories, the simpler explanation of an entity is to be preferred}{--- \textup{William of Ockham (1285–1347)}, The Occams razor principle}
+\thispagestyle{empty}
+\listoffigures
+\listoftables
 
-\noindent Milling machines are highly versatile, ubiquitous tools serving a variety of industries. A milling machine removes metal from the work piece by rotating and driving a cutting device into it. Abrasive forces cause tool wear, and optimal tool replacement reduces direct costs and optimizes the machines' downtime. With the 2023 milling machine market valued at USD 68.3 billion \citep{milling-market}, this is an important goal for the industry. The cutting tool experiences multiple types of wear as it cuts through metal. Tool wear depends in several factors such as the cutting speed, force applied to the tool, lubrication and materials of the work piece and cutting tool. 
+\section{Introduction}
+% $$$ Quote
+%\epigraph{"Plurality should not be posited without necessity" -- Of two competing theories, the simpler explanation of an entity is to be preferred}{--- \textup{William of Ockham (1285–1347)}, The Occams razor principle}
+
+%\noindent Milling machines are highly versatile, ubiquitous tools serving a variety of industries. 
+% $$$ End Quote and first line of para without indent
+
+Milling machines are highly versatile, ubiquitous tools serving a variety of industries. A milling machine removes metal from the work piece by rotating and driving a cutting device into it. Abrasive forces cause tool wear, and optimal tool replacement reduces direct costs and optimizes the machines' downtime. With the 2023 milling machine market valued at USD 68.3 billion \citep{milling-market}, this is an important goal for the industry. The cutting tool experiences multiple types of wear as it cuts through metal. Tool wear depends in several factors such as the cutting speed, force applied to the tool, lubrication and materials of the work piece and cutting tool. 
 
 Reinforcement learning (RL) is an artificial intelligence technique inspired by nature. Fig. \ref{fig:RL-loop} \citep{barto2018} shows the RL learning feedback loop. An actor or ``agent" interacts with an environment and learns via ``trial-and-error". It acts based on stimuli or feedback received from the environment after performing a certain action. Actions that help in achieving the learning goal receive a reward while actions that do not, are punished. Repeating this loop over thousands of episodes, good actions are ``reinforced", thereby building a ``policy" that is optimized for that goal. In the case of predictive maintenance for milling machines, the agent is the ``planner" with a goal of learning an optimal tool replacement policy. The environment consists of sensors attached to the machine and related information such as job specifications, environment conditions etc.
 
 \begin{figure}[!h]
 	\centering
-	\includegraphics[width=0.7\textwidth]{RL-loop.pdf}
+	\includegraphics[width=0.5\textwidth]{RL-loop.pdf}
 	\caption{Reinforcement Learning}
 	\label{fig:RL-loop}
 \end{figure}
@@ -112,72 +120,21 @@ While most studies on RL algorithms are evaluated on Open AI Gym environments, o
 
 Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.
 
-This paper is structured as follows: \textcolor{red}{In the next section we provide necessary background and definitions. Section 3 discusses xxx, while Section 4 xxx demonstrates. A summary and conclusions are given in Section 5.}
+The main \textbf{contributions} of this research are (1) evaluation on a custom designed environment built for the predictive maintenance problem (2) targeted toward the industrial practitioner not accustomed to complex hyperparameter tuning and (3) use of simple performance evaluation statistical measures and plots that industrial practitioners are normally used to.
 
-\section{Related Work}
-Literature search conducted on the Scopus\texttrademark{} and Web Of Science\texttrademark{} did not return any articles for the application of reinforcement learning for predictive maintenance of milling machines. Search strings we tried -- \texttt{``reinforcement learning AND tool wear AND maintenance", RL + milling + policy, RL + milling + maintenance, RL + tool wear + policy, RL + tool wear + maintenance"} 
+The rest of the paper is structured as follows: In the next section we survey some related work. Section \ref{sec:Background} provides the necessary technical background describing the algorithms studied in this research and describe the implementation details of the REINFORCE algorithm and the predictive maintenance environment. Section \ref{sec:Method} discusses the methodology adopted for training, testing and evaluation. Section \ref{sec:Results} presents the results of the experiments, that are discussed in Section \ref{sec:Discussion}. Finally, we summarize and draw conclusions in Section \ref{sec:Conclusion}.
 
-Running the search \texttt{``reinforcement learning AND milling AND tool wear"} using the Scopus\texttrademark{} and Web Of Science\texttrademark{} services 
+\section{Related Work}\label{sec:SLR}
+Significant work has been conducted in the application of RL for predictive maintenance \citep{Panzer2021, Erhan2021, siraskar2023}, in general. However, we did not find\footnote{Search terms: \texttt{``reinforcement learning AND tool wear AND maintenance"}. As of: 10-Jul-2023.} any work done for predictive maintenance of \textit{milling machines} across three major journal index services\footnote{IEEE Xplore\texttrademark{}, Scopus\texttrademark{} and Web Of Science\texttrademark{}}. % $$$ Note: 1 article returned (\cite{dai2021reinforcement}) is NOT predictive maintenance - but clamping position optimization. 
+While RL is not, traditional machine learning methods \textit{have} been applied; for example \cite{Qin2023} and \cite{Qiang2023} apply tool-wear law and physics based models before applying ML. \cite{Twardowski2023} and \cite{Denkena2023} use data gathered by sensors. While \cite{Twardowski2023} use two different classification trees, \cite{Denkena2023} use data recorded on other similar machines for building ML models. \cite{oshida2023development} proposes real-time tool wear detection using a stacked LSTM\footnote{long short-term memory networks} encoder-decoder model for anomaly detection as a mechanism to address predictive maintenance.  
 
-\cite{dai2021reinforcement} is the only article we found that tackles the 
+Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard ``benchmark" OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{\href{https://github.com/google-research/realworldrl_suite}{RWRL link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
 
-Machine learning methods have been applied for example --
-\cite{oshida2023development} proposes real-time tool wear detection during the milling process. They use a stacked LSTM encoder-decoder model for anomaly detection.
+\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo Environments}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
 
+The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. We attempt to bridge this gap using a custom built environment, explained in the next section. 
 
-No results for "reinforcement learning" AND "milling machine" AND "tool wear" - on scopus or wos as of 23-jun-2023
-"reinforcement learning" AND "milling machine" - 1 not relevant "	
-\textit{Conference Paper}  •  Open access "Online Learning of Stability Lobe Diagrams in Milling" 	
-Friedrich, J. Torzewski, J.  Verl, A.
-
-"reinforcement learning" AND "tool wear" - 10 results
-\cite{sandeep2022experimental} - \textcolor{red}{**VERY RELEVANT* Experimental Evaluation of Reinforcement Learning Algorithms} -- three policy based learning algorithms(PPO, SAC, DDPG) OpenAI Gym on Bipedal Walker, Bipedal
-Walker Hardcore, Lunar Landing, Mountain Car
-and Pendulum and (2)A2C on the Atari 2600 environments MuZero on custom 6x6 Go environmen
-
-\cite{Krishna2020} - \textcolor{red}{**VERY RELEVANT*  Comparison of Reinforcement Learning Algorithms} -- 
-
-\cite{dulac2020empirical} \textcolor{red}{***} An empirical investigation of the challenges of real-world reinforcement learning -- Distributional Maximum a Posteriori Policy Optimization (DMPO) [Abdolmaleki et al. 2018a] and Distributed Distributional Deterministic Policy Gradient (D4PG) [(DMPO is an EM-style policy iteration algorithm with a stochastic policy and D4PG is a deterministic policy gradient algorithm) D4PG is a modified version of Deep Deterministic Policy Gradients (DDPG) MPO [Abdolmaleki et al. 2018b] is an RL method that combines the sample efficiency of off-policy
-methods with the scalability and hyperparameter robustness of on-policy methods -- envs cartpole:swingup, walker:walk,
-quadruped:walk and humanoid:walk tasks from the realworldrl-suite
-
-\cite{duan2016benchmarking} cart-pole swing-up, tasks with very high state and action dimensionality such as 3D humanoid
-locomotion, tasks with partial observations -- algorithms: (1) batch alsogs REINFORCE, Truncated Natural Policy Gradient (TNPG) (impoorves RF), Reward-Weighted Regression (RWR) Relative Entropy Policy Search (REPS) Trust Region Policy Optimization (TRPO) Cross Entropy Method (CEM) ---- (2) ONLINE algorithms: Deep Deterministic Policy Gradient (DDPG).Compared to batch algorithms, the DDPG
-algorithm continuously improves the policy as it explores
-the environment.\textcolor{red}{*OBSERVATION**}REINFORCE: Despite its simplicity, REINFORCE is an
-effective algorithm in optimizing deep neural network policies
-in most basic and locomotion tasks. Even for high-
-DOF tasks like Ant, REINFORCE can achieve competitive
-results. However we observe that REINFORCE sometimes
-suffers from premature convergence to local optima
-as noted by Peters  Schaal (2008), which explains the performance
-gaps between REINFORCE and TNPG on tasks
-such as Walker (Figure 3(a)). By visualizing the final policies,
-we can see that REINFORCE results in policies that
-tend to jump forward and fall over to maximize short-term
-return instead of acquiring a stable walking gait to maximize
-long-term return. In Figure 3(b), we can observe
-that even with a small learning rate, steps taken by REINFORCE
-can sometimes result in large changes to policy
-distribution, which may explain the fast convergence to local
-optima.
-
-
-\cite{henderson2018deep} \textcolor{red}{**VERY REINFORCELEVANT Deep Reinforcement Learning that Matters --	Peter Henderson*}
-DDPG ACKTR TRPO PPO - ON mujoco envs - HalfCheetah-v1 ,Hopper-v1 , Walker2d-v1 and Swimmer-v1
-We investigate the OpenAI baselines implementation of TRPO and DDPG and rllab implementation of TRPO we generally use the OpenAI Baselines2
-implementations of the following algorithms: ACKTR (Wu
-et al. 2017), PPO (Schulman et al. 2017), DDPG (Plappert et
-al. 2017), TRPO (Schulman et al. 2017). We use the Hopperv1 and HalfCheetah-v1 MuJoCo (Todorov, Erez, and Tassa
-2012) environments from OpenAI Gym (Brock
-
-
-\cite{ford2022cognitive} - compares DQN A2C AND PPO FOR cognition in sensing systems to the choice of operational radio frequency (RF) mode (active, bistatic receive, electronic surveillance (ES), electronic protection measure (EPM)) for a multi-function RF system (MFRFS) -- suggest ppo is best
-
-\cite{dulac2021} taks of real word problem challenges
-
-
-\section{Technical Background}
+\section{Technical Background}\label{sec:Background}
 \subsection{Algorithms}
 \textbf{Algorithm timelines}
 \begin{itemize}
@@ -190,7 +147,7 @@ al. 2017), TRPO (Schulman et al. 2017). We use the Hopperv1 and HalfCheetah-v1 M
 	\item 2017: PPO 
 \end{itemize}
 
-\section{The core elements of the 4 algorithms}
+\subsubsection{The core elements of the 4 algorithms}
 The core elements of the 4 algorithms. \citep{graesser2019} \\
 
 \textbf{REINFORCE}: Paper \citep{REINFORCE-williams1992}
@@ -205,6 +162,8 @@ Learning Q-function in DQN. Paper \citep{DQN-mnih2013}. Implementation notes: "\
 	Q^\pi (s, a) = r + \gamma  \max_{a'} Q^\pi (s', a')
 	\label{eq:DQN}
 \end{equation}
+\textbf{DQN}
+Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) \citep{riedmiller2005neural} and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping.
 
 \textbf{A2C}: Actors learn parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in Equation \ref{eq:A2C}. "\textcolor{red}{*SB3 says:*} A synchronous, deterministic variant of Asynchronous Advantage Actor Critic (A3C). It uses multiple workers to avoid the use of a replay buffer.". Paper \citep{A2C-mnih2016} 
 
@@ -228,7 +187,7 @@ Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the a
 	\label{eq:PPO}
 \end{equation}
 
-\section{The REINFORCE algorithm}
+\subsubsection{The REINFORCE algorithm}
 Three key features of any RL algorithm:
 \begin{enumerate}
 	\item Policy: $\pi_\theta$ = Probablities of all actions, given a state. Parameterized by $\theta$
@@ -237,10 +196,15 @@ Three key features of any RL algorithm:
 		\max_{\theta} J(\pi_{\theta}) = \mathop{\mathbb{E}}_{\tau \sim \pi_\theta} [R(\tau)]
 	\end{equation}
 	\item Method: Way to udate the parameters = Policy Gradient
-	
 \end{enumerate}
+sB-3 dOES NOT IMPLEMENT THE REINFORCE	 --- https://stable-baselines3.readthedocs.io/en/master/guide/algos.html
 
-\subsection{Policy gradient numerical computation}
+Model Free --> Policy Gradient/Actor-Critic --> REINFORCE)
+REINFORCE (Monte-Carlo policy gradient) 
+IEEE NUAA Ideahouse dataset has been used in this paper for the RUL estimation of the milling cutter. \cite{NUAA-data-set} Tool wear modeling is the first step to assist in predicting. 
+
+
+\subsubsection{Policy gradient numerical computation}
 
 \begin{enumerate}
 	\item Plain vanilla: 
@@ -283,29 +247,19 @@ Stable-Baselines3 \cite{SB3-paper}, is Open Source and very popular among the RL
 
  for  , implementation s  the advanced algorithms -- DQN, A2C and PPO and compare its performance to a na\"ive custom implementation of the REINFORCE algorithm. We use Stable-Baselines3 (SB3), the highly popular and reliable implementations of DQN, A2C and PPO. As of 27-Jun-2023, the REINFORCE was not implemented by Stable-Baselines and we therefore custom implemented a basic version. 
 
-\subsubsection{DQN}
-Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) \citep{riedmiller2005neural} and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping.
 
-%SB3 settings > classstable_baselines3.dqn.DQN(policy, env, learning_rate=0.0001, buffer_size=1000000, learning_starts=50000, batch_size=32, tau=1.0, gamma=0.99, train_freq=4, gradient_steps=1, replay_buffer_class=None, replay_buffer_kwargs=None, optimize_memory_usage=False, target_update_interval=10000, exploration_fraction=0.1, exploration_initial_eps=1.0, exploration_final_eps=0.05, max_grad_norm=10, stats_window_size=100, tensorboard_log=None, policy_kwargs=None, verbose=0, seed=None, device='auto', _init_setup_model=True) %https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html
 
-\subsubsection{REINFORCE}
-sB-3 dOES NOT IMPLEMENT THE REINFORCE	 --- https://stable-baselines3.readthedocs.io/en/master/guide/algos.html
 
-Model Free --> Policy Gradient/Actor-Critic --> REINFORCE)
-REINFORCE (Monte-Carlo policy gradient) 
-IEEE NUAA Ideahouse dataset has been used in this paper for the RUL estimation of the milling cutter. \cite{NUAA-data-set} Tool wear modeling is the first step to assist in predicting. 
 
 \subsection{Implementation details}
 xx\\
 
-\subsection{Data description}
+\subsubsection{Data description}
 - Simulated\\
 - PHM\\
-\subsection{Environment design}
+\subsubsection{Environment design}
 we follow the procedure in \cite{graesser2019} pg 289 Part iv, ch14-15.
-\section{Environment description}
-
-\subsection{simulated data}
+\subsubsection{simulated data}
 \citep{davsic2006}. eq 16 from the paper 
 parameters b0, b1, b2 and a under the form of a
 complex power-exponential regression equation
@@ -371,7 +325,7 @@ X(m,n) = \left\{\begin{array}{lr}
 	\label{eq:RewardFunction}
 \end{equation}
 
-\subsection{SS}
+\subsubsection{SS}
 \begin{verbatim}
 	def _get_observation(self, index):
 	next_state = np.array([
@@ -382,7 +336,7 @@ X(m,n) = \left\{\begin{array}{lr}
 	return next_state
 \end{verbatim}
 
-\subsection{MS}
+\subsubsection{MS}
 \begin{verbatim}
 	def _get_observation(self, index):
 	next_state = np.array([
@@ -416,12 +370,12 @@ X(m,n) = \left\{\begin{array}{lr}
 	self.reward = 0.0
 \end{verbatim}
 
-\subsection{main env}
+\subsubsection{main env}
 \begin{verbatim}
 	env = MillingTool_SS_NT(df_train, WEAR_THRESHOLD_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
 \end{verbatim}
 
-\subsection{test env}
+\subsubsection{test env}
 \begin{verbatim}
 	env_test = MillingTool_SS_NT(df_test, WEAR_THRESHOLD_ORG_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
 \end{verbatim}
@@ -446,7 +400,7 @@ X(m,n) = \left\{\begin{array}{lr}
 
 - Transition function \citep{graesser2019}: pg333 "Transition function  - also known as model. can be learnt or programmed programmable rules are common and lead to increasing complexity. \textcolor{red}{***} We use a hybrid model - partly learnt and partly programmed": \textbf{Noise and breakdown}\\
 
-\subsection{Network architecture and basic hyper-parameters}
+\subsubsection{Network architecture and basic hyper-parameters}
 
 \begin{table*}\centering
 	\sffamily
@@ -500,13 +454,13 @@ except for the optimizer and learning rate that were taken from Stable Baselines
 
 
 
-\subsection{Hyper-parameters for Precision or Recall control}
+\subsubsection{Hyper-parameters for Precision or Recall control}
 - xxx\\
 
 
 
 
-\section{Methodology}
+\section{Methodology}\label{sec:Method}
 
 \textit{The methodology explains in detail what the researcher did to undertake the research. Various aspects of the research have to be outlined: The overall structure and operation of the experiment or observational experience. The groups studied in the research including the size of each group and any features of the subjects which may be relevant to the topic being researched. The variables that were changed between groups and the variables measured as a result of the changes. The conditions under which the research was undertaken and any factors or variations in conditions which may have an impact on the results. The methods of data analysis used in order to analyse and collate the results. \textcolor{red}{***}Any limitations of the data collected.}
 
@@ -548,7 +502,7 @@ except for the optimizer and learning rate that were taken from Stable Baselines
 
 
 
-\section{Results}
+\section{Results}\label{sec:Results}
 
 \begin{figure}[ht]
 	\begin{subfigure}{\textwidth}
@@ -677,8 +631,6 @@ except for the optimizer and learning rate that were taken from Stable Baselines
 	\caption{Multi-variate state environment -- Avg. performance over 10 rounds of model training}
 	\label{fig:tr-ms-env}
 \end{figure}
-
-
 
 \subsection{Detailed metrics}
 xx
@@ -909,7 +861,25 @@ xx
 
 
 
-\section{Discussion}
+\section{Discussion}\label{sec:Discussion}
+\cite{duan2016benchmarking} the environment.\textcolor{red}{*OBSERVATION**}REINFORCE: Despite its simplicity, REINFORCE is an
+effective algorithm in optimizing deep neural network policies
+in most basic and locomotion tasks. Even for high-
+DOF tasks like Ant, REINFORCE can achieve competitive
+results. However we observe that REINFORCE sometimes
+suffers from premature convergence to local optima
+as noted by Peters  Schaal (2008), which explains the performance
+gaps between REINFORCE and TNPG on tasks
+such as Walker (Figure 3(a)). By visualizing the final policies,
+we can see that REINFORCE results in policies that
+tend to jump forward and fall over to maximize short-term
+return instead of acquiring a stable walking gait to maximize
+long-term return. In Figure 3(b), we can observe
+that even with a small learning rate, steps taken by REINFORCE
+can sometimes result in large changes to policy
+distribution, which may explain the fast convergence to local
+optima.
+
 
 \subsection{Precision or Recall?}
 - Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized \\
@@ -936,7 +906,7 @@ can also be difficult to optimize. Alternatively, prior works have normalized re
 completion baseline, essentially a single sample Monte-Carlo estimate of the normalizing term. In
 contrast the DPO reparameterization yields a reward function that does not require any baselines.
 
-\section{Conclusion}
+\section{Conclusion}\label{sec:Conclusion}
 
 
 %% References
