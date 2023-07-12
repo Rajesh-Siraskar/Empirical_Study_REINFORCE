@@ -1,8 +1,8 @@
-\contentsline {table}{\numberline {1}{\ignorespaces Comparing the network architecture and basic hyper-parameters across algorithms\relax }}{15}{table.caption.6}%
+\contentsline {table}{\numberline {1}{\ignorespaces Comparing the network architecture and basic hyper-parameters across algorithms\relax }}{14}{table.caption.6}%
 \contentsline {table}{\numberline {2}{\ignorespaces Model performance comparison all variants of the environments, over 10 rounds of training.\relax }}{22}{table.caption.11}%
 \contentsline {table}{\numberline {3}{\ignorespaces Super Models: Best models selected over 10 rounds of training.\relax }}{24}{table.caption.12}%
 \contentsline {table}{\numberline {4}{\ignorespaces Model performance summary - averaged over all environment.\relax }}{25}{table.caption.13}%
 \contentsline {table}{\numberline {5}{\ignorespaces Model performance summary - averaged over simulated environments.\relax }}{25}{table.caption.14}%
 \contentsline {table}{\numberline {6}{\ignorespaces Model performance summary - averaged over PHM-2010 environments with simple single-variable environment.\relax }}{26}{table.caption.15}%
 \contentsline {table}{\numberline {7}{\ignorespaces Model performance summary - averaged over PHM-2010 environments with complex multi-variate environment.\relax }}{26}{table.caption.16}%
-\contentsline {table}{\numberline {8}{\ignorespaces One-tail t-test - Ho: No difference in metrics. Ha: REINFORCE metric > Advanced algorithm metric\relax }}{27}{table.caption.17}%
+\contentsline {table}{\numberline {8}{\ignorespaces One-tail t-test - Ho: No difference in metrics. Ha: REINFORCE metric > Advanced algorithm metric\relax }}{28}{table.caption.17}%

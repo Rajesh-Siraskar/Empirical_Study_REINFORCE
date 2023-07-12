@@ -130,7 +130,7 @@ While RL is not, traditional machine learning methods \textit{have} been applied
 
 Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard ``benchmark" OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{\href{https://github.com/google-research/realworldrl_suite}{RWRL link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
 
-\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo Environments}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
+\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo are environments for studying ``Multi-Joint dynamics with Contact"}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
 
 The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. We attempt to bridge this gap using a custom built environment, explained in the next section. 
 
@@ -269,7 +269,12 @@ function form
 
 tool
 flank wear VB
-\[ VB = a \cdot t^{b_1} \cdot e^{b_2 \cdot t} \Big|_{t=t_0}^{t=t_1} \]
+
+\begin{equation}
+	VB = a \cdot t^{b_1} \cdot e^{b_2 \cdot t} \Big|_{t=t_0}^{t=t_1}
+	\label{eq:Dasic}
+\end{equation}
+
 
 % \[ \evu{\frac{1}{5} \tan \theta}{\pi}{0} \]
 b0	-2.4941	
@@ -303,17 +308,7 @@ degradation model as exponential
 \begin{equation}\label{eq:DegradationModel}
 	H(t) = 1 - D_0 - {\rm e}^{(at^b)},
 \end{equation}
-where, $D_0$ is the initial degradation state while $a$ and $b$ are wear-rate coefficients that depend on the effect of temperature, vibration and other system stress parameters
-
-
-\[
-X(m,n) = \left\{\begin{array}{lr}
-	x(n), & \text{for } 0\leq n\leq 1\\
-	x(n-1), & \text{for } 0\leq n\leq 1\\
-	x(n-1), & \text{for } 0\leq n\leq 1
-\end{array}\right\} = xy
-\]
-
+where, $D_0$ is the initial degradation state while $a$ and $b$ are wear-rate coefficients that depend on the effect of temperature, vibration and other system stress parameters.
 
 \begin{equation}
 	R_t =
@@ -801,6 +796,21 @@ xx
 \end{table*}
 
 \subsection{Hypothesis testing}
+
+Notes: \\
+- Definition of 1 data point\\
+- Single training round (5th of the 10 rounds)\\
+- Single dataset:  PHM C01\\
+- Single env:  Simple uni-variate state\\
+- Single noise setting:  HBD = high\\
+- File has 40 rows = 4 algos x 10 test rounds\\
+- 10 test rounds of 40 random sampled points\\
+- 1 point = 1 row = 1 classification test with 40 samples\\
+- E.g. Dasic = 10 training rounds x 10 test rounds x 3 noise settings = 300 sample points\\
+- E.g. PHM SS = 3 data-sets x 10 training rounds x 10 test rounds x 3 noise settings = 900 sample points\\
+- Technically Dasic = 300 points for metrics = 300 * 40 sampled data points of wear data = 12000\\
+
+
 
 \begin{equation}
 	\left.\begin{aligned}
