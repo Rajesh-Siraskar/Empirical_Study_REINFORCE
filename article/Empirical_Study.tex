@@ -78,13 +78,13 @@ For reproducibility, model training and testing code, data and the trained REINF
 	\begin{tabular}{L{1cm} L{4.5cm} L{1cm} L{4.5cm}}
 		\arrayrulecolor{black!40}\toprule	
 		
-		DQN & Deep Q-Network & A2C & Advantage Actor-Critic\\
+		A2C & Advantage Actor-Critic & DQN & Deep Q-Network\\
 		PPO & Proximal Policy Optimization & RF & REINFORCE\\
 		SS & Single-variable state & MS & Multi-variate state\\
 		TP &True positive &TN &True negative\\
 		FP &False positive &FN &False negative\\
 		RL & Reinforcement Learning & SB3 & Stable-Baselines3\\
-		PHM & The Prognostics and Health Management Society & \textcolor{red}{*AA*} & \textcolor{red}{Advanced Algorithms} \\
+		PHM & The Prognostics and Health Management Society & & \\
 
 		\bottomrule
 	\end{tabular}
@@ -135,7 +135,10 @@ Research work focusing of comparing experimental and empirical analysis of vario
 The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. We attempt to bridge this gap using a custom built environment, explained in the next section. 
 
 \section{Technical Background}\label{sec:Background}
-\subsection{Algorithms}
+This section provides a brief overview of the algorithms we experimented with. 
+
+
+
 \textbf{Algorithm timelines}
 \begin{itemize}
 	\item 1947: Monte Carlo Sampling
