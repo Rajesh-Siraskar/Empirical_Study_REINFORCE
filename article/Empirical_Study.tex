@@ -2,7 +2,8 @@
 \documentclass[a4paper, 12pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[round]{natbib}
+%\usepackage[round]{natbib} % Sort in order of occurence
+\usepackage[round, authoryear, sort]{natbib}
 \bibliographystyle{plainnat}
 
 \usepackage[pass]{geometry}
@@ -118,25 +119,32 @@ Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is co
 
 While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance'' policy as the baseline for comparing the RL algorithm policy. 
 
-Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.
+Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.\par \vspace{12pt}
 
-The main \textbf{contributions} of this research are (1) evaluation on a custom designed environment built for the predictive maintenance problem (2) targeted toward the industrial practitioner not accustomed to complex hyperparameter tuning and (3) use of simple performance evaluation statistical measures and plots that industrial practitioners are normally used to.
+The main \textbf{contributions} of this research are:
+\begin{enumerate}
+	\item Research is targeted toward the industrial practitioner not accustomed to complex hyper-parameter tuning  of RL algorithms
+	\item Design and implement an RL environment for predictive maintenance of a milling machine.
+	\item Rigorous evaluation of four standard RL algorithms.
+	\item Use of simple performance evaluation statistical measures and plots that industrial practitioners are normally used to.
+\end{enumerate} 
 
-The rest of the paper is structured as follows: In the next section we survey some related work. Section \ref{sec:Background} provides the necessary technical background describing the algorithms studied in this research and describe the implementation details of the REINFORCE algorithm and the predictive maintenance environment. Section \ref{sec:Method} discusses the methodology adopted for training, testing and evaluation. Section \ref{sec:Results} presents the results of the experiments, that are discussed in Section \ref{sec:Discussion}. Finally, we summarize and draw conclusions in Section \ref{sec:Conclusion}.
+The rest of the paper is structured as follows: In the next section we survey some related work and provide the necessary technical background describing the algorithms studied in this research. Section \ref{sec:Method} discusses implementation details of the REINFORCE algorithm and the predictive maintenance environment followed by the methodology adopted for training, testing and evaluation. Section \ref{sec:Results} presents the results of the experiments, that are discussed in Section \ref{sec:Discussion}. Finally, we summarize and draw conclusions in Section \ref{sec:Conclusion}.
 
-\section{Related Work}\label{sec:SLR}
-Significant work has been conducted in the application of RL for predictive maintenance \citep{Panzer2021, Erhan2021, siraskar2023}, in general. However, we did not find\footnote{Search terms: \texttt{``reinforcement learning AND tool wear AND maintenance"}. As of: 10-Jul-2023.} any work done for predictive maintenance of \textit{milling machines} across three major journal index services\footnote{IEEE Xplore\texttrademark{}, Scopus\texttrademark{} and Web Of Science\texttrademark{}}. % $$$ Note: 1 article returned (\cite{dai2021reinforcement}) is NOT predictive maintenance - but clamping position optimization. 
+\section{Related work and background}\label{sec:SLR}
+\subsection{Literature Review}
+Significant work has been conducted in the application of RL for predictive maintenance \citep{Panzer2021, Erhan2021, siraskar2023}, in general. However, we did not find\footnote{Search terms: \texttt{"reinforcement learning AND tool wear AND maintenance"}. As of: 10-Jul-2023.} any work done for predictive maintenance of \textit{milling machines} across three major journal index services\footnote{IEEE Xplore\texttrademark{}, Scopus\texttrademark{} and Web Of Science\texttrademark{}}. % $$$ Note: 1 article returned (\cite{dai2021reinforcement}) is NOT predictive maintenance - but clamping position optimization. 
 While RL is not, traditional machine learning methods \textit{have} been applied; for example \cite{Qin2023} and \cite{Qiang2023} apply tool-wear law and physics based models before applying ML. \cite{Twardowski2023} and \cite{Denkena2023} use data gathered by sensors. While \cite{Twardowski2023} use two different classification trees, \cite{Denkena2023} use data recorded on other similar machines for building ML models. \cite{oshida2023development} proposes real-time tool wear detection using a stacked LSTM\footnote{long short-term memory networks} encoder-decoder model for anomaly detection as a mechanism to address predictive maintenance.  
 
 Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard benchmark OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{\href{https://github.com/google-research/realworldrl_suite}{RWRL link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
 
 \cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo are environments for studying Multi-Joint dynamics with Contact}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
 
-The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. We attempt to bridge this gap using a custom built environment, explained in the next section. 
+The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. In Section \ref{sec:Implementation} we attempt to bridge this gap by implementing a custom built environment.
 
-\section{Technical Background}\label{sec:Background}
+\subsection{Technical Background}
 
-\subsection{Key concepts of RL}
+\subsubsection*{Key concepts of RL}
 A task is a goal we set for our agent to learn. In our case the agent must learn to optimally predict the replacement of the tool. Frequent tool replacement increases down-time while delaying it results in inferior work piece quality. In Fig. \ref{fig:RL-loop} the agent interacts with the environment by performing an action ($a \in \mathcal{A}$), which then alters the state of the environment to one of many states ($s \in \mathcal{S}$). The resulting state is determined by a state-transition probabilities ($\mathcal{P}$) since RL is founded on Markov Decision Process (MDP) theory. The new state provides a feedback via a reward ($r \in \mathcal{R}$). Higher positive rewards ``reinforce'' good behavior. Performing this over thousands of episodes with the objective of maximizing the total rewards $R$, enables the agent to develop a policy $\pi$ which is essentially a mapping of the optimal action to perform, given a certain state.
 
 A \textbf{value function} computes how good a state or an action is by predicting future rewards, also known as a ``return'' $G_t = R_{t+1} + \gamma R_{t+2} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$. $\gamma \in [0, 1]$ facilitates discounting i.e. applying less weight to future rewards. 
@@ -157,7 +165,7 @@ Value functions can be represented by \textbf{state-value} $V_{\pi}(s)$ of a sta
 
 With a brief overview of RL, we now briefly touch upon the core ideas of the four algorithms we experimented with.
 
-\subsection{Deep Q-Network (DQN)}
+\subsubsection*{Deep Q-Network (DQN)}
 Deep Q-Network \citep{DQN-mnih2013} significantly improved the earliest RL algorithm, Q-learning, by introducing neural networks to learn policies for high-dimension environments with two novel strategies to significantly stabilize learning -- an ``experience replay buffer'' and a target network that was frozen and only periodically updated. Equation (\ref{eq:DQN}) shows the DQN loss function where $D$ is the replay memory and is sampled using a uniform distribution $U(D)$, $Q(s, a; \theta)$ is the function parameterized with $\theta$, that helps compute the Q values and $\theta^{-}$ represents parameters of the frozen target Q-network.
 
 \begin{equation}
@@ -165,110 +173,60 @@ Deep Q-Network \citep{DQN-mnih2013} significantly improved the earliest RL algor
 	\label{eq:DQN}
 \end{equation}
 
-\subsection{Advantage Actor Critic (A2C)}
+\subsubsection*{Advantage Actor Critic (A2C)}
 
-A2C is a policy-gradient actor-critic algorithm \citep{A2C-mnih2016}. The policy-gradient family of algorithms strive to model and optimize the policy directly. Actor-critic structures consist of two networks -- a critic that updates function parameters $w$ of the value function (i.e either $Q_w(a \vert s)$ or $V_w(s)$); and an actor that updates the policy parameters $\theta$ for $\pi_\theta(a \vert s)$, following the direction computed by critic. Actors therefore learn the parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in (\ref{eq:A2C}). 
+A2C is a variant of Asynchronous Advantage Actor Critic (A3C) \citep{A2C-mnih2016}, and uses multiple computation workers to avoid the use of a replay buffer. A2C is a policy-gradient actor-critic algorithm. The policy-gradient family of algorithms strive to model and optimize the policy directly. Actor-critic structures consist of two networks -- a critic that updates function parameters $w$ of the value function (i.e either $Q_w(a \vert s)$ or $V_w(s)$); and an actor that updates the policy parameters $\theta$ for $\pi_\theta(a \vert s)$, following the direction computed by critic. Actors therefore learn the parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in (\ref{eq:A2C}). 
 \begin{equation}
 	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; A^\pi_t \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
 	\label{eq:A2C}
 \end{equation}
-
 Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the action is w.r.t. policy's average, for a particular state, using (\ref{eq:A2CAF}).
-
 \begin{equation}
 	A^\pi_t (s_t, a_t) = Q^\pi (s_t, a_t) - V^\pi (s_t)
 	\label{eq:A2CAF}
 \end{equation}
 
-
-\subsection{REINFORCE} 
-Paper \citep{REINFORCE-williams1992}
-\begin{equation}
-	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
-	\label{eq:REINFORCE}
+\subsubsection*{Proximal Policy Optimization (PPO)} 
+\cite{PPO-schulman2017} formulated PPO which is often considered as the most robust of the RL algorithms. PPO is policy-gradient method based on TRPO (Trust region policy optimization) by \cite{TRPO-schulman2015}, where the main idea is the use of a trust region to improve training stability by avoiding updates to parameters that vastly change the policy at a particular time step. TRPO ensures this by using a divergence constraint on the magnitude of policy update. If $r(\theta)$ (\ref{eq:rPPO}) represents the ratio of probabilities between policies of previous and current iteration, then the objective function of TRPO is given by (\ref{eq:TRPO}), where $\hat{A}$ represents the estimated advantage function.
+\begin{equation}\label{eq:rPPO}
+	r(\theta) = \frac{\pi_\theta(a \vert s)}{\pi_{\theta_\text{old}}(a \vert s)}
+\end{equation}
+\begin{equation}\label{eq:TRPO}
+	J^\text{TRPO} (\theta) = \mathbb{E} [ r(\theta) \hat{A}_{\theta_\text{old}}(s, a) ]
 \end{equation}
 
-
-
-
-\textbf{PPO}: " \textcolor{red}{*SB3 says:*} The Proximal Policy Optimization algorithm combines ideas from A2C (having multiple workers) and TRPO (it uses a trust region to improve the actor). The main idea is that after an update, the new policy should be not too far from the old policy. For that, ppo uses clipping to avoid too large update.". Paper \citep{PPO-schulman2017}
-
-
+PPO extends TRPO by additionally imposing a regional constraint. It prevents large updates by forcing the ratio $r(\theta)$ to stay within a small interval $[1-\epsilon, 1+\epsilon]$, around $1.0$, by use of a hyper-parameter $\epsilon$.
 \begin{equation}
 	J^{CLIP} (\theta) = \mathbb{E}_t \; [ \; min (r_t(\theta) A^{\pi_{\theta_{old}}}_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon) A^{\pi_{\theta_{old}}}_t)]
 	\label{eq:PPO}
 \end{equation}
 
-\subsubsection{The REINFORCE algorithm}
-Three key features of any RL algorithm:
-\begin{enumerate}
-	\item Policy: $\pi_\theta$ = Probablities of all actions, given a state. Parameterized by $\theta$
-	\item Objective function:
-	\begin{equation}
-		\max_{\theta} J(\pi_{\theta}) = \mathop{\mathbb{E}}_{\tau \sim \pi_\theta} [R(\tau)]
-	\end{equation}
-	\item Method: Way to udate the parameters = Policy Gradient
-\end{enumerate}
-sB-3 dOES NOT IMPLEMENT THE REINFORCE	 --- https://stable-baselines3.readthedocs.io/en/master/guide/algos.html
+\subsubsection*{REINFORCE} 
+The REINFORCE algorithm, invented by \cite{REINFORCE-williams1992}, is an early algorithm that directly learns a policy $\pi_\theta$ to produce action probabilities from states. Actions that cause favorable states are positively reinforced thereby increasing their probability of occurrence. Conversely, those resulting in unfavorable states are penalized.
 
-Model Free --> Policy Gradient/Actor-Critic --> REINFORCE)
-REINFORCE (Monte-Carlo policy gradient) 
-IEEE NUAA Ideahouse dataset has been used in this paper for the RUL estimation of the milling cutter. \cite{NUAA-data-set} Tool wear modeling is the first step to assist in predicting. 
+The objective function (\ref{eq:REINFORCE-obj}) that the agent attempts to maximize is defined as the expected return over many trajectories sampled from the policy.
+\begin{equation}\label{eq:REINFORCE-obj}
+	\max_{\theta} J(\pi_{\theta}) = \mathop{\mathbb{E}}_{\tau \sim \pi_\theta} [R(\tau)]
+\end{equation}
 
+REINFORCE uses policy gradient to update the action probabilities.
+\begin{equation}
+	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
+	\label{eq:REINFORCE}
+\end{equation}
 
-\subsubsection{Policy gradient numerical computation}
+\subsubsection*{Stable-Baselines3}
+Stable-Baselines3 (SB3) \cite{SB3-paper} provides robust open source implementations of many reinforcement learning algorithms. The core algorithms of Stable-Baselines3 are completely refactored PyTorch implementations of Open AI baselines \citep{OpenAI-baselines}. \cite{SB3-PPO-implementation} describes the 37 PPO implementation details that SB3 carried out and demonstrates the complexity depth of their implementations.
 
-\begin{enumerate}
-	\item Plain vanilla: 
-	\begin{equation}
-		\nabla_ \theta J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \; [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
-	\end{equation}
-	\item With Monte Carlo sampling and approximation: $\nabla_\theta J(\pi_\theta) \approx [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
-	\item With baseline: $\nabla_\theta J(\theta) \approx [ \; \sum_{t=0}^T (R_t(\tau) - b(s_t)) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
-	\item Where, baseline does not change per time-step, it is for the entire trajectory
-	\item One baseline option: $V^\pi$ - leads to Actor-Critic algorithm
-	\item Simpler option: Average returns over trajectory: $b = \frac{1}{T}\sum_{t=0}^T R_t(\tau) $
-\end{enumerate}
+As of 10-Jul-2023, 13 algorithms have been implemented \citep{SB3-algorithms}. REINFORCE has \textit{not} been implemented. For this research we use the SB3 implementations of DQN, A2C and PPO and compare its performance to a na\"ive custom implementation of the REINFORCE algorithm. %SB3 is popular among the RL community\footnote{As of 27-Jun-2023, it had 6k+ stars and 424 closed pull requests}.
 
-Algorithm
-%1. Initialize $\alpha$, $\gamma$ and $\theta$ i.e. weigths of the NN
-%2. for episodes = 0 to MAX_EPISODES:
-%- sample trajectory $\tau$
-%- set $\nabla_\theta J(\pi_{\theta})$ = 0
-%- for t=0 to T:
-%- $R_t(\tau) = \sum_{t'=t}^{T} \gamma^{t'-t} r'_t$
-%- $\nabla_\theta J(\pi_\theta)  = \mathbb{E}_{\tau \sim \pi_\theta} \; [ \; \sum_{t=0}^T R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]$
-%- end for sampled trajectory
-%- $\theta = \theta + \alpha \nabla_\theta J(\pi_\theta) $
-%3. end for all episodes 
-%
-%Implementation notes:
-%1. Code is inspired by Laura Graesser's (LG, 2020 book) implementation, however with large modifications
-%2. We use the concept of Agent (instead of 'pi' or '$policy_pi$') and a separate network class (i.e. how the function approximator is implemented, it could well be a linear regression)
-%3. **Important concept**: "Loss" in the implementation below, is the "objective" $J$. In our algorithm, we want to **maximize** it. PyTorch's optimizer, by default, MINIMIZES it (as it is called "loss"), we therefore add "-" negate it, so as to maximize it. 
-%4. Also in the final plot, notice "loss" is RISING and follows the rewards, which is expected as "loss" is really being maximized.  
-%5. self.pd.probs = prob. distribution of all actions
-%6. Sum of all possible action probabilities = 1.0
-%7. Note that episodes > 300 start showing repeated patterns. Rewards drop and rise in cylces. 300 is ideal and hence suggested in LG (2020)
-
-
-
-
-\subsubsection{Stable-Baselines3}
-Stable-Baselines3 \cite{SB3-paper}, is Open Source and very popular among the RL community\footnote{As of 27-Jun-2023, it had 6k+ stars and 424 closed pull requests}. Stable-Baselines3 was initially based on the Open AI baselines \citep{OpenAI-baselines} and is completely rewritten using PyTorch. 
-
- for  , implementation s  the advanced algorithms -- DQN, A2C and PPO and compare its performance to a na\"ive custom implementation of the REINFORCE algorithm. We use Stable-Baselines3 (SB3), the highly popular and reliable implementations of DQN, A2C and PPO. As of 27-Jun-2023, the REINFORCE was not implemented by Stable-Baselines and we therefore custom implemented a basic version. 
-
-
-
-
-
-\subsection{Implementation details}
+\section{Methodology}\label{sec:Method}
+\subsection{Implementation details}\label{sec:Implementation}
 xx\\
 
 \subsubsection{Data description}
 - Simulated\\
-- PHM\\
+- PHM IEEE NUAA Ideahouse dataset has been used in this paper for the RUL estimation of the milling cutter. \cite{NUAA-data-set}\\
 \subsubsection{Environment design}
 we follow the procedure in \cite{graesser2019} pg 289 Part iv, ch14-15.
 \subsubsection{simulated data}
@@ -466,8 +424,6 @@ except for the optimizer and learning rate that were taken from Stable Baselines
 
 
 
-
-\section{Methodology}\label{sec:Method}
 
 \textit{The methodology explains in detail what the researcher did to undertake the research. Various aspects of the research have to be outlined: The overall structure and operation of the experiment or observational experience. The groups studied in the research including the size of each group and any features of the subjects which may be relevant to the topic being researched. The variables that were changed between groups and the variables measured as a result of the changes. The conditions under which the research was undertaken and any factors or variations in conditions which may have an impact on the results. The methods of data analysis used in order to analyse and collate the results. \textcolor{red}{***}Any limitations of the data collected.}
 

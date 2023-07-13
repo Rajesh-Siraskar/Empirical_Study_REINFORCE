@@ -4,6 +4,8 @@ models-all/
 Template/
 *.aux
 *.log
+*.lot
+*.lof
 *.bbl
 *.blg
 *.txt
