@@ -8,7 +8,5 @@ Template/
 *.blg
 *.txt
 *.out
-*.lot
-*.lof
 *.synctex.gz
 *.gz

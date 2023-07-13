@@ -157,40 +157,23 @@ Value functions can be represented by \textbf{state-value} $V_{\pi}(s)$ of a sta
 
 With a brief overview of RL, we now briefly touch upon the core ideas of the four algorithms we experimented with.
 
-\subsection{Deep Q-Network (DQN)}:
- parameter 
-to calculate Q values, we can label Q value function as 
-.
-Deep Q-Network \citep{DQN-mnih2013} significantly improved the earliest RL algorithm, Q-learning, by introducing neural networks to learn policies for high-dimension environments. \cite{DQN-mnih2013} introduced an ``experience replay buffer'' and a target network that was frozen and only periodically updated to significantly stabilize learning. $Q(s, a; \theta)$ is the function parameterized with $\theta$, that helps computes the Q values.
-
-%\begin{equation}
-%	Q^\pi (s, a) = r + \gamma  \max_{a'} Q^\pi (s', a')
-%	\label{eq:DQN}
-%\end{equation}
+\subsection{Deep Q-Network (DQN)}
+Deep Q-Network \citep{DQN-mnih2013} significantly improved the earliest RL algorithm, Q-learning, by introducing neural networks to learn policies for high-dimension environments with two novel strategies to significantly stabilize learning -- an ``experience replay buffer'' and a target network that was frozen and only periodically updated. Equation (\ref{eq:DQN}) shows the DQN loss function where $D$ is the replay memory and is sampled using a uniform distribution $U(D)$, $Q(s, a; \theta)$ is the function parameterized with $\theta$, that helps compute the Q values and $\theta^{-}$ represents parameters of the frozen target Q-network.
 
 \begin{equation}
 	\mathcal{L}(\theta) = \mathbb{E}_{(s, a, r, s') \sim U(D)} \Big[ \big( r + \gamma \max_{a'} Q(s', a'; \theta^{-}) - Q(s, a; \theta) \big)^2 \Big]
 	\label{eq:DQN}
 \end{equation}
 
-where $D$ is the replay memory and is sampled using a uniform distribution $U(D)$; $\theta^{-}$ represents parameters of the frozen target Q-network.
-
-is a temporal-difference (TD) learning algorithm that 
-
 \subsection{Advantage Actor Critic (A2C)}
 
-A2C is a policy-gradient actor-critic algorithm \citep{A2C-mnih2016}. The policy-gradient family of algorithms strive to model and optimize the policy directly, while actor-critic structures consist of two network models -- a critic that updates function parameters $w$ of the value function (i.e either $Q_w(a \vert s)$ or $V_w(s)$); and a actor that updates the policy parameters  $\theta$ for $\pi_\theta(a \vert s)$, following the direction computed by critic.
-
-A2C was proceeded by Asynchronous Advantage Actor Critic (A3C). A2C is a \textit{synchronous}, deterministic variant of A3C, and uses multiple computational workers to avoid the use of a replay buffer. 
-
-\textbf{A2C}: Actors learn parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in \ref{eq:A2C}. "\textcolor{red}{*SB3 says:*} 
-
+A2C is a policy-gradient actor-critic algorithm \citep{A2C-mnih2016}. The policy-gradient family of algorithms strive to model and optimize the policy directly. Actor-critic structures consist of two networks -- a critic that updates function parameters $w$ of the value function (i.e either $Q_w(a \vert s)$ or $V_w(s)$); and an actor that updates the policy parameters $\theta$ for $\pi_\theta(a \vert s)$, following the direction computed by critic. Actors therefore learn the parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in (\ref{eq:A2C}). 
 \begin{equation}
 	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; A^\pi_t \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
 	\label{eq:A2C}
 \end{equation}
 
-Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the action is w.r.t. policy's average, for a particular state using Equation \ref{eq:A2CAF}
+Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the action is w.r.t. policy's average, for a particular state, using (\ref{eq:A2CAF}).
 
 \begin{equation}
 	A^\pi_t (s_t, a_t) = Q^\pi (s_t, a_t) - V^\pi (s_t)
