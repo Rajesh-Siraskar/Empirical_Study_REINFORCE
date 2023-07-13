@@ -105,7 +105,7 @@ For reproducibility, model training and testing code, data and the trained REINF
 
 Milling machines are highly versatile, ubiquitous tools serving a variety of industries. A milling machine removes metal from the work piece by rotating and driving a cutting device into it. Abrasive forces cause tool wear, and optimal tool replacement reduces direct costs and optimizes the machines' downtime. With the 2023 milling machine market valued at USD 68.3 billion \citep{milling-market}, this is an important goal for the industry. The cutting tool experiences multiple types of wear as it cuts through metal. Tool wear depends in several factors such as the cutting speed, force applied to the tool, lubrication and materials of the work piece and cutting tool. 
 
-Reinforcement learning (RL) is an artificial intelligence technique inspired by nature. Fig. \ref{fig:RL-loop} \citep{barto2018} shows the RL learning feedback loop. An actor or ``agent" interacts with an environment and learns via ``trial-and-error". It acts based on stimuli or feedback received from the environment after performing a certain action. Actions that help in achieving the learning goal receive a reward while actions that do not, are punished. Repeating this loop over thousands of episodes, good actions are ``reinforced", thereby building a ``policy" that is optimized for that goal. In the case of predictive maintenance for milling machines, the agent is the ``planner" with a goal of learning an optimal tool replacement policy. The environment consists of sensors attached to the machine and related information such as job specifications, environment conditions etc.
+Reinforcement learning (RL) is an artificial intelligence technique inspired by nature. Fig. \ref{fig:RL-loop} \citep{barto2018} shows the RL learning feedback loop. An actor or ``agent'' interacts with an environment and learns via ``trial-and-error''. It acts based on stimuli or feedback received from the environment after performing a certain action. Actions that help in achieving the learning goal receive a reward while actions that do not, are punished. Repeating this loop over thousands of episodes, good actions are ``reinforced'', thereby building a ``policy'' that is optimized for that goal. In the case of predictive maintenance for milling machines, the agent is the ``planner'' with a goal of learning an optimal tool replacement policy. The environment consists of sensors attached to the machine and related information such as job specifications, environment conditions etc.
 
 \begin{figure}[!h]
 	\centering
@@ -114,9 +114,9 @@ Reinforcement learning (RL) is an artificial intelligence technique inspired by 
 	\label{fig:RL-loop}
 \end{figure}
 
-Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is considered as a basic reinforcement learning algorithm. It is a policy-based, on-policy algorithm, capable of handling both discrete and continuous observation and action domains. In practice the REINFORCE algorithm is considered as a ``weak" algorithm and superseded by several algorithms developed since. Most notably the Q-Learning and its deep-neural network version, the DQN \citep{DQN-mnih2013}, followed by Actor-Critic \citep{A2C-mnih2016} and one of the most robust modern-day algorithms, the PPO \citep{PPO-schulman2017}.
+Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is considered as a basic reinforcement learning algorithm. It is a policy-based, on-policy algorithm, capable of handling both discrete and continuous observation and action domains. In practice the REINFORCE algorithm is considered as a ``weak'' algorithm and superseded by several algorithms developed since. Most notably the Q-Learning and its deep-neural network version, the DQN \citep{DQN-mnih2013}, followed by Actor-Critic \citep{A2C-mnih2016} and one of the most robust modern-day algorithms, the PPO \citep{PPO-schulman2017}.
 
-While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance" policy as the baseline for comparing the RL algorithm policy. 
+While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance'' policy as the baseline for comparing the RL algorithm policy. 
 
 Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.
 
@@ -128,47 +128,62 @@ The rest of the paper is structured as follows: In the next section we survey so
 Significant work has been conducted in the application of RL for predictive maintenance \citep{Panzer2021, Erhan2021, siraskar2023}, in general. However, we did not find\footnote{Search terms: \texttt{``reinforcement learning AND tool wear AND maintenance"}. As of: 10-Jul-2023.} any work done for predictive maintenance of \textit{milling machines} across three major journal index services\footnote{IEEE Xplore\texttrademark{}, Scopus\texttrademark{} and Web Of Science\texttrademark{}}. % $$$ Note: 1 article returned (\cite{dai2021reinforcement}) is NOT predictive maintenance - but clamping position optimization. 
 While RL is not, traditional machine learning methods \textit{have} been applied; for example \cite{Qin2023} and \cite{Qiang2023} apply tool-wear law and physics based models before applying ML. \cite{Twardowski2023} and \cite{Denkena2023} use data gathered by sensors. While \cite{Twardowski2023} use two different classification trees, \cite{Denkena2023} use data recorded on other similar machines for building ML models. \cite{oshida2023development} proposes real-time tool wear detection using a stacked LSTM\footnote{long short-term memory networks} encoder-decoder model for anomaly detection as a mechanism to address predictive maintenance.  
 
-Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard ``benchmark" OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{\href{https://github.com/google-research/realworldrl_suite}{RWRL link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
+Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard benchmark OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{\href{https://github.com/google-research/realworldrl_suite}{RWRL link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
 
-\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo are environments for studying ``Multi-Joint dynamics with Contact"}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
+\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo are environments for studying Multi-Joint dynamics with Contact}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
 
 The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. We attempt to bridge this gap using a custom built environment, explained in the next section. 
 
 \section{Technical Background}\label{sec:Background}
-This section provides a brief overview of the algorithms we experimented with. 
+
+\subsection{Key concepts of RL}
+A task is a goal we set for our agent to learn. In our case the agent must learn to optimally predict the replacement of the tool. Frequent tool replacement increases down-time while delaying it results in inferior work piece quality. In Fig. \ref{fig:RL-loop} the agent interacts with the environment by performing an action ($a \in \mathcal{A}$), which then alters the state of the environment to one of many states ($s \in \mathcal{S}$). The resulting state is determined by a state-transition probabilities ($\mathcal{P}$) since RL is founded on Markov Decision Process (MDP) theory. The new state provides a feedback via a reward ($r \in \mathcal{R}$). Higher positive rewards ``reinforce'' good behavior. Performing this over thousands of episodes with the objective of maximizing the total rewards $R$, enables the agent to develop a policy $\pi$ which is essentially a mapping of the optimal action to perform, given a certain state.
+
+A \textbf{value function} computes how good a state or an action is by predicting future rewards, also known as a ``return'' $G_t = R_{t+1} + \gamma R_{t+2} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$. $\gamma \in [0, 1]$ facilitates discounting i.e. applying less weight to future rewards. 
+
+Value functions can be represented by \textbf{state-value} $V_{\pi}(s)$ of a state $s$ as the expected return: $V_{\pi}(s) = \mathbb{E}_{\pi}[G_t \vert S_t = s]$; or an \textbf{action-value} function of a state-action pair as $Q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t \vert S_t = s, A_t = a]$.
 
 
+%\textbf{Algorithm timelines}
+%\begin{itemize}
+%	\item 1947: Monte Carlo Sampling
+%	\item 1959: Temporal Difference Learning
+%	\item 1989: Q-Learning
+%	\item 1992: REINFORCE
+%	\item 2013: DQN
+%	\item 2016: A3C
+%	\item 2017: PPO 
+%\end{itemize}
 
-\textbf{Algorithm timelines}
-\begin{itemize}
-	\item 1947: Monte Carlo Sampling
-	\item 1959: Temporal Difference Learning
-	\item 1989: Q-Learning
-	\item 1992: REINFORCE
-	\item 2013: DQN
-	\item 2016: A3C
-	\item 2017: PPO 
-\end{itemize}
+With a brief overview of RL, we now briefly touch upon the core ideas of the four algorithms we experimented with.
 
-\subsubsection{The core elements of the 4 algorithms}
-The core elements of the 4 algorithms. \citep{graesser2019} \\
+\subsection{Deep Q-Network (DQN)}:
+ parameter 
+to calculate Q values, we can label Q value function as 
+.
+Deep Q-Network \citep{DQN-mnih2013} significantly improved the earliest RL algorithm, Q-learning, by introducing neural networks to learn policies for high-dimension environments. \cite{DQN-mnih2013} introduced an ``experience replay buffer'' and a target network that was frozen and only periodically updated to significantly stabilize learning. $Q(s, a; \theta)$ is the function parameterized with $\theta$, that helps computes the Q values.
 
-\textbf{REINFORCE}: Paper \citep{REINFORCE-williams1992}
+%\begin{equation}
+%	Q^\pi (s, a) = r + \gamma  \max_{a'} Q^\pi (s', a')
+%	\label{eq:DQN}
+%\end{equation}
+
 \begin{equation}
-	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
-	\label{eq:REINFORCE}
-\end{equation}
-
-\textbf{DQN}:
-Learning Q-function in DQN. Paper \citep{DQN-mnih2013}. Implementation notes: "\textcolor{red}{*SB3 says:*} Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping" 
-\begin{equation}
-	Q^\pi (s, a) = r + \gamma  \max_{a'} Q^\pi (s', a')
+	\mathcal{L}(\theta) = \mathbb{E}_{(s, a, r, s') \sim U(D)} \Big[ \big( r + \gamma \max_{a'} Q(s', a'; \theta^{-}) - Q(s, a; \theta) \big)^2 \Big]
 	\label{eq:DQN}
 \end{equation}
-\textbf{DQN}
-Deep Q Network (DQN) builds on Fitted Q-Iteration (FQI) \citep{riedmiller2005neural} and make use of different tricks to stabilize the learning with neural networks: it uses a replay buffer, a target network and gradient clipping.
 
-\textbf{A2C}: Actors learn parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in Equation \ref{eq:A2C}. "\textcolor{red}{*SB3 says:*} A synchronous, deterministic variant of Asynchronous Advantage Actor Critic (A3C). It uses multiple workers to avoid the use of a replay buffer.". Paper \citep{A2C-mnih2016} 
+where $D$ is the replay memory and is sampled using a uniform distribution $U(D)$; $\theta^{-}$ represents parameters of the frozen target Q-network.
+
+is a temporal-difference (TD) learning algorithm that 
+
+\subsection{Advantage Actor Critic (A2C)}
+
+A2C is a policy-gradient actor-critic algorithm \citep{A2C-mnih2016}. The policy-gradient family of algorithms strive to model and optimize the policy directly, while actor-critic structures consist of two network models -- a critic that updates function parameters $w$ of the value function (i.e either $Q_w(a \vert s)$ or $V_w(s)$); and a actor that updates the policy parameters  $\theta$ for $\pi_\theta(a \vert s)$, following the direction computed by critic.
+
+A2C was proceeded by Asynchronous Advantage Actor Critic (A3C). A2C is a \textit{synchronous}, deterministic variant of A3C, and uses multiple computational workers to avoid the use of a replay buffer. 
+
+\textbf{A2C}: Actors learn parameterized policy $\pi_{\theta}$ using the policy-gradient as shown in \ref{eq:A2C}. "\textcolor{red}{*SB3 says:*} 
 
 \begin{equation}
 	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; A^\pi_t \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
@@ -181,6 +196,17 @@ Where the advantage function $A^\pi_t (s_t, a_t)$ measures how good or bad the a
 	A^\pi_t (s_t, a_t) = Q^\pi (s_t, a_t) - V^\pi (s_t)
 	\label{eq:A2CAF}
 \end{equation}
+
+
+\subsection{REINFORCE} 
+Paper \citep{REINFORCE-williams1992}
+\begin{equation}
+	\nabla_ \theta J(\pi_\theta) = \mathbb{E}_t \; [ \; R_t(\tau) \; \nabla_\theta \ln \pi_\theta(a_t \vert s_t) \;]
+	\label{eq:REINFORCE}
+\end{equation}
+
+
+
 
 \textbf{PPO}: " \textcolor{red}{*SB3 says:*} The Proximal Policy Optimization algorithm combines ideas from A2C (having multiple workers) and TRPO (it uses a trust region to improve the actor). The main idea is that after an update, the new policy should be not too far from the old policy. For that, ppo uses clipping to avoid too large update.". Paper \citep{PPO-schulman2017}
 
