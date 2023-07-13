@@ -4,26 +4,53 @@
 \usepackage[utf8]{inputenc}
 %\usepackage[round]{natbib} % Sort in order of occurence
 \usepackage[round, authoryear, sort]{natbib}
-\bibliographystyle{plainnat}
 
 \usepackage[pass]{geometry}
 \usepackage{graphicx}
 \graphicspath{{./images/}} % Images folder
 
 %\usepackage{csquotes} 	% Quotes
+\usepackage{listings}
 \usepackage[table]{xcolor} %
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+
 \usepackage{booktabs}	% Tables
 \usepackage{arydshln} 	% dashed lines in tables
 \usepackage{pdflscape}	% Landscape page
 
 \usepackage{caption}
+
 \usepackage{subcaption}
 \usepackage{amsfonts}
 \usepackage{amsmath,amssymb}
 \usepackage{textcomp}	% for \texttrademark
 \usepackage{setspace}
 \usepackage[spaces, hyphens]{url}
-\usepackage[colorlinks, allcolors=blue]{hyperref} 
+\usepackage[colorlinks, allcolors=blue]{hyperref}
 
 % Macros
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -119,7 +146,7 @@ Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is co
 
 While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance'' policy as the baseline for comparing the RL algorithm policy. 
 
-Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.\par \vspace{12pt}
+Our systematic evaluation, based on levels of environment difficulty, different bench-mark data sets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.\\
 
 The main \textbf{contributions} of this research are:
 \begin{enumerate}
@@ -136,9 +163,9 @@ The rest of the paper is structured as follows: In the next section we survey so
 Significant work has been conducted in the application of RL for predictive maintenance \citep{Panzer2021, Erhan2021, siraskar2023}, in general. However, we did not find\footnote{Search terms: \texttt{"reinforcement learning AND tool wear AND maintenance"}. As of: 10-Jul-2023.} any work done for predictive maintenance of \textit{milling machines} across three major journal index services\footnote{IEEE Xplore\texttrademark{}, Scopus\texttrademark{} and Web Of Science\texttrademark{}}. % $$$ Note: 1 article returned (\cite{dai2021reinforcement}) is NOT predictive maintenance - but clamping position optimization. 
 While RL is not, traditional machine learning methods \textit{have} been applied; for example \cite{Qin2023} and \cite{Qiang2023} apply tool-wear law and physics based models before applying ML. \cite{Twardowski2023} and \cite{Denkena2023} use data gathered by sensors. While \cite{Twardowski2023} use two different classification trees, \cite{Denkena2023} use data recorded on other similar machines for building ML models. \cite{oshida2023development} proposes real-time tool wear detection using a stacked LSTM\footnote{long short-term memory networks} encoder-decoder model for anomaly detection as a mechanism to address predictive maintenance.  
 
-Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard benchmark OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{\href{https://github.com/google-research/realworldrl_suite}{RWRL link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
+Research work focusing of comparing experimental and empirical analysis of various RL algorithms, has been limited to using standard benchmark OpenAI Gym environments. \cite{sandeep2022experimental} documents experimental evaluation of four policy-gradient and actor-critic algorithms PPO, SAC, DDPG and A2C using OpenAI Gym environments such as the Pendulum, Mountain Car, Bipedal Walker, Lunar Landing and Atari 2600 game environments. \cite{Krishna2020} evaluate DQN, DoubleDQN, A2C, REINFORCE and PPO using Cartpole, Space Invaders and the Lunar Lander. \cite{dulac2021, dulac2020empirical} are significant contributions toward analyzing empirical studies directed toward \textit{real-world} challenges. They apply real-world design concepts on the Cartpole and other complex environments such as humanoid and walkers from the Real-World Reinforcement Learning (RWRL) Suite\footnote{Link to RWRL >>   \href{https://github.com/google-research/realworldrl_suite}{link}}. These environments are then evaluated for multiple RL algorithms such as, REINFORCE, Trust Region Policy Optimization (TRPO) and Deep Deterministic Policy Gradient (DDPG). 
 
-\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo are environments for studying Multi-Joint dynamics with Contact}} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
+\cite{dulac2021, henderson2018deep} tackle RL for continuous control. \cite{henderson2018deep} evaluate DDPG, ACKTR, TRPO and PPO on complex MuJoCo\footnote{\href{https://mujoco.org/}{MuJoCo} provids environments for studying Multi-Joint dynamics with Contact} environments such as the HalfCheetah, Hopper, Walker and Swimmer. As in our research they used the OpenAI baseline implementations of RL algorithms for the experiments and evaluation. \cite{ford2022cognitive} is experimental evaluation we found that was based on real-world application. They compare DQN, A2C and PPO for choosing the operational radio frequency (RF) mode for a multi-function RF system and go on to suggest that PPO is the best.
 
 The survey shows that most existing work use standard OpenAI Gym environments, which although necessary for bench marking performance, do not provide coverage of industrial predictive maintenance. In Section \ref{sec:Implementation} we attempt to bridge this gap by implementing a custom built environment.
 
@@ -302,21 +329,38 @@ where, $D_0$ is the initial degradation state while $a$ and $b$ are wear-rate co
 \end{verbatim}
 
 \subsubsection{MS}
+
+\begin{lstlisting}[language=Python]
+	def _get_observation(self, index):
+		next_state = np.array([
+		self.df['tool_wear'][index],
+		self.df['force_x'][index],
+		self.df['force_y'][index],
+		self.df['force_z'][index],
+		self.df['vibration_x'][index],
+		self.df['vibration_y'][index],
+		self.df['vibration_z'][index],
+		self.df['acoustic_emission_rms'][index]
+		], dtype=np.float32)
+	return next_state
+\end{lstlisting}
+
 \begin{verbatim}
 	def _get_observation(self, index):
-	next_state = np.array([
-	self.df['tool_wear'][index],
-	self.df['force_x'][index],
-	self.df['force_y'][index],
-	self.df['force_z'][index],
-	self.df['vibration_x'][index],
-	self.df['vibration_y'][index],
-	self.df['vibration_z'][index],
-	self.df['acoustic_emission_rms'][index]
-	], dtype=np.float32)
-	
+		next_state = np.array([
+		self.df['tool_wear'][index],
+		self.df['force_x'][index],
+		self.df['force_y'][index],
+		self.df['force_z'][index],
+		self.df['vibration_x'][index],
+		self.df['vibration_y'][index],
+		self.df['vibration_z'][index],
+		self.df['acoustic_emission_rms'][index]
+		], dtype=np.float32)
 	return next_state
 \end{verbatim}
+
+
 
 \begin{verbatim}
 	# Machine data frame properties
@@ -888,5 +932,6 @@ contrast the DPO reparameterization yields a reward function that does not requi
 
 
 %% References
+\bibliographystyle{plainnat}
 \bibliography{ES_bibliography}
 \end{document}
