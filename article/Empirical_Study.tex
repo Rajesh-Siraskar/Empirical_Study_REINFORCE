@@ -310,25 +310,71 @@ We used the parameter values provided in the paper $a=0.08257, b1=0.3342, b2=0.0
 
 The IEEE DataPort hosts the tool wear data obtained from a high-speed CNC milling machine, \citep{NUAA-dataset}. C01, C04 and C06 datasets are suggested as benchmark for machine learning training and were the ones we used. The data consists of seven columns corresponding to dynamometer measuring force (N) in X, Y and Z dimensions; accelerometer measuring vibration (g) in X, Y and Z dimensions and finally acoustic emission data as AE-RMS (V). A separate file contains tool wear data in mm. Figures \ref{fig:C01}, \ref{fig:C04} and \ref{fig:C06} show the tool wear for the three datasets.
 
-\subsubsection*{Actual tool wear data}
+\subsubsection*{Environment design}
 
-\textbf{Implementation details}: Normalization
+MS -- \textcolor{red}{issue of tw var -- ``We now introduce seven additional variables, available in the PHM dataset, increasing the state complexity.} 
 
-init \\
-reset \\
-reward function \\
+\subsubsection*{Implementation details}: 
+Normalization. 
+
+inmportant functions
+0. step
+1. init \\
+2. reset \\
+3. reward function \\
+
+\noindent\textbf{Reward function}:\\
+The reward function (\ref{eq:RewardFunction}) drives the learning process. Code implementation is seen in Listing \ref{lst:SSStep}. There are three important phases where reward (or penalty) is provided as feedback. $R_1$, $R_2$ and $R_3$ are constants that determine the magnitude of reward. The first condition is when the current state of wear $w(s_t)$ is less than the threshold $W_T$, and a desirable condition, hence the reward is positive. The formulation allows higher reward to be collected the closer it is to threshold, but not allowing it to cross it. If it does, the agent is penalized (negative reward) by a magnitude of $R2$ and once again the farther away it is from the threshold i.e. a highly deteriorated tool the larger the penalty. To avoid this ``bad" state, the agent must learn to replace the tool; represented by the third condition. However to ensure it does not replace unnecessarily, we in fact ``penalize" for a replacement. It is important to note that the last condition in (\ref{eq:RewardFunction}) is an ``incremental addition", the first two conditions are mutually exclusive and evaluated first, followed by the last condition which is incrementally added on whatever reward is collected in the previous condition. The agent then tries to balance these three condition, such that it maximizes its total return, over time.
 
 \begin{equation}
-	R_t =
+	R_t \;\;=\;\;
 	\begin{cases}
-		\;  +1.0, & \quad \text{if}\; w(s_t) >= {W_T}{(s_t)}\\
-		\;  -1.0, & \quad \text{if}\; U(s_t) = 0, U(s_{t+1}) = 1 \\
-		\; -40.0, & \quad \text{if}\; U(s_t) = 1\\
+		\;\;  +R_1 \times t, & \quad if \;\; w(s_t) < W_T\\
+		\;\;  -R_2 \times t, & \quad if \;\; w(s_t) \ge W_T\\
+		\;\; \mathrel{+}= -R_3, & \quad if \;\; \text{ACTION = REPLACE\_TOOL}\\
 	\end{cases}
 	\label{eq:RewardFunction}
 \end{equation}
 
 \subsubsection{SS}
+
+\begin{lstlisting}[language=Python, label={lst:SSStep}, caption={Environment: Important implementation details of the 'step' function}]
+# Termination condition
+if self.ep_length >= self.max_operations:
+	terminated = True
+	self.reward = 0.0
+	self.df_index = -1
+	info = {'termination':'Max. milling operations crossed'}
+
+elif (tool_wear > self.wear_threshold and 
+	np.random.uniform() < self.breakdown_chance):
+	
+	terminated = True
+	self.reward = 0.0
+	self.df_index = -1
+	info = {'termination':'Tool breakdown'}
+
+else:
+	terminated = False
+	info = {'action':'Continue'}
+	
+	reward = 0.0
+	if tool_wear < self.wear_threshold:
+		reward += self.R1*self.df_index
+	else:
+		# Threshold breached. 
+		# Farther away from threshold => more penalty
+		reward += self.R2*self.df_index 
+		
+	# Based on the action = 1 replace the tool or if 0, continue with normal operation
+	if action:
+		reward += self.R3
+		# We replace the tool - so roll back tool life. 
+		self.df_index = -1
+		self.ep_tool_replaced += 1
+		info = {'action':'Tool replaced'}
+\end{lstlisting}
+
 \begin{verbatim}
 	def _get_observation(self, index):
 	next_state = np.array([
@@ -340,7 +386,7 @@ reward function \\
 \end{verbatim}
 
 \subsubsection{MS}
-
+MS -- \textcolor{red}{issue of tw var -- ``We now introduce seven additional variables, available in the PHM dataset, increasing the state complexity.} 
 \begin{lstlisting}[language=Python]
 	def _get_observation(self, index):
 		next_state = np.array([
