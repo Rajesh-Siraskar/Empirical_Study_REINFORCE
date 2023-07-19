@@ -333,34 +333,38 @@ Fig. (\ref{fig:noise}) shows the effect of adding two levels of noise. ``Low noi
 
 Break down occurs due to excessive tool use and can often occur randomly. In conjunction with Guassian noise this complexity is added for the univariate state based environments. For the low-noise variant we add a ``low chance'', 5\%, of break down and for the high noise variant we add a higher chance of 10\%. Sampled from a uniform distribution, the probability of break down is checked against this ``chance'' threshold and the episode is terminated if less than. This is seen in line 9 of the code in Listing \ref{lst:SSStep}. 
 
-Table \ref{tbl:ListEnvironments} summarizes the 15 environment variants and their three logical groups: (1) Simulated 1-3 (2) PHM univariate (4-12) and PHM multivariate (13-15).
+Table \ref{tbl:ListEnvironments} summarizes the 15 environment variants and their three logical groups: (1) Simulated 1-3 (2) Real data -- simple univariate environment (4-12) and Real data -- simple multivariate (13-15).
 
 \begin{table*}
 	\sffamily
 	\rowspace{1.3}
-	\begin{tabular}{@{}r l rr@{}} \arrayrulecolor{black!40}\toprule
+	\begin{tabular}{@{}r l rr@{}} \arrayrulecolor{black!40}\toprule 
 		 & Environment variant & Noise factor & Breakdown chance \\ \midrule
+		 & \multicolumn{3}{l}{\textbf{Simulated}}\\
 		1 & Simulated - No noise  & None & None \\
 		2 & Simulated - Low noise & 1e-3 & 0.05 \\
 		3 & Simulated  - High noise & 1e-2 & 0.10 \\ \midrule
+		\rule{0pt}{1.5\normalbaselineskip}
+		 & \multicolumn{3}{l}{\textbf{Real data -- simple univariate}} \\
+		4 & PHM C01 SS (simple, univariate) - No noise & None & None \\
+		5 & PHM C01 SS (simple, univariate) - Low noise & 1e-3 & 0.05 \\
+		6 & PHM C01 SS (simple, univariate) - High noise & 1e-2 & 0.10 \\ \hdashline
 		
-		4 & PHM C01 SS (simple univariate) - No noise & None & None \\
-		5 & PHM C01 SS (simple univariate) - Low noise & 1e-3 & 0.05 \\
-		6 & PHM C01 SS (simple univariate) - High noise & 1e-2 & 0.10 \\ \hdashline
+		7 & PHM C04 SS (simple, univariate) - No noise & None & None \\
+		8 & PHM C04 SS (simple, univariate) - Low noise & 1e-3 & 0.05 \\
+		9 & PHM C04 SS (simple, univariate) - High noise & 1e-2 & 0.10 \\ \hdashline
 		
-		7 & PHM C04 SS (simple univariate) - No noise & None & None \\
-		8 & PHM C04 SS (simple univariate) - Low noise & 1e-3 & 0.05 \\
-		9 & PHM C04 SS (simple univariate) - High noise & 1e-2 & 0.10 \\ \hdashline
+		10 & PHM C06 SS (simple, univariate) - No noise & None & None \\
+		11 & PHM C06 SS (simple, univariate) - Low noise & 1e-3 & 0.05 \\
+		12 & PHM C06 SS (simple, univariate - High noise & 1e-2 & 0.10 \\ \midrule
 		
-		10 & PHM C06 SS (simple univariate) - No noise & None & None \\
-		11 & PHM C06 SS (simple univariate) - Low noise & 1e-3 & 0.05 \\
-		12 & PHM C06 SS (simple univariate - High noise & 1e-2 & 0.10 \\ \hdashline
-
-		13 & PHM C01 MS (multivariate) - No noise & None & None \\
-		14 & PHM C04 MS (multivariate) - Low noise & 1e-3 & 0.05 \\
-		15 & PHM C06 MS (multivariate) - High noise & 1e-2 & 0.10 \\ \bottomrule
+		\rule{0pt}{1.5\normalbaselineskip}
+		& \multicolumn{3}{l}{\textbf{Real data -- complex multivariate}}\\
+		13 & PHM C01 MS (complex, multivariate) - No noise & None & None \\
+		14 & PHM C04 MS (complex, multivariate) - Low noise & 1e-3 & 0.05 \\
+		15 & PHM C06 MS (complex, multivariate) - High noise & 1e-2 & 0.10 \\ \bottomrule
 	\end{tabular}
-	\caption{List of the fifteen environments}
+	\caption{List of the fifteen environments and their categorization}
 	\label{tbl:ListEnvironments}
 \end{table*}
 
@@ -461,6 +465,103 @@ The REINFORCE uses a \textit{single} internal layer of 64 units. The default set
 Our training strategy ensured comparison of the algorithm performance, by ensuring the same environment variant, wear dataset, the noise and chance of breakdown parameters, are uniformly maintained across the four algorithms during a single training round. 
 
 The REINFORCE was trained for 800 episodes for the simulated and PHM univariate variants, for all three noise and breakdown levels (none, low and high) -- Table \ref{tbl:ListEnvironments} items 1-12. For the PHM multivariate variant Table \ref{tbl:ListEnvironments} items 13-15, REINFORCE was trained for 1000 episodes. SB3 algorithms were trained for 10,000 episodes for all variants.
+
+\begin{figure}[ht]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/7_PHM_C04_SS_LowNBD__wear_plot.png}  
+		\caption{PHM C04 wear data}
+		\label{fig:C04wear}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/7_PHM_C04_SS_LowNBD__Avg_episode_rewards.png}  
+		\caption{Average rewards per episode}
+		\label{fig:C04rewards}
+	\end{subfigure} \par\bigskip
+	
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/7_PHM_C04_SS_LowNBD__Episode_Length.png}  
+		\caption{Episode length completed per episode}
+		\label{fig:C04eplen}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/7_PHM_C04_SS_LowNBD__Tool_Replacements.png}  
+		\caption{Tool replacements per episode}
+		\label{fig:C04toolrep}
+	\end{subfigure} 
+	\caption{Training plots. Algorithm: REINFORCE. Dataset: PHM-C04. Variant: Univariate state, low-noise and low chance of breakdown.}
+	\label{fig:C04trplots}
+\end{figure}
+Figure \ref{fig:C04trplots} shows the training plots for the algorithm of our interest -- REINFORCE. It displays how the wear plot looked for C04 with low noise and low chance of breakdown settings. The average rewards increase over the course of 800 episodes (Fig. \ref{fig:C04rewards}), the episode length demonstrates the complexity introduced by random breakdown (which abruptly terminates the episode). It is the tool replacement policy that is essentially of interest to the industrial practitioner, this decreases to optimal levels as the agent learns over time, as seen in Fig. \ref{fig:C04toolrep}. Similarly, Fig. \ref{fig:C06trplots} demonstrates the training for the PHM C06 dataset affected by high noise and higher breakdown probability. Finally, for the more complex multivariate state variant, the training plots are as seen in Fig. \ref{fig:C01trplots}; as we do not introduce noise or breakdown here, the episodes are always completed (Fig. \ref{fig:C01eplen}).
+
+\begin{figure}[ht]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/11_PHM_C06_SS_HighNBD__wear_plot.png}  
+		\caption{PHM C06 wear data}
+		\label{fig:C06wear}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/11_PHM_C06_SS_HighNBD__Avg_episode_rewards.png}  
+		\caption{Average rewards per episode}
+		\label{fig:C06rewards}
+	\end{subfigure} \par\bigskip
+	
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/11_PHM_C06_SS_HighNBD__Episode_Length.png}  
+		\caption{Episode length completed per episode}
+		\label{fig:C06eplen}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/11_PHM_C06_SS_HighNBD__Tool_Replacements.png}  
+		\caption{Tool replacements per episode}
+		\label{fig:C06toolrep}
+	\end{subfigure} 
+	\caption{Training plots. Algorithm: REINFORCE. Dataset: PHM-C06. Variant: Univariate state, high-noise and high chance of breakdown.}
+	\label{fig:C06trplots}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/0_0_PHM_C01_MS_NoNBD__wear_plot.png}  
+		\caption{PHM C01 wear data}
+		\label{fig:C01wear}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/0_0_PHM_C01_MS_NoNBD__Avg_episode_rewards.png}  
+		\caption{Average rewards per episode}
+		\label{fig:C01rewards}
+	\end{subfigure} \par\bigskip
+	
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/0_0_PHM_C01_MS_NoNBD__Episode_Length.png}  
+		\caption{Episode length completed per episode}
+		\label{fig:C01eplen}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/TrainingPlots/0_0_PHM_C01_MS_NoNBD__Tool_Replacements.png}  
+		\caption{Tool replacements per episode}
+		\label{fig:C01toolrep}
+	\end{subfigure} 
+	\caption{Training plots. Algorithm: REINFORCE. Dataset: PHM-C01. Variant: Multivariate state, No noise or breakdown.}
+	\label{fig:C01trplots}
+\end{figure}
 
  \begin{itemize}
  	\item Training: SB3 - 10 k eps. 3 times. Average their outputs
