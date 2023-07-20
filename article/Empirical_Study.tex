@@ -1,4 +1,10 @@
-%% (2) Build options: PdfLaTex + BibTex
+%% ----------------------------------------------------------------------------------------
+%% Author: Rajesh Siraskar
+%% Date: 20-Jul-2023
+%% An empirical study -- REINFORCE w.r.t. A2C, DQN and PPO
+%% Build options: PdfLaTex + BibTex
+%%
+%% ----------------------------------------------------------------------------------------
 \documentclass[a4paper, 12pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -41,8 +47,8 @@
 \usepackage{booktabs}	% Tables
 \usepackage{arydshln} 	% dashed lines in tables
 \usepackage{pdflscape}	% Landscape page
-
 \usepackage{caption}
+\usepackage{multirow}
 
 \usepackage{subcaption}
 \usepackage{amsfonts}
@@ -57,6 +63,7 @@
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcommand{\rowspace}[1]{\renewcommand{\arraystretch}{#1}}
+
 \renewenvironment{abstract}
 {\small
 	\begin{center}
@@ -83,7 +90,15 @@
 \title{An empirical study of the na\"ive REINFORCE algorithm for predictive maintenance of industrial milling machines}
 \author{Rajesh Siraskar}
 
+%% Squeezing space
 \onehalfspacing
+\renewcommand\floatpagefraction{.9}
+\renewcommand\topfraction{.9}
+\renewcommand\bottomfraction{.9}
+\renewcommand\textfraction{.1}   
+\setcounter{totalnumber}{50}
+\setcounter{topnumber}{50}
+\setcounter{bottomnumber}{50}
 
 \begin{document}
 \maketitle
@@ -120,8 +135,8 @@ For reproducibility, model training and testing code, data and the trained REINF
 
 \newpage
 \thispagestyle{empty}
-\listoffigures
-\listoftables
+%\listoffigures
+%\listoftables
 
 \section{Introduction}
 % $$$ Quote
@@ -145,7 +160,7 @@ Introduced in 1992, the REINFORCE algorithm \citep{REINFORCE-williams1992} is co
 
 While most studies on RL algorithms are evaluated on Open AI Gym environments, our experiments cover the predictive maintenance problem using a custom built environment. Also, our study focuses on the earliest RL algorithm, the REINFORCE. This is often neglected by studies, as it is considered an early and weak algorithm. In the industry the milling tool is replaced after a set threshold. We use this ``deterministic preventive maintenance'' policy as the baseline for comparing the RL algorithm policy. 
 
-Our systematic evaluation, based on levels of environment difficulty, different bench-mark datasets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F1-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.\\
+Our systematic evaluation, based on levels of environment difficulty, different bench-mark datasets and varying noise levels allow a broader, more robust, comparison of the algorithms. Finally, we conduct statistical tests to ensure a robust statistical-evidence based conclusion. Based on experiments we show that REINFORCE works surprisingly well on tool-replacement precision and F-beta (0.5), over all the variants. The recall and F1-score are better or at-par with the advanced algorithms.\\
 
 The main \textbf{contributions} of this research are:
 \begin{enumerate}
@@ -303,6 +318,13 @@ We used the parameter values provided in the paper $a=0.08257, b1=0.3342, b2=0.0
 \subsubsection*{Actual tool wear data}
 The IEEE DataPort hosts the tool wear data obtained from a high-speed CNC milling machine, \citep{NUAA-dataset}. C01, C04 and C06 datasets are suggested as benchmark for machine learning training and were the ones we used. The data consists of seven columns corresponding to dynamometer measuring force (N) in X, Y and Z dimensions; accelerometer measuring vibration (g) in X, Y and Z dimensions and finally acoustic emission data as AE-RMS (V). A separate file contains tool wear data in mm. Figures \ref{fig:C01}, \ref{fig:C04} and \ref{fig:C06} show the tool wear for the three datasets. We use the real data to create two state designs, an univariate state consisting of only the tool wear and a \textbf{multivariate} state designed using all the additional seven sensor values. As for the simulated case, the complexity of the \textit{univariate} state is increased using two levels of noise and break-down parameters. The multivariate state is complex in itself and we use the natural (without noise) form.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth]{PHMMSdata.pdf}  
+	\caption{PHM C06: multivariate data}
+	\label{fig:PHMMSdata}
+\end{figure} 
+
 In RL state variables are often normalized to improve stability and convergence. Both the simulated and real data was normalized using min-max scaling such that the tool wear and other state features, $x \in [0,\;1] \subset \mathbb{R} $. We will see next how this allows adding white noise of similar magnitudes across different PHM datasets.
 
 \subsubsection*{Adding noise and chance of break-down}
@@ -372,7 +394,7 @@ Table \ref{tbl:ListEnvironments} summarizes the 15 environment variants and thei
 The choice of action is binary and represented by $\text{ACTION} \in [0, 1]$, where $0$ represents continuation of milling operation ($\text{CONTINUE}$), while $1$ represents the action of replacing the tool ($\text{REPLACE\_TOOL}$).
 
 \subsubsection*{Reward function}
-The reward function (\ref{eq:RewardFunction}) drives the learning process. Code implementation is seen in Listing \ref{lst:SSStep}. There are three important phases where reward (or penalty) is provided as feedback. $R_1$, $R_2$ and $R_3$ are constants that determine the magnitude of reward. The first condition is when the current state of wear $w(s_t)$ is less than the threshold $W_T$, and a desirable condition, hence the reward is positive. The formulation allows higher reward to be collected the closer it is to threshold, but not allowing it to cross it. If it does, the agent is penalized (negative reward) by a magnitude of $R2$ and once again the farther away it is from the threshold i.e. a highly deteriorated tool the larger the penalty. To avoid this ``bad" state, the agent must learn to replace the tool; represented by the third condition. However to ensure it does not replace unnecessarily, we in fact ``penalize'' for a replacement. It is important to note that the last condition in (\ref{eq:RewardFunction}) is an ``incremental addition", the first two conditions are mutually exclusive and evaluated first, followed by the last condition which is incrementally added on whatever reward is collected in the previous condition. The agent then tries to balance these three condition, such that it maximizes its total return, over time.
+The reward function (\ref{eq:RewardFunction}) drives the learning process. Code implementation is seen in Listing \ref{lst:SSStep}. There are three important phases where reward (or penalty) is provided as feedback. $R_1$, $R_2$ and $R_3$ are constants that determine the magnitude of reward. The first condition is when the current state of wear $w(s_t)$ is less than the threshold $W_T$, and a desirable condition, hence the reward is positive. The formulation allows higher reward to be collected the closer it is to threshold, but not allowing it to cross it. If it does, the agent is penalized (negative reward) by a magnitude of $R2$ and once again the farther away it is from the threshold i.e. a highly deteriorated tool the larger the penalty. To avoid this ``bad" state, the agent must learn to replace the tool; represented by the third condition. Tool replacement implies a direct cost (that of the tool) and a much higher and significant downtime ``cost''. To ensure the agent learns not to replace unnecessarily, we ``penalize'' it. It is important to note that the last condition in (\ref{eq:RewardFunction}) is an ``incremental addition", the first two conditions are mutually exclusive and evaluated first, followed by the last condition which is incrementally added on whatever reward is collected in the previous condition. The agent then tries to balance these three condition, such that it maximizes its total return, over time.
 \begin{equation}
 	R_t \;\;=\;\;
 	\begin{cases}
@@ -396,7 +418,6 @@ if self.ep_length >= self.max_operations:
 
 elif (tool_wear > self.wear_threshold and 
 	np.random.uniform() < self.breakdown_chance):
-	
 	terminated = True
 	self.reward = 0.0
 	self.df_index = -1
@@ -405,21 +426,19 @@ elif (tool_wear > self.wear_threshold and
 else:
 	terminated = False
 	info = {'action':'Continue'}
-	
 	reward = 0.0
+	
 	if tool_wear < self.wear_threshold:
 		reward += self.R1*self.df_index
 	else:
-		# Threshold breached. 
-		# Farther away from threshold => more penalty
+		# Threshold breached. Farther away from threshold => more penalty
 		reward += self.R2*self.df_index 
 		
 	# Based on the action = 1 replace the tool or if 0, continue with normal operation
 	if action:
-		reward += self.R3
-		# We replace the tool - so roll back tool life. 
-		self.df_index = -1
-		self.ep_tool_replaced += 1
+		reward += self.R3 
+		self.df_index = -1 # Tool replaced - so roll back tool life
+		self.ep_tool_replaced += 1 # Increment tool replaced count
 		info = {'action':'Tool replaced'}
 \end{lstlisting}
 
@@ -439,10 +458,12 @@ else:
 %\end{lstlisting}
 \subsubsection*{Network architecture and basic hyper-parameters}
 For this research we implemented a na\"ive REINFORCE algorithm, with very simple network architectures. This was compared against \textit{default} implementations of the more advanced algorithms; DQN, A2C and PPO, from the Stable-Baselines3 library. Table \ref{tbl:network-architecture} shows a comparison of the network architecture and the basic common hyper-parameters.
+
+\begin{small}
 \begin{table*}\centering
 	\sffamily
 	\rowspace{1.5}
-	\begin{tabular}[h]{L{2cm} R{2.5cm} R{2.5cm} R{2.5cm} R{3cm}}
+	\begin{tabular}[htbp]{L{2cm} R{2.5cm} R{2.5cm} R{2.5cm} R{3cm}}
 		\arrayrulecolor{black!40}\toprule
 		&\textbf{A2C}&\textbf{DQN}&\textbf{PPO}&\textbf{REINFORCE}\\ \midrule
 		
@@ -458,13 +479,22 @@ For this research we implemented a na\"ive REINFORCE algorithm, with very simple
 	\caption{Comparing the network architecture and basic hyper-parameters across algorithms}
 	\label{tbl:network-architecture}
 \end{table*}
-
-The REINFORCE uses a \textit{single} internal layer of 64 units. The default set-up of all three algorithms by SB3 consists of \textit{two} layers of 64 neurons each. While we used ReLU (rectified linear unit) as the activation function, the other three algorithms used hyperbolic tangent (Tanh).
+\end{small}
+The REINFORCE uses a \textit{single} internal layer of 64 units. The default network architecture for all three SB3 algorithms (A2C/DQN/PPO) consists of \textit{two} fully connected layers with 64 units per layer \citep{SB3-DefaultNetwork}. While we used ReLU (rectified linear unit) as the activation function, the other three algorithms used hyperbolic tangent (Tanh).
 
 \subsection{Training}
-Our training strategy ensured comparison of the algorithm performance, by ensuring the same environment variant, wear dataset, the noise and chance of breakdown parameters, are uniformly maintained across the four algorithms during a single training round. 
+The training strategy must ensure a uniform comparison of the algorithms. We maintained the exact \textit{same} environment variant, wear dataset, noise parameter, probability of breakdown parameter, and the reward function parameters $R_1$, $R_2$ and $R_3$; across all four algorithms during a single training round. Our code is fairly automated and we used a configuration file to configure the training experiments and record the results. Fig. \ref{fig:exptconfig} shows the main columns of the configuration file we used.
 
-The REINFORCE was trained for 800 episodes for the simulated and PHM univariate variants, for all three noise and breakdown levels (none, low and high) -- Table \ref{tbl:ListEnvironments} items 1-12. For the PHM multivariate variant Table \ref{tbl:ListEnvironments} items 13-15, REINFORCE was trained for 1000 episodes. SB3 algorithms were trained for 10,000 episodes for all variants.
+As the wear data is time-series data, the training and test sets are created by systematic sampling. Simulated data and real tool-wear data (PHM) was randomly sampled at a certain frequency and down sampled into training and test sets.
+
+\begin{figure}[ht]
+	\centering	
+	\includegraphics[width=\textwidth, trim={1.5cm 15cm 1cm 2cm}, clip]{images/TrainingPlots/Experiments_Sheet_select.pdf}  
+	\caption{Configuring the experiments}
+	\label{fig:exptconfig}
+\end{figure}
+
+The REINFORCE was trained for 800 episodes for the simulated and PHM univariate variants, for all three noise and breakdown levels (none, low and high) -- Table \ref{tbl:ListEnvironments} items 1-12. For the PHM multivariate variant Table \ref{tbl:ListEnvironments} items 13-15, REINFORCE was trained for 1000 episodes. SB3 algorithms were trained for 10,000 episodes for all variants. We ran ten rounds of training, tested each model generated and then averaged their results. Testing is explained in the next section while results are presented in Section \ref{sec:Results}.
 
 \begin{figure}[ht]
 	\begin{subfigure}[b]{0.5\textwidth}
@@ -563,180 +593,65 @@ Figure \ref{fig:C04trplots} shows the training plots for the algorithm of our in
 	\label{fig:C01trplots}
 \end{figure}
 
- \begin{itemize}
- 	\item Training: SB3 - 10 k eps. 3 times. Average their outputs
- 	\item Testing: 
- 	\begin{itemize}
- 		\item Avg. over 5 rounds.
- 		\item Each round - avg over 40 test cases x 10 test rounds
- 		\item Total: 40 x 10 x 5 = 2000 cases
- 		\item Avgs over: 10 rounds (of 40 cases each) X 5 rounds of \textbf{re-trained} SB3 agents = 50 rounds 
- 	\end{itemize}
- \end{itemize}
- -- selecting the model\\
- -- conducting the experiments\\
-\subsection{Testing}
-- Testing \texttt{env-test = wear threshold original}	\\
-- Experiment file\\
-- Rounds\\
+\subsection{Testing and performance evaluation}
+Testing was performed with data separate from the training data. 10 rounds of testing are performed, with a \textit{new} set of 40 test cases randomly sampled and frozen across all four algorithms. 
 
-\begin{verbatim}
-	env = MillingTool_SS_NT(df_train, WEAR_THRESHOLD_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
-	
-	env_test = MillingTool_SS_NT(df_test, WEAR_THRESHOLD_ORG_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
-\end{verbatim}
+\subsubsection*{Evaluation metrics}
+In our data, we indicate a tool replacement suggested by the human expert as 1, and a normal operation as 0. The human decision is based on ``preventive maintenance'' against a set threshold. In reality the threshold is based on several factors like materials of tool and work-piece, the duration of continuous operation, ambient conditions, ``cost'' of production downtime etc. Threshold could therefore vary significantly from one case to another.
 
-\subsection{Evaluation method}
--pr, rc, f1, f1-beta
+We applied classification metrics to evaluate the RL agent decisions that suggest similar actions. These are simple to understand for the general industrial practitioners. 
+\begin{figure}
+	\begin{center}
+		\sffamily
+		\rowspace{1.6}
+		\begin{tabular}{l|l|c|c|}
+			\multicolumn{2}{c}{}&\multicolumn{2}{c}{\textbf{Human action}}\\
+			\cline{3-4}
+			\multicolumn{2}{c|}{}&Replace tool&Continue milling\\
+			\cline{2-4}
+			\multirow{2}{*}{\textbf{Agent action}}& Replace tool & $TP$ & $FP$\\
+			\cline{2-4}
+			& Continue milling& $FN$ & $TN$\\
+			\cline{2-4}
+		\end{tabular}
+	\end{center}
+	\caption{Confusion matrix }
+	\label{fig:CM}	
+\end{figure}
+Classification metrics are based on the confusion matrix shown in Fig. \ref{fig:CM}. $TP$ represents true positive cases, where both the agent and human agree on replacing the tool. False positive $FP$ cases denote the agent falsely suggesting replacements. With false negative $FN$, the agent suggests to continue milling operation when a tool replacement would have helped. Precision (Pr), Recall (Rc) and F1-score metrics can then be computed as shown in (\ref{eq:metrics}).
 
-\begin{itemize}
-	\item why classifction metrics
-	\item why F1beta	
-\end{itemize}
+\begin{equation}
+	\text{Pr} = \frac{TP}{TP+FP}, \quad
+	\text{Rc} = \frac{TP}{TP+FN}, \quad
+	\text{F1-score} = 2 \times \frac{Pr \times Rc)}{(Pr + Rc)}
+	\label{eq:metrics}
+\end{equation}
 
+\textbf{Tool replacement precision}: Timely replacements, $TP$, ensures work piece quality. While we desire high $TP$s, we do want to simultaneously drive down \textit{unnecessary} replacements and reduce costly production downtime, we therefore want lower $FP$s. The precision metric is therefore an ideal metric. 
 
-\subsection{Inference}
-\begin{itemize}
-	\item Training: SB3 is also unstable - show examples of results such as A2C/DQN 0.00 
-	\item Training: SB3 is also unstable - SHOW SB3 tensorboard plots
-	\item Training: SB3 is also unstable - EXCEL plots of results over the 10 rounds 	
-\end{itemize}
+While we prefer a high precision, we do want a reasonably high recall i.e. do not want to miss replacement opportunities (low $FN$s). The F1-score (\textit{true} harmonic mean of precision and recall) gives us a \textit{balanced} measure. Equation (\ref{eq:Fbeta}) provides a \textit{weighted} mechanism to provide a higher F-score for higher precision, by setting $\beta < 1.0$. For our evaluation we set $\beta$ to $0.5$.
 
+\begin{equation}
+	F_{\beta} = (1+\beta^2) \cdot \frac{Pr \times Rc)}{(\beta^2 \cdot Pr + Rc)}
+	\label{eq:Fbeta}
+\end{equation}
 
-
+%\begin{verbatim}
+%	env = MillingTool_SS_NT(df_train, WEAR_THRESHOLD_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
+%	
+%	env_test = MillingTool_SS_NT(df_test, WEAR_THRESHOLD_ORG_NORMALIZED, MILLING_OPERATIONS_MAX, ADD_NOISE, BREAKDOWN_CHANCE, R1, R2, R3)
+%\end{verbatim}
 
 \section{Results}\label{sec:Results}
+In the previous section we discussed the training and testing methods, as well as the evaluation metrics. Our automated code reads settings shown in Fig. \ref{fig:exptconfig} and creates 10 models. Each model is tested 10 times, with a fresh set of 40 randomly sampled points. The results are presented in this section.
 
-\begin{figure}[ht]
-	\begin{subfigure}{\textwidth}
-	\centering
-	\includegraphics[width=\linewidth]{Overall_Pr.pdf}  
-	\caption{Precision}
-	\label{fig:tr-ovr-pr}
-	\end{subfigure} \par\smallskip
-
-	\begin{subfigure}{\textwidth}
-	\centering
-	\includegraphics[width=\linewidth]{Overall_Rc.pdf}  
-	\caption{Recall}
-	\label{fig:tr-ovr-rc}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Overall_F1.pdf}  
-		\caption{F1-score}
-		\label{fig:tr-ovr-f1}
-	\end{subfigure} \par\smallskip
-
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Overall_F05.pdf}  
-		\caption{F1-beta (0.5)}
-		\label{fig:tr-ovr-f05}
-	\end{subfigure}
-	\caption{Overall performance -- Avg. performance over 10 rounds of model training}
-	\label{fig:tr-overall}
-\end{figure}
-
-\begin{figure}[ht]
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Simulated_Pr.pdf}  
-		\caption{Precision}
-		\label{fig:tr-sim-pr}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Simulated_Rc.pdf}  
-		\caption{Recall}
-		\label{fig:tr-sim-rc}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Simulated_F1.pdf}  
-		\caption{F1-score}
-		\label{fig:tr-sim-f1}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Simulated_F05.pdf}  
-		\caption{F1-beta (0.5)}
-		\label{fig:tr-sim-f05}
-	\end{subfigure}
-	\caption{Simulated environment -- Avg. performance over 10 rounds of model training}
-	\label{fig:tr-sim-env}
-\end{figure}
-
-\begin{figure}[ht]
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Singevariable_Pr.pdf}  
-		\caption{Precision}
-		\label{fig:tr-ss-pr}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Singevariable_Rc.pdf}  
-		\caption{Recall}
-		\label{fig:tr-ss-rc}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Singevariable_F1.pdf}  
-		\caption{F1-score}
-		\label{fig:tr-ss-f1}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Singevariable_F05.pdf}  
-		\caption{F1-beta (0.5)}
-		\label{fig:tr-ss-f05}
-	\end{subfigure}
-	\caption{Singe-variable state environment -- Avg. performance over 10 rounds of model training}
-	\label{fig:tr-ss-env}
-\end{figure}
-
-\begin{figure}[ht]
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Multivariate_Pr.pdf}  
-		\caption{Precision}
-		\label{fig:tr-ms-pr}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Multivariate_Rc.pdf}  
-		\caption{Recall}
-		\label{fig:tr-ms-rc}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Multivariate_F1.pdf}  
-		\caption{F1-score}
-		\label{fig:tr-ms-f1}
-	\end{subfigure} \par\smallskip
-	
-	\begin{subfigure}{\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{Multivariate_F05.pdf}  
-		\caption{F1-beta (0.5)}
-		\label{fig:tr-ms-f05}
-	\end{subfigure}
-	\caption{multivariate state environment -- Avg. performance over 10 rounds of model training}
-	\label{fig:tr-ms-env}
-\end{figure}
-
-\subsection{Detailed metrics}
-xx
+We first present averaged metrics and averaged standard deviation of \textit{all} 15 variants in Table \ref{tbl:DetailedMetrics}, followed by category wise summary of results:
+\begin{enumerate}
+	\item Overall performance: Averaged over all 15 environments -- Table \ref{tbl:ListEnvironments}, items 1 to 15.
+	\item Simulated environment: Averaged over 3 noise setting variants -- Table \ref{tbl:ListEnvironments}, items 1 to 3.
+	\item Real data - simple univariate state: Averaged over 9 variants i.e. 3 PHM datasets (C01, C04 and C06) with 3 noise settings -- Table \ref{tbl:ListEnvironments}, items 4 to 12. 
+	\item Real data - complex multivariate state: Averaged over 3 variants of PHM datasets (C01, C04 and C06) -- Table \ref{tbl:ListEnvironments}, items 13 to 15. 
+\end{enumerate}
 \newgeometry{margin=1cm} % Change margins for landscape table
 \begin{landscape}\centering
 	\begin{table*}
@@ -746,7 +661,7 @@ xx
 			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
 			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
 			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
-			Environment &Prec. &Recall &F1 &F0.5 & &Prec. &Recall &F1 &F0.5 & &Prec. &Recall &F1 &F0.5 & &Prec. &Recall &F1 &F0.5\\ \midrule
+			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
 			Simulated  - No noise &0.842 &0.878 &0.838 & 0.834 & & 0.424 &0.451 &0.423 &0.421 & &0.426 &0.674 &0.471 &0.410 & &0.504 &0.200 &0.271&0.360\\
 			Simulated  - Low noise &0.777 &0.929 &0.834 & 0.796 & & 0.465 &0.423 &0.409 &0.427 & &0.421 &0.338 &0.270 &0.283 & &0.482 &0.236 &0.296&0.369\\
 			Simulated  - High noise &0.798 &0.940 &0.851 & 0.816 & & 0.358 &0.281 &0.256 &0.272 & &0.447 &0.519 &0.380 &0.360 & &0.514 &0.207 &0.286&0.382\\ \midrule
@@ -775,6 +690,230 @@ xx
 \end{landscape}
 \restoregeometry % Restore margins after landscape table
 
+\subsection{Overall summary performance}
+\begin{table*}[!htb]\centering
+	\sffamily
+	\rowspace{1.3}
+	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
+		\arrayrulecolor{black!40}\toprule
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
+		
+		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
+		
+		A2C & 0.449 & 0.088 & &0.480 & 0.084 & & 0.442 & 0.070 & &0.436 &0.071 \\
+		DQN & 0.418 & 0.185 & &0.504 & 0.032 & & 0.374 & 0.035 & &0.348 &0.058 \\
+		PPO & 0.472 & 0.144 & &0.316 & 0.087 & & 0.345 & 0.091 & &0.393 &0.105 \\
+		REINFORCE & 0.687 & 0.059 & &0.629 & 0.051 & & 0.609 & 0.050 & &0.631 &0.052 \\
+		
+		\bottomrule
+	\end{tabular}
+	\caption{Model performance summary - averaged over all environments.}
+	\label{tbl:OverallSummary}
+\end{table*}
+At an overall level, Table \ref{tbl:OverallSummary}, the REINFORCE scores much higher than the other algorithms, on all the four metrics. Tool replacement precision at 0.687, is highest of the four algorithms and better by 0.215 in absolute terms when compared to the next best, PPO. The standard deviation for precision is the lowest at 0.059. On recall, F1 and F-beta (0.5), REINFORCE is better by 0.125, 0.168 and 0.195 compared to the next best.
+
+\subsection{Simulated environment}
+\begin{table*}[!htb]\centering\sffamily
+	\rowspace{1.3}
+	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
+		\arrayrulecolor{black!40}\toprule
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
+		
+		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
+		A2C & 0.416 & 0.120 & &0.385 & 0.073 & & 0.363 & 0.072 & &0.373 &0.082 \\
+		DQN & 0.432 & 0.184 & &0.510 & 0.031 & & 0.374 & 0.034 & &0.351 &0.056 \\
+		PPO & 0.500 & 0.178 & &0.215 & 0.081 & & 0.285 & 0.099 & &0.370 &0.122 \\
+		REINFORCE & 0.806 & 0.040 & &0.915 & 0.038 & & 0.841 & 0.035 & &0.816 &0.037 \\
+		
+		
+		\bottomrule
+	\end{tabular}
+	\caption{Model performance summary - averaged over simulated environments.}
+	\label{tbl:SimulatedEnv}
+\end{table*}
+The simulated tool wear environment is relatively the simplest for the agent to learn. We added two levels of noise and chance of breakdown and averaged the performance over the three variants, Table \ref{tbl:SimulatedEnv}. The REINFORCE performs the best and in absolute terms it is better than the next best advanced algorithm by very high margins: precision by 0.306, recall by 0.405, F1 by 0.468 and F-beta (0.5) by 0.442. The standard deviation is lower or just marginally higher than others.
+
+\subsection{Real data - simple univariate environment}
+\begin{table*}[!htb]\centering
+	\sffamily
+	\rowspace{1.3}
+	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
+		\arrayrulecolor{black!40}\toprule
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
+		
+		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
+		A2C & 0.447 & 0.077 & &0.477 & 0.091 & & 0.452 & 0.072 & &0.446 &0.070 \\
+		DQN & 0.419 & 0.179 & &0.507 & 0.032 & & 0.379 & 0.036 & &0.352 &0.057 \\
+		PPO & 0.450 & 0.146 & &0.314 & 0.082 & & 0.333 & 0.087 & &0.374 &0.102 \\
+		REINFORCE & 0.605 & 0.046 & &0.603 & 0.046 & & 0.570 & 0.041 & &0.576 &0.040 \\
+		
+		\bottomrule
+	\end{tabular}
+	\caption{Model performance summary - averaged over PHM-2010 environments with simple single-variable environment.}
+	\label{tbl:PHMSS}
+\end{table*}
+Real data offers a more challenging environment. Despite this, in Table \ref{tbl:PHMSS}, we notice that REINFORCE  still performs better than the other algorithms. The margins are understandably lower: precision by 0.155, recall by 0.097, F1 by 0.117 and F-beta (0.5) by 0.130. 
+
+\subsection{Real data - complex multivariate state}
+\begin{table*}[!htb]\centering
+	\sffamily
+	\rowspace{1.3}
+	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
+		\arrayrulecolor{black!40}\toprule
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
+		
+		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
+		A2C & 0.487 & 0.086 & &0.582 & 0.075 & & 0.488 & 0.063 & &0.467 &0.065 \\
+		DQN & 0.399 & 0.204 & &0.491 & 0.032 & & 0.361 & 0.035 & &0.332 &0.060 \\
+		PPO & 0.512 & 0.107 & &0.422 & 0.107 & & 0.441 & 0.096 & &0.472 &0.096 \\
+		REINFORCE & 0.813 & 0.119 & &0.421 & 0.079 & & 0.495 & 0.090 & &0.609 &0.101 \\
+		
+		
+		\bottomrule
+	\end{tabular}
+	\caption{Model performance summary - averaged over PHM-2010 environments with complex multivariate environment.}
+	\label{tbl:PHMMS}
+\end{table*}
+This environments offers the highest difficulty and the most realistic scenario. We use real data, from multiple sensors. As with other scenarios, we used untuned, default settings of all algorithms. Surprisingly, the tool replacement precision was very high at 0.813, Table .  
+
+ is the Real data offers a more challenging environment. Despite this, in Table \ref{tbl:PHMSS}, we notice that REINFORCE  still performs better than the other algorithms. The margins are understandably lower: precision by 0.155, recall by 0.097, F1 by 0.117 and F-beta (0.5) by 0.130. 
+
+
+\subsection{Plots}
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+	\centering
+	\includegraphics[width=\linewidth]{Overall_Pr.pdf}  
+	\caption{Precision}
+	\label{fig:tr-ovr-pr}
+	\end{subfigure} \par\smallskip
+
+	\begin{subfigure}{\textwidth}
+	\centering
+	\includegraphics[width=\linewidth]{Overall_Rc.pdf}  
+	\caption{Recall}
+	\label{fig:tr-ovr-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Overall_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-ovr-f1}
+	\end{subfigure} \par\smallskip
+
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Overall_F05.pdf}  
+		\caption{F-beta (0.5)}
+		\label{fig:tr-ovr-f05}
+	\end{subfigure}
+	\caption{Overall performance -- Average over 10 models}
+	\label{fig:tr-overall}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_Pr.pdf}  
+		\caption{Precision}
+		\label{fig:tr-sim-pr}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_Rc.pdf}  
+		\caption{Recall}
+		\label{fig:tr-sim-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-sim-f1}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Simulated_F05.pdf}  
+		\caption{F-beta (0.5)}
+		\label{fig:tr-sim-f05}
+	\end{subfigure}
+	\caption{Simulated environment -- Average over 10 models}
+	\label{fig:tr-sim-env}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_Pr.pdf}  
+		\caption{Precision}
+		\label{fig:tr-ss-pr}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_Rc.pdf}  
+		\caption{Recall}
+		\label{fig:tr-ss-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-ss-f1}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Singevariable_F05.pdf}  
+		\caption{F-beta (0.5)}
+		\label{fig:tr-ss-f05}
+	\end{subfigure}
+	\caption{Univariate state environment -- Average over 10 models}
+	\label{fig:tr-ss-env}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_Pr.pdf}  
+		\caption{Precision}
+		\label{fig:tr-ms-pr}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_Rc.pdf}  
+		\caption{Recall}
+		\label{fig:tr-ms-rc}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_F1.pdf}  
+		\caption{F1-score}
+		\label{fig:tr-ms-f1}
+	\end{subfigure} \par\smallskip
+	
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Multivariate_F05.pdf}  
+		\caption{F-beta (0.5)}
+		\label{fig:tr-ms-f05}
+	\end{subfigure}
+	\caption{Multivariate state environment -- Average over 10 models}
+	\label{fig:tr-ms-env}
+\end{figure}
+
+
+
 
 \subsection{Super models metrics}
 
@@ -787,7 +926,7 @@ xx
 			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
 			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
 			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
-			Environment &Prec. &Recall &F1 &F0.5 & &Prec. &Recall &F1 &F0.5 & &Prec. &Recall &F1 &F0.5 & &Prec. &Recall &F1 &F0.5\\ \midrule
+			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
 			Simulated  - No noise &0.897 &0.960 &0.926 & 0.908 & & 0.500 &1.000 &0.667 &0.556 & &0.505 &0.980 &0.667 &0.560 & &0.669 &0.430 &0.518&0.597\\
 			Simulated  - Low noise &0.960 &0.945 &0.952 & 0.957 & & 0.516 &1.000 &0.680 &0.571 & &0.500 &0.980 &0.662 &0.554 & &0.633 &0.460 &0.530&0.586\\
 			Simulated  - High noise &0.922 &0.990 &0.955 & 0.935 & & 0.503 &1.000 &0.669 &0.558 & &0.504 &0.990 &0.668 &0.559 & &0.569 &0.355 &0.434&0.505\\\midrule
@@ -815,93 +954,6 @@ xx
 \end{landscape}
 \restoregeometry % Restore margins after landscape table
 
-\subsection{Overall summary performance}
-
-\begin{table*}[hbt!]\centering
-	\sffamily
-	\rowspace{1.3}
-	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
-		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F1-beta score} \\
-		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
-		
-		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
-		
-		A2C & 0.449 & 0.088 & &0.480 & 0.084 & & 0.442 & 0.070 & &0.436 &0.071 \\
-		DQN & 0.418 & 0.185 & &0.504 & 0.032 & & 0.374 & 0.035 & &0.348 &0.058 \\
-		PPO & 0.472 & 0.144 & &0.316 & 0.087 & & 0.345 & 0.091 & &0.393 &0.105 \\
-		REINFORCE & 0.687 & 0.059 & &0.629 & 0.051 & & 0.609 & 0.050 & &0.631 &0.052 \\
-			
-		\bottomrule
-	\end{tabular}
-	\caption{Model performance summary - averaged over all environment.}
-	\label{tbl:OverallSummary}
-\end{table*}
-
-\subsection{Simulated environment}
-\begin{table*}[hbt!]\centering\sffamily
-	\rowspace{1.3}
-	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
-		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F1-beta score} \\
-		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
-		
-		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
-		A2C & 0.416 & 0.120 & &0.385 & 0.073 & & 0.363 & 0.072 & &0.373 &0.082 \\
-		DQN & 0.432 & 0.184 & &0.510 & 0.031 & & 0.374 & 0.034 & &0.351 &0.056 \\
-		PPO & 0.500 & 0.178 & &0.215 & 0.081 & & 0.285 & 0.099 & &0.370 &0.122 \\
-		REINFORCE & 0.806 & 0.040 & &0.915 & 0.038 & & 0.841 & 0.035 & &0.816 &0.037 \\
-		
-		
-		\bottomrule
-	\end{tabular}
-	\caption{Model performance summary - averaged over simulated environments.}
-	\label{tbl:SimulatedEnv}
-\end{table*}
-
-\newpage
-\subsection{Real data -- simple univariate environment}
-\begin{table*}[h]\centering
-	\sffamily
-	\rowspace{1.3}
-	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
-		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F1-beta score} \\
-		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
-		
-		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
-		A2C & 0.447 & 0.077 & &0.477 & 0.091 & & 0.452 & 0.072 & &0.446 &0.070 \\
-		DQN & 0.419 & 0.179 & &0.507 & 0.032 & & 0.379 & 0.036 & &0.352 &0.057 \\
-		PPO & 0.450 & 0.146 & &0.314 & 0.082 & & 0.333 & 0.087 & &0.374 &0.102 \\
-		REINFORCE & 0.605 & 0.046 & &0.603 & 0.046 & & 0.570 & 0.041 & &0.576 &0.040 \\
-		
-		\bottomrule
-	\end{tabular}
-	\caption{Model performance summary - averaged over PHM-2010 environments with simple single-variable environment.}
-	\label{tbl:PHMSS}
-\end{table*}
-
-\subsection{Real data -- complex multivariate state}
-\begin{table*}[hbt!]\centering
-	\sffamily
-	\rowspace{1.3}
-	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
-		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F1-beta score} \\
-		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
-		
-		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
-		A2C & 0.487 & 0.086 & &0.582 & 0.075 & & 0.488 & 0.063 & &0.467 &0.065 \\
-		DQN & 0.399 & 0.204 & &0.491 & 0.032 & & 0.361 & 0.035 & &0.332 &0.060 \\
-		PPO & 0.512 & 0.107 & &0.422 & 0.107 & & 0.441 & 0.096 & &0.472 &0.096 \\
-		REINFORCE & 0.813 & 0.119 & &0.421 & 0.079 & & 0.495 & 0.090 & &0.609 &0.101 \\
-		
-		
-		\bottomrule
-	\end{tabular}
-	\caption{Model performance summary - averaged over PHM-2010 environments with complex multivariate environment.}
-	\label{tbl:PHMMS}
-\end{table*}
 
 \subsection{Hypothesis testing}
 
@@ -980,6 +1032,9 @@ Notes: \\
 
 
 \section{Discussion}\label{sec:Discussion}
+
+\textcolor{red}{**\textbf{DISCUSSION}** It must be noted that the classification metrics we used to evaluate, assume that the human prevent maintenance policy is ideal and suggested based on experience. In practice this might not always be the case. The RL agent is trained to replace the tool optimally i.e. maximize use before reaching the threshold use, and replace only when necessary so as to maintain lowest possible cost of replacement. In our dataset we assume the threshold to be ideally set and base the ``human'' action against that, rather than a real human action, which incidentally is not available for the PHM dataset anyway.}
+
 \begin{itemize}
 	\item R1 = +1 
 	\item R2 = -1
@@ -988,6 +1043,7 @@ Notes: \\
 	\item Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized. 
 	\item - Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
 	\item \textbf{LOOK AHEAD PARAM}: 
+	\item  It must be noted that the classification metrics we used to evaluate, assume that the human prevent mainteance policy is ideal. Which in practice might not be the case. The RL is trained to replace the tool optimally i.e. maximize use and replace only when necessary so as to maintain lowest possible cost of replacement.
 \end{itemize}
 
 - Transition function \citep{graesser2019}: pg333 "Transition function  - also known as model. can be learnt or programmed programmable rules are common and lead to increasing complexity. \textcolor{red}{***} We use a hybrid model - partly learnt and partly programmed": \textbf{Noise and breakdown}\\
