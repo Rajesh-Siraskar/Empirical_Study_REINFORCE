@@ -645,13 +645,15 @@ While we prefer a high precision, we do want a reasonably high recall i.e. do no
 \section{Results}\label{sec:Results}
 In the previous section we discussed the training and testing methods, as well as the evaluation metrics. Our automated code reads settings shown in Fig. \ref{fig:exptconfig} and creates 10 models. Each model is tested 10 times, with a fresh set of 40 randomly sampled points. The results are presented in this section.
 
-We first present averaged metrics and averaged standard deviation of \textit{all} 15 variants in Table \ref{tbl:DetailedMetrics}, followed by category wise summary of results:
+We first present averaged metrics and averaged standard deviation of \textit{all} 15 variants in Table \ref{tbl:DetailedMetrics}, followed by category wise summary of results. These summaries are followed by error-bar plots over the 10 training rounds. Selecting the best of 10 models obtained, for each algorithm, offers a comparison of select models, we called ``super models''. 
+
 \begin{enumerate}
 	\item Overall performance: Averaged over all 15 environments -- Table \ref{tbl:ListEnvironments}, items 1 to 15.
 	\item Simulated environment: Averaged over 3 noise setting variants -- Table \ref{tbl:ListEnvironments}, items 1 to 3.
 	\item Real data - simple univariate state: Averaged over 9 variants i.e. 3 PHM datasets (C01, C04 and C06) with 3 noise settings -- Table \ref{tbl:ListEnvironments}, items 4 to 12. 
 	\item Real data - complex multivariate state: Averaged over 3 variants of PHM datasets (C01, C04 and C06) -- Table \ref{tbl:ListEnvironments}, items 13 to 15. 
 \end{enumerate}
+
 \newgeometry{margin=1cm} % Change margins for landscape table
 \begin{landscape}\centering
 	\begin{table*}
@@ -711,7 +713,9 @@ We first present averaged metrics and averaged standard deviation of \textit{all
 	\caption{Model performance summary - averaged over all environments.}
 	\label{tbl:OverallSummary}
 \end{table*}
-At an overall level, Table \ref{tbl:OverallSummary}, the REINFORCE scores much higher than the other algorithms, on all the four metrics. Tool replacement precision at 0.687, is highest of the four algorithms and better by 0.215 in absolute terms when compared to the next best, PPO. The standard deviation for precision is the lowest at 0.059. On recall, F1 and F-beta (0.5), REINFORCE is better by 0.125, 0.168 and 0.195 compared to the next best.
+At an overall level, Table \ref{tbl:OverallSummary}, the REINFORCE scores much higher than the other algorithms, on all the four metrics. Tool replacement precision at 0.687, is highest of the four algorithms and better by 0.215 in absolute terms when compared to the next best, PPO. The standard deviation for precision is the lowest at 0.059. On recall, F1 and F-beta (0.5), REINFORCE is better by 0.125, 0.168 and 0.195 compared to the next best. 
+
+Plotting the overall metrics, across the 10 rounds of training, is shown in the error-bar plot, Fig. \ref{fig:tr-overall}. The blue line floating above the rest of the algorithms, for all metrics, is that of REINFORCE. The error-bars are also pretty small, indicating a comparatively small uncertainty. We notice that the other three algorithms are all centered closely and around at about 0.5. 
 
 \subsection{Simulated environment}
 \begin{table*}[!htb]\centering\sffamily
@@ -733,7 +737,7 @@ At an overall level, Table \ref{tbl:OverallSummary}, the REINFORCE scores much h
 	\caption{Model performance summary - averaged over simulated environments.}
 	\label{tbl:SimulatedEnv}
 \end{table*}
-The simulated tool wear environment is relatively the simplest for the agent to learn. We added two levels of noise and chance of breakdown and averaged the performance over the three variants, Table \ref{tbl:SimulatedEnv}. The REINFORCE performs the best and in absolute terms it is better than the next best advanced algorithm by very high margins: precision by 0.306, recall by 0.405, F1 by 0.468 and F-beta (0.5) by 0.442. The standard deviation is lower or just marginally higher than others.
+The simulated tool wear environment is relatively the simplest for the agent to learn. We added two levels of noise and chance of breakdown and averaged the performance over the three variants, Table \ref{tbl:SimulatedEnv}. The REINFORCE performs the best and in absolute terms it is better than the next best advanced algorithm by very high margins: precision by 0.306, recall by 0.405, F1 by 0.468 and F-beta (0.5) by 0.442. The standard deviation is lower or just marginally higher than others. Plots are shown in  Fig. \ref{fig:tr-sim-env}. The \textit{DQN} does show very high fluctuations, occasionally showing recalls at the REINFORCE levels, at round 2 and 8.
 
 \subsection{Real data - simple univariate environment}
 \begin{table*}[!htb]\centering
@@ -755,7 +759,7 @@ The simulated tool wear environment is relatively the simplest for the agent to 
 	\caption{Model performance summary - averaged over PHM-2010 environments with simple single-variable environment.}
 	\label{tbl:PHMSS}
 \end{table*}
-Real data offers a more challenging environment. Despite this, in Table \ref{tbl:PHMSS}, we notice that REINFORCE  still performs better than the other algorithms. The margins are understandably lower: precision by 0.155, recall by 0.097, F1 by 0.117 and F-beta (0.5) by 0.130. 
+Real data offers a more challenging environment. Despite this, in Table \ref{tbl:PHMSS}, we notice that REINFORCE  still performs better than the other algorithms. The margins are understandably lower: precision by 0.155, recall by 0.097, F1 by 0.117 and F-beta (0.5) by 0.130. Fig. \ref{fig:tr-ss-env} shows the plots for the simple univariate state. While the REINFORCE precision is higher for most rounds, the recall seems to be occasionally surpassed slightly by DQN's (1, 8 and 9) and by a larger margin once (5).
 
 \subsection{Real data - complex multivariate state}
 \begin{table*}[!htb]\centering
@@ -778,9 +782,8 @@ Real data offers a more challenging environment. Despite this, in Table \ref{tbl
 	\caption{Model performance summary - averaged over PHM-2010 environments with complex multivariate environment.}
 	\label{tbl:PHMMS}
 \end{table*}
-This environment offers the highest difficulty. We use real data, from \textit{multiple} sensors. As with other scenarios, we used untuned, default settings of all algorithms. In Table \ref{tbl:PHMSS}, we see that the REINFORCE has the poorest recall at 0.421, however it demonstrates a surprisingly high tool replacement precision at 0.813, which drives the F1 and F-beta to the top of the table.
+This environment offers the highest difficulty. We use real data, from \textit{multiple} sensors. As with other scenarios, we used untuned, default settings of all algorithms. In Table \ref{tbl:PHMSS}, we see that the REINFORCE has the poorest recall at 0.421, however it demonstrates a surprisingly high tool replacement precision at 0.813, which drives the F1 and F-beta to the top of the table. The plot, Fig. \ref{fig:tr-ms-env} the REINFORCE's high precision behavior. However, it is important to note that the error-bars are occasionally larger (rounds 0, 2, 4 and 6). The recall seemed higher at some points but lower half the times. The F1 appears to in range of all the other algorithms.
 
-\subsection{Plots}
 \begin{figure}[ht]
 	\begin{subfigure}{\textwidth}
 	\centering
@@ -909,10 +912,28 @@ This environment offers the highest difficulty. We use real data, from \textit{m
 	\label{fig:tr-ms-env}
 \end{figure}
 
+\subsection{Super models}
+Finally, we look at performance of ``select'' models. As a logical process, one would choose the best model from a set of 10 trained models. In machine learning, there are concepts such as ``grid-search'', that allow running through options and selecting the best. Selecting models that produce the highest F1 with a minimum criteria for precision and recall allowed us to evaluate performance of ``super-models'' for each algorithm. In Table \ref{tbl:SuperModels}, the REINFORCE performs better than the other three algorithms by a huge margin, for 14 of the 15 variants. For the PHM C06, univariate environment, the DQN performs the best, with extremely high metrics throughout and an F1 of 0.969 to 0.831 of REINFORCE.
 
+As an overall average performance, Table \ref{tbl:supermodelssummary} demonstrates the remarkable performance of the simple REINFORCE algorithm. It does show a lower recall when compared to the DQN, however it is a much more \textit{balanced} model on an overall basis.
 
-
-\subsection{Super models metrics}
+\begin{table*}[!htb]\centering
+	\sffamily
+	\rowspace{1.3}
+	\begin{tabular}{@{}l r c r c r c r@{}}
+		\arrayrulecolor{black!40}\toprule
+%		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+%		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
+		&Precision & &Recall & &F1-score  & &F-beta (0.5) \\ \midrule
+		A2C	&0.520	&&0.859	&&0.639	&&0.560\\
+		DQN	&0.651	&&0.937	&&0.740	&&0.678\\
+		PPO	&0.558	&&0.643	&&0.580	&&0.562\\
+		REINFORCE&	0.884&&	0.884	&&0.873	&&0.876\\
+		\bottomrule
+	\end{tabular}
+	\caption{Super models: Averaged performance over all 15 environments.}
+	\label{tbl:supermodelssummary}
+\end{table*}
 
 \newgeometry{margin=1cm} % Change margins for landscape table
 \begin{landscape}\centering
@@ -950,7 +971,6 @@ This environment offers the highest difficulty. We use real data, from \textit{m
 	\end{table*}
 \end{landscape}
 \restoregeometry % Restore margins after landscape table
-
 
 \subsection{Hypothesis testing}
 
