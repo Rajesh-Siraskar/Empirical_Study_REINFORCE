@@ -775,8 +775,6 @@ Real data offers a more challenging environment. Despite this, in Table \ref{tbl
 		DQN & 0.399 & 0.204 & &0.491 & 0.032 & & 0.361 & 0.035 & &0.332 &0.060 \\
 		PPO & 0.512 & 0.107 & &0.422 & 0.107 & & 0.441 & 0.096 & &0.472 &0.096 \\
 		REINFORCE & 0.813 & 0.119 & &0.421 & 0.079 & & 0.495 & 0.090 & &0.609 &0.101 \\
-		
-		
 		\bottomrule
 	\end{tabular}
 	\caption{Model performance summary - averaged over PHM-2010 environments with complex multivariate environment.}
@@ -916,22 +914,22 @@ This environment offers the highest difficulty. We use real data, from \textit{m
 Finally, we look at performance of ``select'' models. As a logical process, one would choose the best model from a set of 10 trained models. In machine learning, there are concepts such as ``grid-search'', that allow running through options and selecting the best. Selecting models that produce the highest F1 with a minimum criteria for precision and recall allowed us to evaluate performance of ``super-models'' for each algorithm. In Table \ref{tbl:SuperModels}, the REINFORCE performs better than the other three algorithms by a huge margin, for 14 of the 15 variants. For the PHM C06, univariate environment, the DQN performs the best, with extremely high metrics throughout and an F1 of 0.969 to 0.831 of REINFORCE.
 
 As an overall average performance, Table \ref{tbl:supermodelssummary} demonstrates the remarkable performance of the simple REINFORCE algorithm. It does show a lower recall when compared to the DQN, however it is a much more \textit{balanced} model on an overall basis.
-
 \begin{table*}[!htb]\centering
 	\sffamily
 	\rowspace{1.3}
-	\begin{tabular}{@{}l r c r c r c r@{}}
+	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
 		\arrayrulecolor{black!40}\toprule
-%		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
-%		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
-		&Precision & &Recall & &F1-score  & &F-beta (0.5) \\ \midrule
-		A2C	&0.520	&&0.859	&&0.639	&&0.560\\
-		DQN	&0.651	&&0.937	&&0.740	&&0.678\\
-		PPO	&0.558	&&0.643	&&0.580	&&0.562\\
-		REINFORCE&	0.884&&	0.884	&&0.873	&&0.876\\
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
+		
+		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
+		A2C & 0.520 & 0.031 & &0.859 & 0.053 & & 0.639 & 0.036 & &0.560 &0.032 \\
+		DQN & 0.651 & 0.022 & &0.937 & 0.031 & & 0.740 & 0.022 & &0.678 &0.021 \\
+		PPO & 0.558 & 0.076 & &0.643 & 0.097 & & 0.580 & 0.079 & &0.562 &0.075 \\
+		REINFORCE & 0.884 & 0.042 & &0.884 & 0.042 & & 0.873 & 0.034 & &0.876 &0.036 \\
 		\bottomrule
 	\end{tabular}
-	\caption{Super models: Averaged performance over all 15 environments.}
+	\caption{Super models: Best of 10 rounds; performance averaged over all 15 environments.}
 	\label{tbl:supermodelssummary}
 \end{table*}
 
@@ -973,22 +971,7 @@ As an overall average performance, Table \ref{tbl:supermodelssummary} demonstrat
 \restoregeometry % Restore margins after landscape table
 
 \subsection{Hypothesis testing}
-
-Notes: \\
-- Definition of 1 data point\\
-- Single training round (5th of the 10 rounds)\\
-- Single dataset:  PHM C01\\
-- Single env:  Simple univariate state\\
-- Single noise setting:  HBD = high\\
-- File has 40 rows = 4 algos x 10 test rounds\\
-- 10 test rounds of 40 random sampled points\\
-- 1 point = 1 row = 1 classification test with 40 samples\\
-- E.g. Dasic = 10 training rounds x 10 test rounds x 3 noise settings = 300 sample points\\
-- E.g. PHM SS = 3 datasets x 10 training rounds x 10 test rounds x 3 noise settings = 900 sample points\\
-- Technically Dasic = 300 points for metrics = 300 * 40 sampled data points of wear data = 12000\\
-
-
-
+We undertake a statistical analysis of the results, postulated by the hypothesis (\ref{eq:Hypothesis}). Table \ref{tbl:ttest} shows the result of a one-sided, two-sample t-test, conducted for a confidence level of 95\%. The number of samples used for the test are mentioned against each category.
 \begin{equation}
 	\left.\begin{aligned}
 		H_0 & : \mu_{RF} - \mu_{AA} = 0,\;\; \\
@@ -996,8 +979,10 @@ Notes: \\
 	\end{aligned}
 	\right\}
 	\qquad \forall \;\; \text{$AA \in[A2C, DQN, PPO]$}
+	\label{eq:Hypothesis}
 \end{equation}
 
+\noindent\textbf{What does a single data point indicate?}: Consider the ``Simulated'' category -- 10 training rounds $\times$ 10 test rounds $\times$ 3 noise settings = 300 sample points. Note that a single test round is conducted with 40 randomly sampled wear datapoints and therefore 300 samples actually indicate 300 $\times$ 40 i.e. 12,000 samples from the wear dataset. Similarly, the real-data univariate state -- 3 datasets $\times$  10 training rounds $\times$ 10 test rounds $\times$ 3 noise settings = 900 sample points.
 \begin{table*}[hbt!]\centering
 	\sffamily
 	\rowspace{1.3}
@@ -1029,90 +1014,84 @@ Notes: \\
 		F1 score & &7.27E-01 &1.44E-08 &1.35E-03 & & &0.349 &5.748 &3.220\\
 		\bottomrule
 	\end{tabular}
-	\caption{One-tail t-test - Ho: No difference in metrics. Ha: REINFORCE metric > Advanced algorithm metric}
+	\caption{Statistical test: One-sided two-sample t-tests. $H_0: \mu_{RF}-\mu_{AA}=0; H_a: \mu_{RF}-\mu_{AA} > 0$, where $AA$ is one of A2C, DQN or PPO}
 	\label{tbl:ttest}
 \end{table*}
 
-
-
 \subsection{Training times}
+Our final set of results are related to the training time required for each algorithm. The na\"ive REINFORCE algorithm is extremely slow, with a very high variance in training time, as seen in Fig. \ref{fig:tr-time}.
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\linewidth]{Model_training_time.pdf}  
-	\caption{Training time. Across 10 rounds and all environment variants.}
+	\includegraphics[width=0.70\linewidth]{Model_training_time.pdf}  
+	\caption{Training time, averaged over 10 rounds and all 15 variants.}
 	\label{fig:tr-time}
 \end{figure}
 
-
-
-
-
-
 \section{Discussion}\label{sec:Discussion}
 
-\textcolor{red}{**\textbf{DISCUSSION}** It must be noted that the classification metrics we used to evaluate, assume that the human prevent maintenance policy is ideal and suggested based on experience. In practice this might not always be the case. The RL agent is trained to replace the tool optimally i.e. maximize use before reaching the threshold use, and replace only when necessary so as to maintain lowest possible cost of replacement. In our dataset we assume the threshold to be ideally set and base the ``human'' action against that, rather than a real human action, which incidentally is not available for the PHM dataset anyway.}
-
-\begin{itemize}
-	\item R1 = +1 
-	\item R2 = -1
-	\item R3 = -100 => higher neg. Improve recall. Lower neg. Improve precision. 
-	\item Hyper-parameters for Precision or Recall control: 
-	\item Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized. 
-	\item - Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
-	\item \textbf{LOOK AHEAD PARAM}: 
-	\item  It must be noted that the classification metrics we used to evaluate, assume that the human prevent mainteance policy is ideal. Which in practice might not be the case. The RL is trained to replace the tool optimally i.e. maximize use and replace only when necessary so as to maintain lowest possible cost of replacement.
-\end{itemize}
-
-- Transition function \citep{graesser2019}: pg333 "Transition function  - also known as model. can be learnt or programmed programmable rules are common and lead to increasing complexity. \textcolor{red}{***} We use a hybrid model - partly learnt and partly programmed": \textbf{Noise and breakdown}\\
-
-
-\cite{duan2016benchmarking} the environment.\textcolor{red}{*OBSERVATION**}REINFORCE: Despite its simplicity, REINFORCE is an
-effective algorithm in optimizing deep neural network policies
-in most basic and locomotion tasks. Even for high-
-DOF tasks like Ant, REINFORCE can achieve competitive
-results. However we observe that REINFORCE sometimes
-suffers from premature convergence to local optima
-as noted by Peters  Schaal (2008), which explains the performance
-gaps between REINFORCE and TNPG on tasks
-such as Walker (Figure 3(a)). By visualizing the final policies,
-we can see that REINFORCE results in policies that
-tend to jump forward and fall over to maximize short-term
-return instead of acquiring a stable walking gait to maximize
-long-term return. In Figure 3(b), we can observe
-that even with a small learning rate, steps taken by REINFORCE
-can sometimes result in large changes to policy
-distribution, which may explain the fast convergence to local
-optima.
-
-
-\subsection{Precision or Recall?}
-- Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized \\
-- Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
-
-
-limitiongs of the slecting model for evaluation
-
-\cite{SB3-paper} -- quote from paper - intro section -- "A major challenge is that small implementation details can have a substantial effect on performance often greater than the difference between algorithms (Engstrom et al., 2020). It is particularly important that  implementations used as experimental baselines are reliable; otherwise, novel algorithms compared to weak baselines lead to inated estimates of performance improvements"
-
-DPO paper - Rafael Rafailov May-2023 --- Direct Preference Optimization: Your Language Model is Secretly a Reward Model 
-
-5.2 Instability of Actor-Critic Algorithms
-We can also use our framework to diagnose instabilities with standard actor-critic algorithms used
-for the RLHF, such as PPO. We follow the RLHF pipeline and focus on the RL fine-tuning step
-outlined in Section 3. We can draw connections to the control as inference framework [18] for the
-constrained RL problem outlined in 3. We assume a parameterized model and minimize
-This is the same objective optimized in prior works [45, 35, 1, 23] using the DPO-equivalent reward
-for the reward class of In this setting, we can interpret the normalization term in 
-as the soft value function of the reference policy . While this term does not affect the optimal
-solution, without it, the policy gradient of the objective could have high variance, making learning
-unstable. We can accommodate for the normalization term using a learned value function, but that
-can also be difficult to optimize. Alternatively, prior works have normalized rewards using a human
-completion baseline, essentially a single sample Monte-Carlo estimate of the normalizing term. In
-contrast the DPO reparameterization yields a reward function that does not require any baselines.
+%\textcolor{red}{**\textbf{DISCUSSION}** It must be noted that the classification metrics we used to evaluate, assume that the human prevent maintenance policy is ideal and suggested based on experience. In practice this might not always be the case. The RL agent is trained to replace the tool optimally i.e. maximize use before reaching the threshold use, and replace only when necessary so as to maintain lowest possible cost of replacement. In our dataset we assume the threshold to be ideally set and base the ``human'' action against that, rather than a real human action, which incidentally is not available for the PHM dataset anyway.}
+%
+%\begin{itemize}
+%	\item R1 = +1 
+%	\item R2 = -1
+%	\item R3 = -100 => higher neg. Improve recall. Lower neg. Improve precision. 
+%	\item Hyper-parameters for Precision or Recall control: 
+%	\item Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized. 
+%	\item - Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
+%	\item \textbf{LOOK AHEAD PARAM}: 
+%	\item  It must be noted that the classification metrics we used to evaluate, assume that the human prevent mainteance policy is ideal. Which in practice might not be the case. The RL is trained to replace the tool optimally i.e. maximize use and replace only when necessary so as to maintain lowest possible cost of replacement.
+%\end{itemize}
+%
+%- Transition function \citep{graesser2019}: pg333 "Transition function  - also known as model. can be learnt or programmed programmable rules are common and lead to increasing complexity. \textcolor{red}{***} We use a hybrid model - partly learnt and partly programmed": \textbf{Noise and breakdown}\\
+%
+%
+%\cite{duan2016benchmarking} the environment.\textcolor{red}{*OBSERVATION**}REINFORCE: Despite its simplicity, REINFORCE is an
+%effective algorithm in optimizing deep neural network policies
+%in most basic and locomotion tasks. Even for high-
+%DOF tasks like Ant, REINFORCE can achieve competitive
+%results. However we observe that REINFORCE sometimes
+%suffers from premature convergence to local optima
+%as noted by Peters  Schaal (2008), which explains the performance
+%gaps between REINFORCE and TNPG on tasks
+%such as Walker (Figure 3(a)). By visualizing the final policies,
+%we can see that REINFORCE results in policies that
+%tend to jump forward and fall over to maximize short-term
+%return instead of acquiring a stable walking gait to maximize
+%long-term return. In Figure 3(b), we can observe
+%that even with a small learning rate, steps taken by REINFORCE
+%can sometimes result in large changes to policy
+%distribution, which may explain the fast convergence to local
+%optima.
+%
+%
+%\subsection{Precision or Recall?}
+%- Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized \\
+%- Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
+%
+%
+%limitiongs of the slecting model for evaluation
+%
+%\cite{SB3-paper} -- quote from paper - intro section -- "A major challenge is that small implementation details can have a substantial effect on performance often greater than the difference between algorithms (Engstrom et al., 2020). It is particularly important that  implementations used as experimental baselines are reliable; otherwise, novel algorithms compared to weak baselines lead to inated estimates of performance improvements"
+%
+%DPO paper - Rafael Rafailov May-2023 --- Direct Preference Optimization: Your Language Model is Secretly a Reward Model 
+%
+%5.2 Instability of Actor-Critic Algorithms
+%We can also use our framework to diagnose instabilities with standard actor-critic algorithms used
+%for the RLHF, such as PPO. We follow the RLHF pipeline and focus on the RL fine-tuning step
+%outlined in Section 3. We can draw connections to the control as inference framework [18] for the
+%constrained RL problem outlined in 3. We assume a parameterized model and minimize
+%This is the same objective optimized in prior works [45, 35, 1, 23] using the DPO-equivalent reward
+%for the reward class of In this setting, we can interpret the normalization term in 
+%as the soft value function of the reference policy . While this term does not affect the optimal
+%solution, without it, the policy gradient of the objective could have high variance, making learning
+%unstable. We can accommodate for the normalization term using a learned value function, but that
+%can also be difficult to optimize. Alternatively, prior works have normalized rewards using a human
+%completion baseline, essentially a single sample Monte-Carlo estimate of the normalizing term. In
+%contrast the DPO reparameterization yields a reward function that does not require any baselines.
 
 \section{Conclusion}\label{sec:Conclusion}
 
-
+\newpage
 %% References
 \bibliographystyle{plainnat}
 \bibliography{ES_bibliography}
