@@ -3,7 +3,7 @@
 %% Date: 20-Jul-2023
 %% An empirical study -- REINFORCE w.r.t. A2C, DQN and PPO
 %% Build options: PdfLaTex + BibTex
-%%
+%% V.0.9: 23-07-23: Start Discussion 
 %% ----------------------------------------------------------------------------------------
 \documentclass[a4paper, 12pt]{article}
 \usepackage[T1]{fontenc}
@@ -1029,65 +1029,18 @@ Our final set of results are related to the training time required for each algo
 
 \section{Discussion}\label{sec:Discussion}
 
-%\textcolor{red}{**\textbf{DISCUSSION}** It must be noted that the classification metrics we used to evaluate, assume that the human prevent maintenance policy is ideal and suggested based on experience. In practice this might not always be the case. The RL agent is trained to replace the tool optimally i.e. maximize use before reaching the threshold use, and replace only when necessary so as to maintain lowest possible cost of replacement. In our dataset we assume the threshold to be ideally set and base the ``human'' action against that, rather than a real human action, which incidentally is not available for the PHM dataset anyway.}
-%
-%\begin{itemize}
-%	\item R1 = +1 
-%	\item R2 = -1
-%	\item R3 = -100 => higher neg. Improve recall. Lower neg. Improve precision. 
-%	\item Hyper-parameters for Precision or Recall control: 
-%	\item Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized. 
-%	\item - Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
-%	\item \textbf{LOOK AHEAD PARAM}: 
-%	\item  It must be noted that the classification metrics we used to evaluate, assume that the human prevent mainteance policy is ideal. Which in practice might not be the case. The RL is trained to replace the tool optimally i.e. maximize use and replace only when necessary so as to maintain lowest possible cost of replacement.
-%\end{itemize}
-%
+\textbf{On REINFORCE algorithm}: \cite{duan2016benchmarking} extensively studied the performane of REINFORCE algorithm on multiple OpenAI Gym environments. They observe that the ``\textit{despite its simplicity, REINFORCE is an effective algorithm in optimizing deep neural network policies}'', and ``\textit{However we observe that REINFORCE sometimes suffers from premature convergence to local optima as noted by \textcolor{red}{Peters Schaal (2008)}, which explains the performance gaps...that REINFORCE results in policies that tend to jump forward and fall over to maximize short-term return instead of acquiring a stable walking gait to maximize long-term return}'', and ``\textit{...we can observe that even with a \textcolor{red}{small learning rate} -- \textcolor{red}{WE TOOK A LARGER LR - to avoid this???}, steps taken by REINFORCE can sometimes result in large changes to policy distribution, which may explain the fast convergence to local optima.}''
+
+\textbf{On RL algorithms}: \cite{SB3-paper}, in its Introduction section mentions that ``\textit{A major challenge is that small implementation details can have a substantial effect on performance often greater than the difference between algorithms \textcolor{red}{(Engstrom et al., 2020)}. It is particularly important that  implementations used as experimental baselines are reliable; otherwise, novel algorithms compared to weak baselines lead to inated estimates of performance improvements}''
+
+\textbf{On the evaluation criteria:} It must be noted that the classification metrics we used to evaluate, assume that the human prevent maintenance policy is ideal and suggested based on experience. In practice this might not always be the case. The RL agent is trained to replace the tool optimally i.e. maximize use before reaching the threshold use, and replace only when necessary so as to maintain lowest possible cost of replacement. In our dataset we assume the threshold to be ideally set and base the ``human'' action against that, rather than a real human action, which incidentally is not available for the PHM dataset anyway.
+
+\textbf{On precision and recall control}: High precision implies lower $FP$ i.e. false replacement action reduced i.e. unnecessary tool replacements reduced. Tool life maximized, down time minimized, production disruption minimized.  High recall implies lower $FN$, i.e. false declaration of ``normal  state'' reduced, so true normal state detection increased.
+
+\textbf{On the reward function:} Default value for $R3$ was $-40$. A higher penalty for tool replacement improves recall, while a lower penalty improved precision.
+ 
 %- Transition function \citep{graesser2019}: pg333 "Transition function  - also known as model. can be learnt or programmed programmable rules are common and lead to increasing complexity. \textcolor{red}{***} We use a hybrid model - partly learnt and partly programmed": \textbf{Noise and breakdown}\\
 %
-%
-%\cite{duan2016benchmarking} the environment.\textcolor{red}{*OBSERVATION**}REINFORCE: Despite its simplicity, REINFORCE is an
-%effective algorithm in optimizing deep neural network policies
-%in most basic and locomotion tasks. Even for high-
-%DOF tasks like Ant, REINFORCE can achieve competitive
-%results. However we observe that REINFORCE sometimes
-%suffers from premature convergence to local optima
-%as noted by Peters  Schaal (2008), which explains the performance
-%gaps between REINFORCE and TNPG on tasks
-%such as Walker (Figure 3(a)). By visualizing the final policies,
-%we can see that REINFORCE results in policies that
-%tend to jump forward and fall over to maximize short-term
-%return instead of acquiring a stable walking gait to maximize
-%long-term return. In Figure 3(b), we can observe
-%that even with a small learning rate, steps taken by REINFORCE
-%can sometimes result in large changes to policy
-%distribution, which may explain the fast convergence to local
-%optima.
-%
-%
-%\subsection{Precision or Recall?}
-%- Precision => low FP => False replacement-action reduced. \textcolor{red}{***} Unnecessary tool replacement reduced. Tool life maximized, down time minimized, production disruption minimized \\
-%- Recall => low FN => False declaration of normal operation reduced. Reduce missed replacements. Tool replacements increased. \textcolor{red}{***} Product quality not compromised. 
-%
-%
-%limitiongs of the slecting model for evaluation
-%
-%\cite{SB3-paper} -- quote from paper - intro section -- "A major challenge is that small implementation details can have a substantial effect on performance often greater than the difference between algorithms (Engstrom et al., 2020). It is particularly important that  implementations used as experimental baselines are reliable; otherwise, novel algorithms compared to weak baselines lead to inated estimates of performance improvements"
-%
-%DPO paper - Rafael Rafailov May-2023 --- Direct Preference Optimization: Your Language Model is Secretly a Reward Model 
-%
-%5.2 Instability of Actor-Critic Algorithms
-%We can also use our framework to diagnose instabilities with standard actor-critic algorithms used
-%for the RLHF, such as PPO. We follow the RLHF pipeline and focus on the RL fine-tuning step
-%outlined in Section 3. We can draw connections to the control as inference framework [18] for the
-%constrained RL problem outlined in 3. We assume a parameterized model and minimize
-%This is the same objective optimized in prior works [45, 35, 1, 23] using the DPO-equivalent reward
-%for the reward class of In this setting, we can interpret the normalization term in 
-%as the soft value function of the reference policy . While this term does not affect the optimal
-%solution, without it, the policy gradient of the objective could have high variance, making learning
-%unstable. We can accommodate for the normalization term using a learned value function, but that
-%can also be difficult to optimize. Alternatively, prior works have normalized rewards using a human
-%completion baseline, essentially a single sample Monte-Carlo estimate of the normalizing term. In
-%contrast the DPO reparameterization yields a reward function that does not require any baselines.
 
 \section{Conclusion}\label{sec:Conclusion}
 
