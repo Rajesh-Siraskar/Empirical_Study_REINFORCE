@@ -137,7 +137,7 @@ For reproducibility, model training and testing code, data and the trained REINF
 \thispagestyle{empty}
 %\listoffigures
 %\listoftables
-
+\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
 \section{Introduction}
 % $$$ Quote
 %\epigraph{"Plurality should not be posited without necessity" -- Of two competing theories, the simpler explanation of an entity is to be preferred}{--- \textup{William of Ockham (1285–1347)}, The Occams razor principle}
@@ -266,7 +266,7 @@ As of 10-Jul-2023, 13 algorithms have been implemented \citep{SB3-algorithms}. R
 
 \section{Methodology}\label{sec:Method}
 \subsection{Implementation details}\label{sec:Implementation}
-Reinforcement learning requires an environment to function. In this section we describe the custom milling environment we built, which allows our agent to learn a policy for tool replacement. Figure \ref{fig:environments} shows the stepped approach used to generate the \textit{fifteen} environments, of varying complexity, to evaluate the agents. In this section we describe the approach used to model and simulate tool-wear and hence generate wear data followed by actual tool wear data. We then describe the elements of environment design i.e. state, reward functions. The Python code used for this research is uploaded to GitHub at \href{https://github.com/Rajesh-Siraskar/Empirical_Study_REINFORCE}{URL}.  % $$$ we follow the procedure in \cite{graesser2019} pg 289 Part iv, ch14-15.
+Reinforcement learning requires an environment to function. In this section we describe the custom milling environment we built, which allows our agent to learn a policy for tool replacement. Figure \ref{fig:environments} shows the stepped approach used to generate the \textit{fifteen} environments, of varying complexity, to evaluate the agents. In this section we describe the approach used to model and simulate tool-wear and hence generate wear data followed by actual tool wear data. We then describe the elements of environment design i.e. state space, action space and reward functions. The Python code used for this research is uploaded to GitHub at \href{https://github.com/Rajesh-Siraskar/Empirical_Study_REINFORCE}{URL}.  % $$$ we follow the procedure in \cite{graesser2019} pg 289 Part iv, ch14-15.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{Environments.pdf}  
@@ -390,16 +390,71 @@ Table \ref{tbl:ListEnvironments} summarizes the 15 environment variants and thei
 	\label{tbl:ListEnvironments}
 \end{table*}
 
+\subsubsection{Markov Decision Processes (MDP)}
+$\mathcal{A, S, P, R}$
+\begin{verbatim}
+	\textcolor{red}{Each RL problem assumes that there is an underlying Markov Decision Process (MDP). MDPs are
+		used to mathematically model decision making control processes, and forms the basis of how we
+		derive the optimization problem for RL. All MDPs satisfy the Markov property, which indicates
+		that any transition to another state is only dependent on the current state, irrespective of the
+		previous states [12].
+		MDPs are defined by a quintuple (S, A,P, R,g) [13]:
+		• State space (S): A state is a representation of the environment. The state space is the set
+		of all possible states.
+		• Action space (A): The set of all possible actions the learning agent can take in the environment.
+		• Probability transition matrix (P): Each element in this matrix can be defined as P
+		a
+		ss0 ,
+		which is the probability of transitioning from a state s to another state s
+		0 when taking an
+		action a. This matrix has dimensions |S| × |S| × |A|.
+		• Reward matrix (R): Each element in this matrix can be defined as Ra
+		ss0 , which is the
+		reward received when transitioning from state s to state s
+		0 by taking action a. This matrix
+		has dimensions |S| × |S| × |A|.
+		• Reward discount factor (g): When making decisions, we want to account for future
+		rewards we can gain. This allows us to take less intuitive actions early on which lead to
+		much larger rewards in the future. g defines how much we care about future rewards relative
+		to immediate rewards. g is a real value between 0 and 1. If g = 1, we care about all future
+		rewards. On the other hand, having g = 0 causes us to completely neglect future rewards,
+		and focus on making the best action at this current moment in time
+		
+		Model-based learning: We learn the underlying model by calculating estimates of P and
+		R. Once we have a good model, we use this to plan our actions and find a good policy.
+		2. Model-free learning: We don’t attempt to learn the underlying model (P or R). Rather,
+		we directly use experienced samples to estimate the optimal state-action values to form an
+		optimal policy}
+\end{verbatim}
+
+
+\subsubsection*{State space}
+We can formally define the various state space as follows:
+
+\begin{equation}
+	S_t \;\;=\;\;
+	\begin{cases}
+		\;\;  +R_1 \times t, & \quad if \;\; w(s_t) < W_T\\
+		\;\;  -R_2 \times t, & \quad if \;\; w(s_t) \ge W_T\\
+		\;\; \mathrel{+}= -R_3, & \quad if \;\; \text{ACTION = REPLACE\_TOOL}\\
+	\end{cases}
+	\label{eq:StateSpace}
+\end{equation}
+
+Simple univariate state: wear, wear threshold, noise factor, chance of breakdown
+Complex multivariate state: wear, wear threshold, noise factor, chance of breakdown
+
+
 \subsubsection*{Actions}
 The choice of action is binary and represented by $\text{ACTION} \in [0, 1]$, where $0$ represents continuation of milling operation ($\text{CONTINUE}$), while $1$ represents the action of replacing the tool ($\text{REPLACE\_TOOL}$).
 
 \subsubsection*{Reward function}
-The reward function (\ref{eq:RewardFunction}) drives the learning process. Code implementation is seen in Listing \ref{lst:SSStep}. There are three important phases where reward (or penalty) is provided as feedback. $R_1$, $R_2$ and $R_3$ are constants that determine the magnitude of reward. The first condition is when the current state of wear $w(s_t)$ is less than the threshold $W_T$, and a desirable condition, hence the reward is positive. The formulation allows higher reward to be collected the closer it is to threshold, but not allowing it to cross it. If it does, the agent is penalized (negative reward) by a magnitude of $R2$ and once again the farther away it is from the threshold i.e. a highly deteriorated tool the larger the penalty. To avoid this ``bad" state, the agent must learn to replace the tool; represented by the third condition. Tool replacement implies a direct cost (that of the tool) and a much higher and significant downtime ``cost''. To ensure the agent learns not to replace unnecessarily, we ``penalize'' it. It is important to note that the last condition in (\ref{eq:RewardFunction}) is an ``incremental addition", the first two conditions are mutually exclusive and evaluated first, followed by the last condition which is incrementally added on whatever reward is collected in the previous condition. The agent then tries to balance these three condition, such that it maximizes its total return, over time.
+The reward function (\ref{eq:RewardFunction}) drives the learning process. Code implementation is seen in Listing \ref{lst:SSStep}. There are three important phases where reward (or penalty) is provided as feedback. $R_1$, $R_2$ and $R_3$ are constants that determine the magnitude of reward. The first condition is when the current state of wear $w_t$ is less than the threshold $W_\tau$, and a desirable condition, hence the reward is positive. The formulation allows higher reward to be collected the closer it is to threshold, but not allowing it to cross it. If it does, the agent is penalized (negative reward) by a magnitude of $R_2$ and once again the farther away it is from the threshold i.e. a highly deteriorated tool the larger the penalty. To avoid this ``bad" state, the agent must learn to replace the tool; represented by the third condition. Tool replacement implies a direct cost (that of the tool) and a much higher and significant downtime ``cost''. To ensure the agent learns not to replace unnecessarily, we ``penalize'' it. It is important to note that the last condition in (\ref{eq:RewardFunction}) is an ``incremental addition", the first two conditions are mutually exclusive and evaluated first, followed by the last condition which is incrementally added on whatever reward is collected in the previous condition. The agent then tries to balance these three condition, such that it maximizes its total return, over time.
 \begin{equation}
 	R_t \;\;=\;\;
 	\begin{cases}
-		\;\;  +R_1 \times t, & \quad if \;\; w(s_t) < W_T\\
-		\;\;  -R_2 \times t, & \quad if \;\; w(s_t) \ge W_T\\
+		\;\;  +R_1 \times t, & \quad if \;\; w_t < W_\tau\\
+		\;\;  -R_2 \times t, & \quad if \;\; w_t\ge W_\tau\\
 		\;\; \mathrel{+}= -R_3, & \quad if \;\; \text{ACTION = REPLACE\_TOOL}\\
 	\end{cases}
 	\label{eq:RewardFunction}
@@ -597,9 +652,10 @@ Figure \ref{fig:C04trplots} shows the training plots for the algorithm of our in
 Testing was performed with data separate from the training data. 10 rounds of testing are performed, with a \textit{new} set of 40 test cases randomly sampled and frozen across all four algorithms. 
 
 \subsubsection*{Evaluation metrics}
-In our data, we indicate a tool replacement suggested by the human expert as 1, and a normal operation as 0. The human decision is based on ``preventive maintenance'' against a set threshold. In reality the threshold is based on several factors like materials of tool and work-piece, the duration of continuous operation, ambient conditions, ``cost'' of production downtime etc. Threshold could therefore vary significantly from one case to another.
+RL algorithms are often evaluated based on the learning efficiency by using metrics such as average reward and the number of episodes to reach maximum reward. However for the industrial practitioner this is of secondary significance and it is the tool replacement precision that is of prime importance. 
 
-We applied classification metrics to evaluate the RL agent decisions that suggest similar actions. These are simple to understand for the general industrial practitioners. 
+In our data, we indicate a tool replacement suggested by the human expert as 1, and a normal operation as 0. The human decision is based on ``preventive maintenance'' against a set threshold. In reality the threshold is based on several factors like materials of tool and work-piece, the duration of continuous operation, ambient conditions, ``cost'' of production downtime etc. Threshold could therefore vary significantly from one case to another. We applied  classification metrics to evaluate the RL agent decisions that suggest similar actions. These are simple to understand for the general industrial practitioners.
+ 
 \begin{figure}
 	\begin{center}
 		\sffamily
@@ -691,6 +747,8 @@ We first present averaged metrics and averaged standard deviation of \textit{all
 	\end{table*}
 \end{landscape}
 \restoregeometry % Restore margins after landscape table
+\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+
 
 \subsection{Overall summary performance}
 \begin{table*}[!htb]\centering
@@ -968,7 +1026,10 @@ As an overall average performance, Table \ref{tbl:supermodelssummary} demonstrat
 		\label{tbl:SuperModels}
 	\end{table*}
 \end{landscape}
-\restoregeometry % Restore margins after landscape table
+% Restore margins after landscape table
+\restoregeometry 
+\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+
 
 \subsection{Hypothesis testing}
 We undertake a statistical analysis of the results, postulated by the hypothesis (\ref{eq:Hypothesis}). Table \ref{tbl:ttest} shows the result of a one-sided, two-sample t-test, conducted for a confidence level of 95\%. The number of samples used for the test are mentioned against each category.
@@ -1028,10 +1089,13 @@ Our final set of results are related to the training time required for each algo
 \end{figure}
 
 \section{Discussion}\label{sec:Discussion}
+\textcolor{red}{LAYOUT: -- Duan2016, peters Schaal and REINFORCE ORIGINAL paper? what do they say abt the perf: unstable. local optima, etc.. ***HENCE**** while there is no doubt that blah blah -- \textit{this empirical study} demostrates that it could benefit from looking deeper.}
 
-\textbf{On REINFORCE algorithm}: \cite{duan2016benchmarking} extensively studied the performane of REINFORCE algorithm on multiple OpenAI Gym environments. They observe that the ``\textit{despite its simplicity, REINFORCE is an effective algorithm in optimizing deep neural network policies}'', and ``\textit{However we observe that REINFORCE sometimes suffers from premature convergence to local optima as noted by \textcolor{red}{Peters Schaal (2008)}, which explains the performance gaps...that REINFORCE results in policies that tend to jump forward and fall over to maximize short-term return instead of acquiring a stable walking gait to maximize long-term return}'', and ``\textit{...we can observe that even with a \textcolor{red}{small learning rate} -- \textcolor{red}{WE TOOK A LARGER LR - to avoid this???}, steps taken by REINFORCE can sometimes result in large changes to policy distribution, which may explain the fast convergence to local optima.}''
+\cite{duan2016benchmarking} extensively studied the performance of REINFORCE on multiple OpenAI Gym environments and observe that, despite its simplicity it is an effective algorithm in optimizing policies based on deep neural networks. On the other hand, their empirical study concluded that REINFORCE is occasionally trapped in premature convergence to local optima which is also supported by \textcolor{red}{Peters Schaal (2008)}, \textit{which explains the performance gaps...that REINFORCE results in policies that tend to jump forward and fall over to maximize short-term return instead of acquiring a stable walking gait to maximize long-term return}, and ``\textit{...we can observe that even with a \textcolor{red}{small learning rate} -- \textcolor{red}{WE TOOK A LARGER LR - to avoid this???}, steps taken by REINFORCE can sometimes result in large changes to policy distribution, which may explain the fast convergence to local optima.}''
 
-\textbf{On RL algorithms}: \cite{SB3-paper}, in its Introduction section mentions that ``\textit{A major challenge is that small implementation details can have a substantial effect on performance often greater than the difference between algorithms \textcolor{red}{(Engstrom et al., 2020)}. It is particularly important that  implementations used as experimental baselines are reliable; otherwise, novel algorithms compared to weak baselines lead to inated estimates of performance improvements}''
+While there is no doubt that this REINFORCE na\"ive implementation will be unstable and occasionally produce learning patterns that are stuck in local optimas and demonstrate premature convergence, our exhaustive empirical studies indicate that it did perform well for this problem. 
+
+\textbf{On RL algorithms}: \cite{SB3-paper}, in its Introduction section mentions that ``\textit{A major challenge is that small implementation details can have a substantial effect on performance often greater than the difference between algorithms \textcolor{red}{(Engstrom et al., 2020)}.}''
 
 \textbf{On the evaluation criteria:} It must be noted that the classification metrics we used to evaluate, assume that the human prevent maintenance policy is ideal and suggested based on experience. In practice this might not always be the case. The RL agent is trained to replace the tool optimally i.e. maximize use before reaching the threshold use, and replace only when necessary so as to maintain lowest possible cost of replacement. In our dataset we assume the threshold to be ideally set and base the ``human'' action against that, rather than a real human action, which incidentally is not available for the PHM dataset anyway.
 
@@ -1043,6 +1107,9 @@ Our final set of results are related to the training time required for each algo
 %
 
 \section{Conclusion}\label{sec:Conclusion}
+The REINFORCE is a simple algorithm and our na\"ive implementation can be improved drastically, for example with the implementation of a baseline. We evaluated the REINFORCE along with industry grade implementations of more advanced algorithms -- DQN, A2C and PPO. Over the 15 environment variants, comprising of simulated and real data, 3 different real datasets, simple univariate and complex multivariate version of environments; the REINFORCE performs reasonably well.  , Despite its simplicity, the REINFORCE performs well.   
+
+Important study in the PdM domain and using real data (compared to \cite{duan2016benchmarking} - OpenAI Gym envs.)
 
 \newpage
 %% References
