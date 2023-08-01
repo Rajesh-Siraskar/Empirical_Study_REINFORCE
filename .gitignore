@@ -1,7 +1,7 @@
 storage/
 */storage
-models-all/
 Template/
+presentation/
 *.aux
 *.log
 *.lot
