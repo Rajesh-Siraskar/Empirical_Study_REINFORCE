@@ -42,6 +42,7 @@
 \usepackage[spaces, hyphens]{url}
 \usepackage[colorlinks, allcolors=blue]{hyperref}
 \usepackage{chronosys}
+\usepackage[title]{appendix}
 
 % Macros
 \algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
@@ -1029,9 +1030,9 @@ The REINFORCE is a simple algorithm and our na\"ive implementation can be improv
 
 Implementing robust RL algorithms is complex and \cite{SB3-paper} mention how small implementation details can significantly impact performance that is often greater than the difference between the algorithms themselves. We hope our research will contribute to empirical evidence in the study of REINFORCE and therefore contribute in an infinitesimal way to enable AutoML for the field of predictive maintenance using RL. %conducted on non-OpenAI-Gym environment, 
 
-\appendix
-\section{Detailed results}
-%\subsection{Detailed performance across all variants - Averaged over 10 rounds of training}
+\begin{appendices}
+\section{Detailed results}\label{apx}
+
 \newgeometry{margin=1cm} % Change margins for landscape table
 \begin{landscape}\centering
 	\begin{table*}
@@ -1071,7 +1072,6 @@ Implementing robust RL algorithms is complex and \cite{SB3-paper} mention how sm
 \restoregeometry % Restore margins after landscape table
 \newgeometry{left=1in, top=1in, right=1in, bottom=1in}
 
-%\subsection{Super models - Detailed performance across all variants}
 \newgeometry{margin=1cm} % Change margins for landscape table
 \begin{landscape}\centering
 	\begin{table*}
@@ -1189,6 +1189,7 @@ Implementing robust RL algorithms is complex and \cite{SB3-paper} mention how sm
 %% Restore margins after landscape table
 %\restoregeometry 
 %\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+\end{appendices}
 
 %% References
 \singlespacing

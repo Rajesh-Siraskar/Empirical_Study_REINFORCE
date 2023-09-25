@@ -5,8 +5,9 @@
 %% Build options: PdfLaTex + BibTex
 %% V.1.1:  30-Aug-2023: First release with, NUAA error removed from Abstract
 %% V.2.02: 24-Sep-2023: Remove $ space issues
+%% V.2.04: 25-Sep-2023: Move large plots to Appendix, and keep Fbeta in main 
 %% ----------------------------------------------------------------------------------------
-\def\Version{\today { } V 2.03} % Env. / reward fn.
+\def\Version{\today { } V 2.05} % Modify error bar line plots
 
 \documentclass[a4paper, 12pt]{article}
 \usepackage[T1]{fontenc}
@@ -20,37 +21,12 @@
 
 
 %\usepackage{csquotes} 	% Quotes
-\usepackage{listings}
+%\usepackage{listings}
 \usepackage[table]{xcolor} %
 \usepackage{xcolor, soul, colortbl} % Highlights
 %\usepackage{csquotes} 	% Quotes
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-	backgroundcolor=\color{backcolour},   
-	commentstyle=\color{codegreen},
-	keywordstyle=\color{magenta},
-	numberstyle=\tiny\color{codegray},
-	stringstyle=\color{codepurple},
-	basicstyle=\ttfamily\footnotesize,
-	breakatwhitespace=false,         
-	breaklines=true,                 
-	captionpos=b,                    
-	keepspaces=true,                 
-	numbers=left,                    
-	numbersep=5pt,                  
-	showspaces=false,                
-	showstringspaces=false,
-	showtabs=false,                  
-	tabsize=2
-}
-\lstset{style=mystyle}
 
 \usepackage{authblk}
 \usepackage{booktabs}	% Tables
@@ -66,6 +42,7 @@
 \usepackage[spaces, hyphens]{url}
 \usepackage[colorlinks, allcolors=blue]{hyperref}
 \usepackage{chronosys}
+\usepackage[title]{appendix}
 
 % Macros
 \algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
@@ -75,21 +52,13 @@
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcommand{\rowspace}[1]{\renewcommand{\arraystretch}{#1}}
 
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{dblue}{rgb}{0.12, 0.56, 1.0}
+
 % Affiliations format set to small size
 \setcounter{Maxaffil}{0}
 \renewcommand\Affilfont{\small}
 \newgeometry{left=1in, top=1in, right=1in, bottom=1in}
-%\renewenvironment{abstract}
-%{\small
-%	\begin{center}
-%		\bfseries \abstractname\vspace{-.5em}\vspace{0pt}
-%	\end{center}
-%	\list{}{
-%		\setlength{\leftmargin}{.25cm}%
-%		\setlength{\rightmargin}{\leftmargin}%
-%	}%
-%	\item\relax}
-%{\endlist}
 
 %% Quotes with epigraph style
 \usepackage{epigraph}
@@ -663,7 +632,9 @@ While we prefer a high precision, we do want a reasonably high recall i.e. do no
 %\end{verbatim}
 
 \section{Results}\label{sec:Results}
-We first present averaged metrics and averaged standard deviation of \textit{all} 15 variants in Table \ref{tbl:DetailedMetrics}, followed by category wise summary of results. These summaries are followed by error-bar plots over the 10 training rounds. Selecting the best of 10 models obtained, for each algorithm, offers a comparison of select models, we called ``super models''. 
+\hlc{We present the summarized results in this section accompanied by commentary referring to detailed results made available in Appendix {\ref{apx}}. Tables in this section and Appendix {\ref{apx}} use {\textcolor{dblue}{blue}} text to highlight prominent values. Plots accompany tables to assist in visualizing the comparative performance.}
+
+We first present the overall category-wise averaged metrics and averaged standard deviations, followed by error-bar plots of the F-beta (0.5) validation score across the ten training-cum-testing rounds. Finally, we present performance of the ``super models'' -- best of the ten trained models, for each algorithm.
 
 \begin{enumerate}
 	\item Overall performance: Averaged over all 15 environments (Table \ref{tbl:ListEnvironments}, items 1--15)
@@ -671,84 +642,6 @@ We first present averaged metrics and averaged standard deviation of \textit{all
 	\item Real data - simple univariate state: Averaged over 9 variants i.e. 3 PHM datasets (C01, C04 and C06) $\times$ 3 noise settings each (Table \ref{tbl:ListEnvironments}, items 4--12) 
 	\item Real data - complex multivariate state: Averaged over 3 PHM dataset variants i.e. C01, C04 and C06 (Table \ref{tbl:ListEnvironments}, items 13--15)
 \end{enumerate}
-
-%\newgeometry{margin=1cm} % Change margins for landscape table
-%\begin{landscape}\centering
-%	\begin{table*}
-%		\sffamily
-%		\rowspace{1.3}
-%		\begin{tabular}{@{}l rrrr @{\kern8pt}c rrrr @{\kern8pt}c rrrr @{\kern8pt}c rrrr@{}} \arrayrulecolor{black!40}\toprule
-%			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
-%			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
-%			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
-%			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
-%			Simulated  - No noise &\textbf{0.842} &\textbf{0.878} &\textbf{0.838} & \textbf{0.834} & & 0.424 &0.451 &0.423 &0.421 & &0.426 &0.674 &0.471 &0.410 & &0.504 &0.200 &0.271&0.360\\
-%			Simulated  - Low noise &\textbf{0.777} &\textbf{0.929} &\textbf{0.834} & \textbf{0.796} & & 0.465 &0.423 &0.409 &0.427 & &0.421 &0.338 &0.270 &0.283 & &0.482 &0.236 &0.296&0.369\\
-%			Simulated  - High noise &\textbf{0.798} &\textbf{0.940} &\textbf{0.851} & \textbf{0.816} & & 0.358 &0.281 &0.256 &0.272 & &0.447 &0.519 &0.380 &0.360 & &0.514 &0.207 &0.286&0.382\\ \midrule
-%			
-%			PHM C01 SS - No noise &0.478 &0.363 &0.400 & 0.439 & & \textbf{0.501} &\textbf{0.500} &\textbf{0.493} &\textbf{0.496} & &0.472 &0.807 &0.568 &0.490 & &0.440 &0.417 &0.387&0.395\\
-%			PHM C01 SS - Low noise &0.507 &0.311 &0.332 & 0.383 & & \textbf{0.503} &\textbf{0.598} &\textbf{0.535} &\textbf{0.513} & &0.393 &0.502 &0.351 &0.317 & &0.522 &0.338 &0.388&0.448\\
-%			PHM C01 SS - High noise &\textbf{0.693} &\textbf{0.562} &\textbf{0.579} & \textbf{0.623} & & 0.266 &0.282 &0.267 &0.262 & &0.458 &0.525 &0.400 &0.384 & &0.456 &0.369 &0.372&0.400\\ \hdashline
-%			
-%			PHM C04 SS - No noise &\textbf{0.751} &\textbf{0.878} &\textbf{0.784} & \textbf{0.757} & & 0.487 &0.442 &0.449 &0.463 & &0.439 &0.684 &0.472 &0.411 & &0.500 &0.510 &0.469&0.473\\
-%			PHM C04 SS - Low noise &\textbf{0.662} &\textbf{0.756} &\textbf{0.672} & \textbf{0.657} & & 0.409 &0.455 &0.428 &0.416 & &0.411 &0.500 &0.370 &0.341 & &0.488 &0.280 &0.324&0.386\\
-%			PHM C04 SS - High noise &\textbf{0.611} &\textbf{0.713} &\textbf{0.620} & \textbf{0.598} & & 0.518 &0.607 &0.552 &0.530 & &0.358 &0.451 &0.325 &0.294 & &0.428 &0.262 &0.286&0.333\\ \hdashline
-%			
-%			PHM C06 SS - No noise &\textbf{0.830} &\textbf{0.726} &\textbf{0.754} & \textbf{0.792} & & 0.517 &0.509 &0.507 &0.511 & &0.360 &0.309 &0.256 &0.258 & &0.409 &0.248 &0.275&0.321\\
-%			PHM C06 SS - Low noise &0.205 &0.279 &0.228 & 0.212 & & \textbf{0.510} &\textbf{0.577} &\textbf{0.530} &\textbf{0.516} & &0.434 &0.266 &0.266 &0.296 & &0.417 &0.181 &0.232&0.294\\
-%			PHM C06 SS - High noise &\textbf{0.709} &\textbf{0.843} &\textbf{0.759 }& \textbf{0.726} & & 0.316 &0.324 &0.311 &0.308 & &0.449 &0.518 &0.400 &0.375 & &0.388 &0.222 &0.265&0.317\\ \midrule
-%			
-%			PHM C01 MS - No noise &\textbf{0.835} &\textbf{0.652} &\textbf{0.656} & \textbf{0.716} & & 0.461 &0.444 &0.397 &0.404 & &0.384 &0.558 &0.393 &0.348 & &0.513 &0.383 &0.416&0.460\\
-%			PHM C04 MS - No noise &\textbf{0.739} &0.255 &0.359 & \textbf{0.494} & & 0.498 &\textbf{0.589 }&\textbf{0.490} &0.470 & &0.323 &0.209 &0.160 &0.168 & &0.499 &0.393 &0.421&0.457\\
-%			PHM C06 MS - No noise &\textbf{0.864} &0.356 &0.469 & \textbf{0.616} & & 0.501 &\textbf{0.713} &\textbf{0.578} &\textbf{0.527} & &0.489 &0.705 &0.529 &0.479 & &0.523 &0.488 &0.485&0.498\\
-%			
-%			\bottomrule
-%		\end{tabular}
-%		\caption{Model performance comparison all variants of the environments, over 10 rounds of training.}
-%		\label{tbl:DetailedMetrics_BOLD}
-%	\end{table*}
-%\end{landscape}
-%\restoregeometry % Restore margins after landscape table
-%\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
-
-\newgeometry{margin=1cm} % Change margins for landscape table
-\begin{landscape}\centering
-	\begin{table*}
-		\sffamily
-		\rowspace{1.3}
-		\begin{tabular}{@{}l rrrr @{\kern8pt}c rrrr @{\kern8pt}c rrrr @{\kern8pt}c rrrr@{}} \arrayrulecolor{black!40}\toprule
-			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
-			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
-			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
-			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
-			Simulated  - No noise &\underline{0.842} &\underline{0.878} &\underline{0.838} & \underline{0.834} & & 0.424 &0.451 &0.423 &0.421 & &0.426 &0.674 &0.471 &0.410 & &0.504 &0.200 &0.271&0.360\\
-			Simulated  - Low noise &\underline{0.777} &\underline{0.929} &\underline{0.834} & \underline{0.796} & & 0.465 &0.423 &0.409 &0.427 & &0.421 &0.338 &0.270 &0.283 & &0.482 &0.236 &0.296&0.369\\
-			Simulated  - High noise &\underline{0.798} &\underline{0.940} &\underline{0.851} & \underline{0.816} & & 0.358 &0.281 &0.256 &0.272 & &0.447 &0.519 &0.380 &0.360 & &0.514 &0.207 &0.286&0.382\\ \midrule
-			
-			PHM C01 SS - No noise &0.478 &0.363 &0.400 & 0.439 & & \underline{0.501} &0.500 &0.493 &\underline{0.496} & &0.472 &\underline{0.807} &\underline{0.568} &0.490 & &0.440 &0.417 &0.387&0.395\\
-			PHM C01 SS - Low noise &0.507 &0.311 &0.332 & 0.383 & & \underline{0.503} &\underline{0.598} &\underline{0.535} &\underline{0.513} & &0.393 &0.502 &0.351 &0.317 & &0.522 &0.338 &0.388&0.448\\
-			PHM C01 SS - High noise &\underline{0.693} &\underline{0.562} &\underline{0.579} & \underline{0.623} & & 0.266 &0.282 &0.267 &0.262 & &0.458 &0.525 &0.400 &0.384 & &0.456 &0.369 &0.372&0.400\\ \hdashline
-			
-			PHM C04 SS - No noise &\underline{0.751} &\underline{0.878} &\underline{0.784} & \underline{0.757} & & 0.487 &0.442 &0.449 &0.463 & &0.439 &0.684 &0.472 &0.411 & &0.500 &0.510 &0.469&0.473\\
-			PHM C04 SS - Low noise &\underline{0.662} &\underline{0.756} &\underline{0.672} & \underline{0.657} & & 0.409 &0.455 &0.428 &0.416 & &0.411 &0.500 &0.370 &0.341 & &0.488 &0.280 &0.324&0.386\\
-			PHM C04 SS - High noise &\underline{0.611} &\underline{0.713} &\underline{0.620} & \underline{0.598} & & 0.518 &0.607 &0.552 &0.530 & &0.358 &0.451 &0.325 &0.294 & &0.428 &0.262 &0.286&0.333\\ \hdashline
-			
-			PHM C06 SS - No noise &\underline{0.830} &\underline{0.726} &\underline{0.754} & \underline{0.792} & & 0.517 &0.509 &0.507 &0.511 & &0.360 &0.309 &0.256 &0.258 & &0.409 &0.248 &0.275&0.321\\
-			PHM C06 SS - Low noise &0.205 &0.279 &0.228 & 0.212 & & \underline{0.510} &\underline{0.577} &\underline{0.530} &\underline{0.516} & &0.434 &0.266 &0.266 &0.296 & &0.417 &0.181 &0.232&0.294\\
-			PHM C06 SS - High noise &\underline{0.709} &\underline{0.843} &\underline{0.759 }& \underline{0.726} & & 0.316 &0.324 &0.311 &0.308 & &0.449 &0.518 &0.400 &0.375 & &0.388 &0.222 &0.265&0.317\\ \midrule
-			
-			PHM C01 MS - No noise &\underline{0.835} &\underline{0.652} &\underline{0.656} & \underline{0.716} & & 0.461 &0.444 &0.397 &0.404 & &0.384 &0.558 &0.393 &0.348 & &0.513 &0.383 &0.416&0.460\\
-			PHM C04 MS - No noise &\underline{0.739} &0.255 &0.359 & \underline{0.494} & & 0.498 &\underline{0.589 }&\underline{0.490} &0.470 & &0.323 &0.209 &0.160 &0.168 & &0.499 &0.393 &0.421&0.457\\
-			PHM C06 MS - No noise &\underline{0.864} &0.356 &0.469 & \underline{0.616} & & 0.501 &\underline{0.713} &\underline{0.578} &0.527 & &0.489 &0.705 &0.529 &0.479 & &0.523 &0.488 &0.485&0.498\\
-			
-			\bottomrule
-		\end{tabular}
-		\caption{Model performance comparison all variants of the environments, over 10 rounds of training. Maximum values are underlined.}
-		\label{tbl:DetailedMetrics}
-	\end{table*}
-\end{landscape}
-\restoregeometry % Restore margins after landscape table
-\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
 
 \subsection{Overall summary performance}
 \begin{table*}[h]\centering
@@ -764,7 +657,7 @@ We first present averaged metrics and averaged standard deviation of \textit{all
 		A2C & 0.449 & 0.088 & &0.480 & 0.084 & & 0.442 & 0.070 & &0.436 &0.071 \\
 		DQN & 0.418 & 0.185 & &0.504 & 0.032 & & 0.374 & 0.035 & &0.348 &0.058 \\
 		PPO & 0.472 & 0.144 & &0.316 & 0.087 & & 0.345 & 0.091 & &0.393 &0.105 \\
-		REINFORCE & 0.687 & 0.059 & &0.629 & 0.051 & & 0.609 & 0.050 & &0.631 &0.052 \\
+		REINFORCE & \textcolor{dblue}{0.687} & 0.059 & &\textcolor{dblue}{0.629} & 0.051 & & \textcolor{dblue}{0.609} & 0.050 & &\textcolor{dblue}{0.631} &0.052 \\
 		
 		\bottomrule
 	\end{tabular}
@@ -795,7 +688,7 @@ Fig. \ref{fig:tr-overall} shows the error-bar plot of the overall metrics, acros
 		A2C & 0.416 & 0.120 & &0.385 & 0.073 & & 0.363 & 0.072 & &0.373 &0.082 \\
 		DQN & 0.432 & 0.184 & &0.510 & 0.031 & & 0.374 & 0.034 & &0.351 &0.056 \\
 		PPO & 0.500 & 0.178 & &0.215 & 0.081 & & 0.285 & 0.099 & &0.370 &0.122 \\
-		REINFORCE & 0.806 & 0.040 & &0.915 & 0.038 & & 0.841 & 0.035 & &0.816 &0.037 \\
+		REINFORCE & \textcolor{dblue}{0.806} & 0.040 & &\textcolor{dblue}{0.915} & 0.038 & & \textcolor{dblue}{0.841} & 0.035 & &\textcolor{dblue}{0.816} &0.037 \\
 		
 		
 		\bottomrule
@@ -824,7 +717,7 @@ The simulated tool-wear environment is relatively the simplest for the agent to 
 		A2C & 0.447 & 0.077 & &0.477 & 0.091 & & 0.452 & 0.072 & &0.446 &0.070 \\
 		DQN & 0.419 & 0.179 & &0.507 & 0.032 & & 0.379 & 0.036 & &0.352 &0.057 \\
 		PPO & 0.450 & 0.146 & &0.314 & 0.082 & & 0.333 & 0.087 & &0.374 &0.102 \\
-		REINFORCE & 0.605 & 0.046 & &0.603 & 0.046 & & 0.570 & 0.041 & &0.576 &0.040 \\
+		REINFORCE & \textcolor{dblue}{0.605} & 0.046 & &\textcolor{dblue}{0.603} & 0.046 & & \textcolor{dblue}{0.570} & 0.041 & &\textcolor{dblue}{0.576} &0.040 \\
 		
 		\bottomrule
 	\end{tabular}
@@ -849,10 +742,10 @@ Real data offers a more challenging environment. Despite this, in Table \ref{tbl
 		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
 		
 		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
-		A2C & 0.487 & 0.086 & &0.582 & 0.075 & & 0.488 & 0.063 & &0.467 &0.065 \\
+		A2C & 0.487 & 0.086 & &\textcolor{dblue}{0.582} & 0.075 & & 0.488 & 0.063 & &0.467 &0.065 \\
 		DQN & 0.399 & 0.204 & &0.491 & 0.032 & & 0.361 & 0.035 & &0.332 &0.060 \\
 		PPO & 0.512 & 0.107 & &0.422 & 0.107 & & 0.441 & 0.096 & &0.472 &0.096 \\
-		REINFORCE & 0.813 & 0.119 & &0.421 & 0.079 & & 0.495 & 0.090 & &0.609 &0.101 \\
+		REINFORCE & \textcolor{dblue}{0.813} & 0.119 & &0.421 & 0.079 & & \textcolor{dblue}{0.495} & 0.090 & &\textcolor{dblue}{0.609} &0.101 \\
 		\bottomrule
 	\end{tabular}
 	\caption{Model performance summary - averaged over PHM-2010 environments with complex multivariate environment.}
@@ -1010,7 +903,7 @@ As an overall average performance, Table \ref{tbl:supermodelssummary} demonstrat
 		A2C & 0.520 & 0.031 & &0.859 & 0.053 & & 0.639 & 0.036 & &0.560 &0.032 \\
 		DQN & 0.651 & 0.022 & &0.937 & 0.031 & & 0.740 & 0.022 & &0.678 &0.021 \\
 		PPO & 0.558 & 0.076 & &0.643 & 0.097 & & 0.580 & 0.079 & &0.562 &0.075 \\
-		REINFORCE & 0.884 & 0.042 & &0.884 & 0.042 & & 0.873 & 0.034 & &0.876 &0.036 \\
+		REINFORCE & \textcolor{dblue}{0.884} & 0.042 & &\textcolor{dblue}{0.884} & 0.042 & & \textcolor{dblue}{0.873} & 0.034 & &\textcolor{dblue}{0.876} &0.036 \\
 		\bottomrule
 	\end{tabular}
 	\caption{Super models: Best of 10 rounds; performance averaged over all 15 environments.}
@@ -1023,44 +916,6 @@ As an overall average performance, Table \ref{tbl:supermodelssummary} demonstrat
 	\label{fig:supermodels}
 \end{figure}
 
-%\newgeometry{margin=1cm} % Change margins for landscape table
-%\begin{landscape}\centering
-%	\begin{table*}
-%		\sffamily
-%		\rowspace{1.3}
-%		\begin{tabular}{@{}l rrrr c rrrr c rrrr c rrrr@{}} \arrayrulecolor{black!40}\toprule
-%			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
-%			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
-%			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
-%			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
-%			Simulated  - No noise &0.897 &0.960 &0.926 & 0.908 & & 0.500 &1.000 &0.667 &0.556 & &0.505 &0.980 &0.667 &0.560 & &0.669 &0.430 &0.518&0.597\\
-%			Simulated  - Low noise &0.960 &0.945 &0.952 & 0.957 & & 0.516 &1.000 &0.680 &0.571 & &0.500 &0.980 &0.662 &0.554 & &0.633 &0.460 &0.530&0.586\\
-%			Simulated  - High noise &0.922 &0.990 &0.955 & 0.935 & & 0.503 &1.000 &0.669 &0.558 & &0.504 &0.990 &0.668 &0.559 & &0.569 &0.355 &0.434&0.505\\\midrule
-%			
-%			PHM C01 SS - No noise &0.889 &0.995 &0.939 & 0.908 & & 0.586 &0.625 &0.603 &0.592 & &0.647 &0.970 &0.776 &0.693 & &0.543 &1.000 &0.703&0.597\\
-%			PHM C01 SS - Low noise &0.988 &0.765 &0.861 & 0.932 & & 0.499 &0.995 &0.664 &0.554 & &0.504 &0.990 &0.668 &0.559 & &0.623 &0.740 &0.675&0.643\\
-%			PHM C01 SS - High noise &0.850 &0.970 &0.905 & 0.871 & & 0.521 &0.680 &0.588 &0.546 & &0.505 &0.985 &0.668 &0.560 & &0.520 &0.725 &0.604&0.551\\\hdashline
-%			
-%			PHM C04 SS - No noise &0.811 &1.000 &0.895 & 0.842 & & 0.536 &0.645 &0.583 &0.554 & &0.501 &0.965 &0.660 &0.554 & &0.579 &0.895 &0.702&0.622\\
-%			PHM C04 SS - Low noise &0.798 &0.980 &0.879 & 0.829 & & 0.556 &0.665 &0.603 &0.573 & &0.734 &0.990 &0.843 &0.774 & &0.546 &0.660 &0.596&0.565\\
-%			PHM C04 SS - High noise &0.708 &0.840 &0.767 & 0.730 & & 0.521 &0.835 &0.641 &0.563 & &0.511 &0.985 &0.672 &0.565 & &0.517 &0.820 &0.633&0.558\\\hdashline
-%			
-%			PHM C06 SS - No noise &1.000 &0.895 &0.944 & 0.977 & & 0.520 &0.680 &0.587 &0.545 & &0.935 &0.975 &0.954 &0.942 & &0.587 &0.650 &0.615&0.597\\
-%			PHM C06 SS - Low noise &0.943 &0.795 &0.861 & 0.908 & & 0.501 &1.000 &0.668 &0.557 & &0.961 &0.725 &0.826 &0.901 & &0.552 &0.370 &0.438&0.497\\
-%			PHM C06 SS - High noise &0.821 &0.845 &0.831 & 0.825 & & 0.540 &0.755 &0.628 &0.572 & &0.980 &0.960 &0.969 &0.976 & &0.521 &0.615 &0.564&0.537\\\midrule
-%			
-%			PHM C01 MS - No noise &0.827 &0.995 &0.903 & 0.856 & & 0.500 &1.000 &0.667 &0.556 & &0.505 &0.985 &0.668 &0.560 & &0.512 &0.595 &0.549&0.526\\
-%			PHM C04 MS - No noise &0.910 &0.425 &0.577 & 0.738 & & 0.500 &1.000 &0.667 &0.556 & &0.501 &0.975 &0.662 &0.555 & &0.501 &0.635 &0.558&0.522\\
-%			PHM C06 MS - No noise &0.934 &0.865 &0.896 & 0.918 & & 0.500 &1.000 &0.667 &0.556 & &0.969 &0.600 &0.741 &0.863 & &0.497 &0.690 &0.577&0.526\\			
-%			\bottomrule
-%		\end{tabular}
-%		\caption{Super Models: Best models selected over 10 rounds of training.}
-%		\label{tbl:SuperModels}
-%	\end{table*}
-%\end{landscape}
-%% Restore margins after landscape table
-%\restoregeometry 
-%\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
 
 
 \subsection{Hypothesis testing}
@@ -1176,6 +1031,168 @@ While there is no doubt that this REINFORCE na\"ive implementation will be unsta
 The REINFORCE is a simple algorithm and our na\"ive implementation can be improved drastically, for example with the implementation of a baseline to reduce variance. We evaluated the REINFORCE along with industry grade implementations of more advanced algorithms, DQN, A2C and PPO, over 15 environment variants (simulated and real data). Despite its simplicity, known variance and convergence issues, it performed surprisingly well, as observed through numerical results, plots and statistical tests. 
 
 Implementing robust RL algorithms is complex and \cite{SB3-paper} mention how small implementation details can significantly impact performance that is often greater than the difference between the algorithms themselves. We hope our research will contribute to empirical evidence in the study of REINFORCE and therefore contribute in an infinitesimal way to enable AutoML for the field of predictive maintenance using RL. %conducted on non-OpenAI-Gym environment, 
+
+\begin{appendices}
+\section{Detailed results}\label{apx}
+The Appendix contains detailed tabulated results as well as validation plots.
+
+\newgeometry{margin=1cm} % Change margins for landscape table
+\begin{landscape}\centering
+	\begin{table*}
+		\sffamily
+		\rowspace{1.3}
+		\begin{tabular}{@{}l rrrr c rrrr c rrrr c rrrr@{}} \arrayrulecolor{black!40}\toprule
+			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
+			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
+			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
+			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
+			Simulated  - No noise &\textcolor{dblue}{0.842} &\textcolor{dblue}{0.878} &\textcolor{dblue}{0.838} & \textcolor{dblue}{0.834} & & 0.424 &0.451 &0.423 &0.421 & &0.426 &0.674 &0.471 &0.410 & &0.504 &0.200 &0.271&0.360\\
+			Simulated  - Low noise &\textcolor{dblue}{0.777} &\textcolor{dblue}{0.929} &\textcolor{dblue}{0.834} & \textcolor{dblue}{0.796} & & 0.465 &0.423 &0.409 &0.427 & &0.421 &0.338 &0.270 &0.283 & &0.482 &0.236 &0.296&0.369\\
+			Simulated  - High noise &\textcolor{dblue}{0.798} &\textcolor{dblue}{0.940} &\textcolor{dblue}{0.851} & \textcolor{dblue}{0.816} & & 0.358 &0.281 &0.256 &0.272 & &0.447 &0.519 &0.380 &0.360 & &0.514 &0.207 &0.286&0.382\\ \midrule
+			
+			PHM C01 SS - No noise &0.478 &0.363 &0.400 & 0.439 & & \textcolor{dblue}{0.501} &0.500 &0.493 &\textcolor{dblue}{0.496} & &0.472 &\textcolor{dblue}{0.807} &\textcolor{dblue}{0.568} &0.490 & &0.440 &0.417 &0.387&0.395\\
+			PHM C01 SS - Low noise &0.507 &0.311 &0.332 & 0.383 & & \textcolor{dblue}{0.503} &\textcolor{dblue}{0.598} &\textcolor{dblue}{0.535} &\textcolor{dblue}{0.513} & &0.393 &0.502 &0.351 &0.317 & &0.522 &0.338 &0.388&0.448\\
+			PHM C01 SS - High noise &\textcolor{dblue}{0.693} &\textcolor{dblue}{0.562} &\textcolor{dblue}{0.579} & \textcolor{dblue}{0.623} & & 0.266 &0.282 &0.267 &0.262 & &0.458 &0.525 &0.400 &0.384 & &0.456 &0.369 &0.372&0.400\\ \hdashline
+			
+			PHM C04 SS - No noise &\textcolor{dblue}{0.751} &\textcolor{dblue}{0.878} &\textcolor{dblue}{0.784} & \textcolor{dblue}{0.757} & & 0.487 &0.442 &0.449 &0.463 & &0.439 &0.684 &0.472 &0.411 & &0.500 &0.510 &0.469&0.473\\
+			PHM C04 SS - Low noise &\textcolor{dblue}{0.662} &\textcolor{dblue}{0.756} &\textcolor{dblue}{0.672} & \textcolor{dblue}{0.657} & & 0.409 &0.455 &0.428 &0.416 & &0.411 &0.500 &0.370 &0.341 & &0.488 &0.280 &0.324&0.386\\
+			PHM C04 SS - High noise &\textcolor{dblue}{0.611} &\textcolor{dblue}{0.713} &\textcolor{dblue}{0.620} & \textcolor{dblue}{0.598} & & 0.518 &0.607 &0.552 &0.530 & &0.358 &0.451 &0.325 &0.294 & &0.428 &0.262 &0.286&0.333\\ \hdashline
+			
+			PHM C06 SS - No noise &\textcolor{dblue}{0.830} &\textcolor{dblue}{0.726} &\textcolor{dblue}{0.754} & \textcolor{dblue}{0.792} & & 0.517 &0.509 &0.507 &0.511 & &0.360 &0.309 &0.256 &0.258 & &0.409 &0.248 &0.275&0.321\\
+			PHM C06 SS - Low noise &0.205 &0.279 &0.228 & 0.212 & & \textcolor{dblue}{0.510} &\textcolor{dblue}{0.577} &\textcolor{dblue}{0.530} &\textcolor{dblue}{0.516} & &0.434 &0.266 &0.266 &0.296 & &0.417 &0.181 &0.232&0.294\\
+			PHM C06 SS - High noise &\textcolor{dblue}{0.709} &\textcolor{dblue}{0.843} &\textcolor{dblue}{0.759 }& \textcolor{dblue}{0.726} & & 0.316 &0.324 &0.311 &0.308 & &0.449 &0.518 &0.400 &0.375 & &0.388 &0.222 &0.265&0.317\\ \midrule
+			
+			PHM C01 MS - No noise &\textcolor{dblue}{0.835} &\textcolor{dblue}{0.652} &\textcolor{dblue}{0.656} & \textcolor{dblue}{0.716} & & 0.461 &0.444 &0.397 &0.404 & &0.384 &0.558 &0.393 &0.348 & &0.513 &0.383 &0.416&0.460\\
+			PHM C04 MS - No noise &\textcolor{dblue}{0.739} &0.255 &0.359 & \textcolor{dblue}{0.494} & & 0.498 &\textcolor{dblue}{0.589 }&\textcolor{dblue}{0.490} &0.470 & &0.323 &0.209 &0.160 &0.168 & &0.499 &0.393 &0.421&0.457\\
+			PHM C06 MS - No noise &\textcolor{dblue}{0.864} &0.356 &0.469 & \textcolor{dblue}{0.616} & & 0.501 &\textcolor{dblue}{0.713} &\textcolor{dblue}{0.578} &0.527 & &0.489 &0.705 &0.529 &0.479 & &0.523 &0.488 &0.485&0.498\\
+			
+			\bottomrule
+		\end{tabular}
+		\caption{Model performance comparison all variants of the environments, over 10 rounds of training. Maximum values indicated in   \textcolor{dblue}{blue}.}
+		\label{tbl:DetailedMetrics}
+	\end{table*}
+\end{landscape}
+\restoregeometry % Restore margins after landscape table
+\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+
+\newgeometry{margin=1cm} % Change margins for landscape table
+\begin{landscape}\centering
+	\begin{table*}
+		\sffamily
+		\rowspace{1.3}
+		\begin{tabular}{@{}l rrrr c rrrr c rrrr c rrrr@{}} \arrayrulecolor{black!40}\toprule
+			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
+			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
+			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
+			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
+			Simulated  - No noise &\textcolor{dblue}{0.897} &0.960 &\textcolor{dblue}{0.926} & \textcolor{dblue}{0.908} & & 0.500 &\textcolor{dblue}{1.000} &0.667 &0.556 & &0.505 &0.980 &0.667 &0.560 & &0.669 &0.430 &0.518&0.597\\
+			Simulated  - Low noise &\textcolor{dblue}{0.960} &0.945 &\textcolor{dblue}{0.952} & \textcolor{dblue}{0.957} & & 0.516 &\textcolor{dblue}{1.000} &0.680 &0.571 & &0.500 &0.980 &0.662 &0.554 & &0.633 &0.460 &0.530&0.586\\
+			Simulated  - High noise &\textcolor{dblue}{0.922} &0.990 &\textcolor{dblue}{0.955} & \textcolor{dblue}{0.935} & & 0.503 &\textcolor{dblue}{1.000} &0.669 &0.558 & &0.504 &0.990 &0.668 &0.559 & &0.569 &0.355 &0.434&0.505\\\midrule
+			
+			PHM C01 SS - No noise &\textcolor{dblue}{0.889} &0.995 &\textcolor{dblue}{0.939} & \textcolor{dblue}{0.908} & & 0.586 &0.625 &0.603 &0.592 & &0.647 &0.970 &0.776 &0.693 & &0.543 &\textcolor{dblue}{1.000} &0.703&0.597\\
+			PHM C01 SS - Low noise &\textcolor{dblue}{0.988} &0.765 &\textcolor{dblue}{0.861} & \textcolor{dblue}{0.932} & & 0.499 &0.995 &0.664 &0.554 & &0.504 &\textcolor{dblue}{0.990} &0.668 &0.559 & &0.623 &0.740 &0.675&0.643\\
+			PHM C01 SS - High noise &\textcolor{dblue}{0.850} &0.970 &\textcolor{dblue}{0.905} & \textcolor{dblue}{0.871} & & 0.521 &0.680 &0.588 &0.546 & &0.505 &\textcolor{dblue}{0.985} &0.668 &0.560 & &0.520 &0.725 &0.604&0.551\\\hdashline
+			
+			PHM C04 SS - No noise &\textcolor{dblue}{0.811} &\textcolor{dblue}{1.000} &\textcolor{dblue}{0.895} & \textcolor{dblue}{0.842} & & 0.536 &0.645 &0.583 &0.554 & &0.501 &0.965 &0.660 &0.554 & &0.579 &0.895 &0.702&0.622\\
+			PHM C04 SS - Low noise &\textcolor{dblue}{0.798} &0.980 &\textcolor{dblue}{0.879} & \textcolor{dblue}{0.829} & & 0.556 &0.665 &0.603 &0.573 & &0.734 &\textcolor{dblue}{0.990} &0.843 &0.774 & &0.546 &0.660 &0.596&0.565\\
+			PHM C04 SS - High noise &\textcolor{dblue}{0.708} &0.840 &\textcolor{dblue}{0.767} & \textcolor{dblue}{0.730} & & 0.521 &0.835 &0.641 &0.563 & &0.511 &\textcolor{dblue}{0.985} &0.672 &0.565 & &0.517 &0.820 &0.633&0.558\\\hdashline
+			
+			PHM C06 SS - No noise &\textcolor{dblue}{1.000} &\textcolor{dblue}{0.895} &\textcolor{dblue}{0.944} & \textcolor{dblue}{0.977} & & 0.520 &0.680 &0.587 &0.545 & &0.935 &0.975 &0.954 &0.942 & &0.587 &0.650 &0.615&0.597\\
+			PHM C06 SS - Low noise &\textcolor{dblue}{0.943} &0.795 &\textcolor{dblue}{0.861} & \textcolor{dblue}{0.908} & & 0.501 &\textcolor{dblue}{1.000} &0.668 &0.557 & &0.961 &0.725 &0.826 &0.901 & &0.552 &0.370 &0.438&0.497\\
+			PHM C06 SS - High noise &0.821 &0.845 &0.831 & 0.825 & & 0.540 &0.755 &0.628 &0.572 & &\textcolor{dblue}{0.980} &\textcolor{dblue}{0.960}&\textcolor{dblue}{0.969} &\textcolor{dblue}{0.976} & &0.521 &0.615 &0.564&0.537\\\midrule
+			
+			PHM C01 MS - No noise &\textcolor{dblue}{0.827} &0.995 &\textcolor{dblue}{0.903} & \textcolor{dblue}{0.856} & & 0.500 &\textcolor{dblue}{1.000} &0.667 &0.556 & &0.505 &0.985 &0.668 &0.560 & &0.512 &0.595 &0.549&0.526\\
+			PHM C04 MS - No noise &\textcolor{dblue}{0.910}&0.425 &0.577 & \textcolor{dblue}{0.738} & & 0.500 &\textcolor{dblue}{1.000} &\textcolor{dblue}{0.667} &0.556 & &0.501 &0.975 &0.662 &0.555 & &0.501 &0.635 &0.558&0.522\\
+			PHM C06 MS - No noise &\textcolor{dblue}{0.934} &0.865 &\textcolor{dblue}{0.896} & \textcolor{dblue}{0.918} & & 0.500 &\textcolor{dblue}{1.000} &0.667 &0.556 & &0.969 &0.600 &0.741 &0.863 & &0.497 &0.690 &0.577&0.526\\			
+			\bottomrule
+		\end{tabular}
+		\caption{Super Models: Best models selected over 10 rounds of training. Maximum performance values indicated in   \textcolor{dblue}{blue}.}
+		\label{tbl:SuperModels}
+	\end{table*}
+\end{landscape}
+% Restore margins after landscape table
+\restoregeometry 
+\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+%%\subsection{Detailed performance across all variants - Averaged over 10 rounds of training}
+%\newgeometry{margin=1cm} % Change margins for landscape table
+%\begin{landscape}\centering
+%	\begin{table*}
+%		\sffamily
+%		\rowspace{1.3}
+%		\begin{tabular}{@{}l rrrr @{\kern8pt}c rrrr @{\kern8pt}c rrrr @{\kern8pt}c rrrr@{}} \arrayrulecolor{black!40}\toprule
+%			& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
+%			& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
+%			\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
+%			Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
+%			Simulated  - No noise &\underline{0.842} &\underline{0.878} &\underline{0.838} & \underline{0.834} & & 0.424 &0.451 &0.423 &0.421 & &0.426 &0.674 &0.471 &0.410 & &0.504 &0.200 &0.271&0.360\\
+%			Simulated  - Low noise &\underline{0.777} &\underline{0.929} &\underline{0.834} & \underline{0.796} & & 0.465 &0.423 &0.409 &0.427 & &0.421 &0.338 &0.270 &0.283 & &0.482 &0.236 &0.296&0.369\\
+%			Simulated  - High noise &\underline{0.798} &\underline{0.940} &\underline{0.851} & \underline{0.816} & & 0.358 &0.281 &0.256 &0.272 & &0.447 &0.519 &0.380 &0.360 & &0.514 &0.207 &0.286&0.382\\ \midrule
+%			
+%			PHM C01 SS - No noise &0.478 &0.363 &0.400 & 0.439 & & \underline{0.501} &0.500 &0.493 &\underline{0.496} & &0.472 &\underline{0.807} &\underline{0.568} &0.490 & &0.440 &0.417 &0.387&0.395\\
+%			PHM C01 SS - Low noise &0.507 &0.311 &0.332 & 0.383 & & \underline{0.503} &\underline{0.598} &\underline{0.535} &\underline{0.513} & &0.393 &0.502 &0.351 &0.317 & &0.522 &0.338 &0.388&0.448\\
+%			PHM C01 SS - High noise &\underline{0.693} &\underline{0.562} &\underline{0.579} & \underline{0.623} & & 0.266 &0.282 &0.267 &0.262 & &0.458 &0.525 &0.400 &0.384 & &0.456 &0.369 &0.372&0.400\\ \hdashline
+%			
+%			PHM C04 SS - No noise &\underline{0.751} &\underline{0.878} &\underline{0.784} & \underline{0.757} & & 0.487 &0.442 &0.449 &0.463 & &0.439 &0.684 &0.472 &0.411 & &0.500 &0.510 &0.469&0.473\\
+%			PHM C04 SS - Low noise &\underline{0.662} &\underline{0.756} &\underline{0.672} & \underline{0.657} & & 0.409 &0.455 &0.428 &0.416 & &0.411 &0.500 &0.370 &0.341 & &0.488 &0.280 &0.324&0.386\\
+%			PHM C04 SS - High noise &\underline{0.611} &\underline{0.713} &\underline{0.620} & \underline{0.598} & & 0.518 &0.607 &0.552 &0.530 & &0.358 &0.451 &0.325 &0.294 & &0.428 &0.262 &0.286&0.333\\ \hdashline
+%			
+%			PHM C06 SS - No noise &\underline{0.830} &\underline{0.726} &\underline{0.754} & \underline{0.792} & & 0.517 &0.509 &0.507 &0.511 & &0.360 &0.309 &0.256 &0.258 & &0.409 &0.248 &0.275&0.321\\
+%			PHM C06 SS - Low noise &0.205 &0.279 &0.228 & 0.212 & & \underline{0.510} &\underline{0.577} &\underline{0.530} &\underline{0.516} & &0.434 &0.266 &0.266 &0.296 & &0.417 &0.181 &0.232&0.294\\
+%			PHM C06 SS - High noise &\underline{0.709} &\underline{0.843} &\underline{0.759 }& \underline{0.726} & & 0.316 &0.324 &0.311 &0.308 & &0.449 &0.518 &0.400 &0.375 & &0.388 &0.222 &0.265&0.317\\ \midrule
+%			
+%			PHM C01 MS - No noise &\underline{0.835} &\underline{0.652} &\underline{0.656} & \underline{0.716} & & 0.461 &0.444 &0.397 &0.404 & &0.384 &0.558 &0.393 &0.348 & &0.513 &0.383 &0.416&0.460\\
+%			PHM C04 MS - No noise &\underline{0.739} &0.255 &0.359 & \underline{0.494} & & 0.498 &\underline{0.589 }&\underline{0.490} &0.470 & &0.323 &0.209 &0.160 &0.168 & &0.499 &0.393 &0.421&0.457\\
+%			PHM C06 MS - No noise &\underline{0.864} &0.356 &0.469 & \underline{0.616} & & 0.501 &\underline{0.713} &\underline{0.578} &0.527 & &0.489 &0.705 &0.529 &0.479 & &0.523 &0.488 &0.485&0.498\\
+%			
+%			\bottomrule
+%		\end{tabular}
+%		\caption{Model performance comparison all variants of the environments, over 10 rounds of training. Maximum values are underlined.}
+%		\label{tbl:DetailedMetrics}
+%	\end{table*}
+%\end{landscape}
+%\restoregeometry % Restore margins after landscape table
+%\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+%
+%%\subsection{Super models - Detailed performance across all variants}
+%\newgeometry{margin=1cm} % Change margins for landscape table
+%\begin{landscape}\centering
+%	\begin{table*}
+%			\sffamily
+%			\rowspace{1.3}
+%			\begin{tabular}{@{}l rrrr c rrrr c rrrr c rrrr@{}} \arrayrulecolor{black!40}\toprule
+%					& \multicolumn{4}{c}{\textbf{REINFORCE}} & & \multicolumn{4}{c}{A2C} &
+%					& \multicolumn{4}{c}{DQN} & & \multicolumn{4}{c}{PPO} \\
+%					\cmidrule{2-5} \cmidrule{7-10} \cmidrule{12-15} \cmidrule{17-20}
+%					Environment &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5 & &Prec. &Recall &F1 &F$_\beta$0.5\\ \midrule
+%					Simulated  - No noise &\underline{0.897} &0.960 &\underline{0.926} & \underline{0.908} & & 0.500 &\underline{1.000} &0.667 &0.556 & &0.505 &0.980 &0.667 &0.560 & &0.669 &0.430 &0.518&0.597\\
+%					Simulated  - Low noise &\underline{0.960} &0.945 &\underline{0.952} & \underline{0.957} & & 0.516 &\underline{1.000} &0.680 &0.571 & &0.500 &0.980 &0.662 &0.554 & &0.633 &0.460 &0.530&0.586\\
+%					Simulated  - High noise &\underline{0.922} &0.990 &\underline{0.955} & \underline{0.935} & & 0.503 &\underline{1.000} &0.669 &0.558 & &0.504 &0.990 &0.668 &0.559 & &0.569 &0.355 &0.434&0.505\\\midrule
+%					
+%					PHM C01 SS - No noise &\underline{0.889} &0.995 &\underline{0.939} & \underline{0.908} & & 0.586 &0.625 &0.603 &0.592 & &0.647 &0.970 &0.776 &0.693 & &0.543 &\underline{1.000} &0.703&0.597\\
+%					PHM C01 SS - Low noise &\underline{0.988} &0.765 &\underline{0.861} & \underline{0.932} & & 0.499 &0.995 &0.664 &0.554 & &0.504 &\underline{0.990} &0.668 &0.559 & &0.623 &0.740 &0.675&0.643\\
+%					PHM C01 SS - High noise &\underline{0.850} &0.970 &\underline{0.905} & \underline{0.871} & & 0.521 &0.680 &0.588 &0.546 & &0.505 &\underline{0.985} &0.668 &0.560 & &0.520 &0.725 &0.604&0.551\\\hdashline
+%					
+%					PHM C04 SS - No noise &\underline{0.811} &\underline{1.000} &\underline{0.895} & \underline{0.842} & & 0.536 &0.645 &0.583 &0.554 & &0.501 &0.965 &0.660 &0.554 & &0.579 &0.895 &0.702&0.622\\
+%					PHM C04 SS - Low noise &\underline{0.798} &0.980 &\underline{0.879} & \underline{0.829} & & 0.556 &0.665 &0.603 &0.573 & &0.734 &\underline{0.990} &0.843 &0.774 & &0.546 &0.660 &0.596&0.565\\
+%					PHM C04 SS - High noise &\underline{0.708} &0.840 &\underline{0.767} & \underline{0.730} & & 0.521 &0.835 &0.641 &0.563 & &0.511 &\underline{0.985} &0.672 &0.565 & &0.517 &0.820 &0.633&0.558\\\hdashline
+%					
+%					PHM C06 SS - No noise &\underline{1.000} &\underline{0.895} &\underline{0.944} & \underline{0.977} & & 0.520 &0.680 &0.587 &0.545 & &0.935 &0.975 &0.954 &0.942 & &0.587 &0.650 &0.615&0.597\\
+%					PHM C06 SS - Low noise &\underline{0.943} &0.795 &\underline{0.861} & \underline{0.908} & & 0.501 &\underline{1.000} &0.668 &0.557 & &0.961 &0.725 &0.826 &0.901 & &0.552 &0.370 &0.438&0.497\\
+%					PHM C06 SS - High noise &0.821 &0.845 &0.831 & 0.825 & & 0.540 &0.755 &0.628 &0.572 & &\underline{0.980} &\underline{0.960}&\underline{0.969} &\underline{0.976} & &0.521 &0.615 &0.564&0.537\\\midrule
+%					
+%					PHM C01 MS - No noise &\underline{0.827} &0.995 &\underline{0.903} & \underline{0.856} & & 0.500 &\underline{1.000} &0.667 &0.556 & &0.505 &0.985 &0.668 &0.560 & &0.512 &0.595 &0.549&0.526\\
+%					PHM C04 MS - No noise &\underline{0.910}&0.425 &0.577 & \underline{0.738} & & 0.500 &\underline{1.000} &\underline{0.667} &0.556 & &0.501 &0.975 &0.662 &0.555 & &0.501 &0.635 &0.558&0.522\\
+%					PHM C06 MS - No noise &\underline{0.934} &0.865 &\underline{0.896} & \underline{0.918} & & 0.500 &\underline{1.000} &0.667 &0.556 & &0.969 &0.600 &0.741 &0.863 & &0.497 &0.690 &0.577&0.526\\			
+%					\bottomrule
+%				\end{tabular}
+%			\caption{Super Models: Best models selected over 10 rounds of training. Maximum performance values are underlined.}
+%			\label{tbl:SuperModels}
+%		\end{table*}
+%\end{landscape}
+%% Restore margins after landscape table
+%\restoregeometry 
+%\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
+\end{appendices}
 
 %% References
 \singlespacing
