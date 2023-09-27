@@ -12,3 +12,4 @@
 - All large tables (perf. across 10 rounds) and all detailed plots moved to appendix
 - max values in dicated in BLUE
 - Only F beta plots of all categories kept in main text
+- Table of results with reference links (to actual tables and plots) 
