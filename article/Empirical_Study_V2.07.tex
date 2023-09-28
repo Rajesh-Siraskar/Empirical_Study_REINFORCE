@@ -7,7 +7,7 @@
 %% V.2.02: 24-Sep-2023: Remove $ space issues
 %% V.2.04: 25-Sep-2023: Move large plots to Appendix, and keep Fbeta in main 
 %% ----------------------------------------------------------------------------------------
-\def\Version{\today { } V 2.05} % Modify error bar line plots
+\def\Version{\today { } V 2.07} % Fbeta
 
 \documentclass[a4paper, 12pt]{article}
 \usepackage[T1]{fontenc}
@@ -46,14 +46,16 @@
 
 % Macros
 \algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
-\newcommand{\hlc}[2][cyan!10]{{\colorlet{foo}{#1} \sethlcolor{foo}\hl{#2}}}
+\newcommand{\hlc}[2][cyan!7]{{\colorlet{foo}{#1} \sethlcolor{foo}\hl{#2}}}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcommand{\rowspace}[1]{\renewcommand{\arraystretch}{#1}}
+\newcommand{\ltmidrule} {\arrayrulecolor{black!20} \midrule}
+\newcommand{\drmidrule} {\arrayrulecolor{black!40} \midrule}
 
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{ltgray}{gray}{0.925}
+\definecolor{ltgray}{gray}{0.93}
 \definecolor{dblue}{rgb}{0.12, 0.56, 1.0}
 
 % Affiliations format set to small size
@@ -632,58 +634,56 @@ While we prefer a high precision, we do want a reasonably high recall i.e. do no
 %\end{verbatim}
 
 \section{Results}\label{sec:Results}
-\hlc{We present the summarized results in this section accompanied by commentary referring to detailed results made available in Appendix {\ref{apx}}. Tables in this section and Appendix {\ref{apx}} use {\textcolor{dblue}{blue}} text to highlight prominent values. Plots accompany tables to assist in visualizing the comparative performance.}
-
-We first present the overall category-wise averaged metrics and averaged standard deviations, followed by error-bar plots of the F-beta (0.5) validation score across the ten training-cum-testing rounds. Finally, we present performance of the ``super models'' -- best of the ten trained models, for each algorithm.
-
+\hlc{We present the summarized results in this section accompanied by commentary referring to detailed results made available in Appendix {\ref{apx}}. Since there are several tables and figures, for reference, we created a cross-linked Table {\ref{tbl:ref-results}}. Generally, {\textcolor{dblue}{blue}} text is used in tables to highlight prominent values. Summary performance and F$_\beta$0.5 plots accompany tables to assist in visualizing the comparative performance. The F$_\beta$0.5 plots show \textit{individual} performance over ten rounds of training-validation and help infer training stability. Similar plots for precision, recall and F1 have been relegated to Appendix {\ref{apx}}}.
 \begin{table*}[h]\centering
 	\sffamily
 	\rowspace{1.3}
 	\begin{tabular}{R{0.25cm} L{11.5cm} L{3cm}}
 		\arrayrulecolor{black!40}\toprule 
-		  & Results for & Numeric / Graphical\\ \midrule
+		  & Item & Reference\\ \midrule
 		  \rowcolor{ltgray} & \textbf{Summary Results}  & \\ 
+		  
 		1 & Overall summary -- All 15 environments, averaged over 10 rounds & Table \ref{tbl:OverallSummary}, Fig. \ref{fig:OverallSummary}\\
-		  & \quad\quad ---"--- F$_\beta$0.5 behavior plot over 10 test rounds & Fig. \ref{fig:FbetaOverall}\\
-		2 & Simple univariate state -- Simulated data, 3 environment variants (3 noise settings), averaged over 10 rounds & Table \ref{tbl:SimulatedEnv}, Fig. \ref{fig:SimulatedEnv}\\ 
- 		  & \quad\quad ---"--- F$_\beta$0.5 behavior plot over 10 test rounds & Fig. \ref{fig:FbetaSimulated}\\
-		3 & Simple univariate state -- Real data, 9 environment variants (3 datasets $\times$ 3 noise settings), averaged over 10 rounds & Table \ref{tbl:PHMSS}, Fig. \ref{fig:PHMSS}\\
- 		  & \quad\quad ---"--- F$_\beta$0.5 behavior plot over 10 test rounds & Fig. \ref{fig:FbetaPHMSS}\\
-		4 & Complex multivariate state -- Real data, 9 environment variants (3 datasets $\times$ 3 noise settings), averaged over 10 rounds & Table \ref{tbl:PHMMS}, Fig. \ref{fig:PHMMS}\\
- 		  & \quad\quad ---"--- F$_\beta$0.5 behavior plot over 10 test rounds & Fig. \ref{fig:FbetaPHMMS}\\	\midrule
- 		  \rowcolor{ltgray} & \textbf{Detailed Results}  & \\ 
-		5 & Complete detailed results of all 15 environments (averaged over 10 rounds and 3 datasets) & Appendix \ref{apx} - Table \ref{tbl:DetailedMetrics}\\
-		X & Complete detailed results of all 15 environments (averaged over 10 rounds and 3 datasets) & Appendix \ref{apx} - Table \ref{tbl:DetailedMetrics}\\
+		  & \quad\quad --"-- \quad F$_\beta$0.5 behavior plot over 10 rounds & Fig. \ref{fig:FbetaOverall}\\\ltmidrule
+		  
+		2 & Simple univariate state -- Simulated data, 3 variants (3 noise settings), averaged over 10 rounds & Table \ref{tbl:SimulatedEnv}, Fig. \ref{fig:SimulatedEnv}\\ 
+ 		  & \quad\quad --"-- \quad F$_\beta$0.5 behavior plot over 10 rounds & Fig. \ref{fig:FbetaSimulated}\\\ltmidrule
+ 		  
+		3 & Simple univariate state -- Real data, 9 variants (3 datasets $\times$ 3 noise settings), averaged over 10 rounds & Table \ref{tbl:PHMSS}, Fig. \ref{fig:PHMSS}\\
+ 		  & \quad\quad --"-- \quad F$_\beta$0.5 behavior plot over 10 rounds & Fig. \ref{fig:FbetaPHMSS}\\\ltmidrule
+ 		  
+		4 & Complex multivariate state -- Real data, 3 variants (3 datasets), averaged over 10 rounds & Table \ref{tbl:PHMMS}, Fig. \ref{fig:PHMMS}\\
+ 		  & \quad\quad --"-- \quad F$_\beta$0.5 behavior plot over 10 rounds & Fig. \ref{fig:FbetaPHMMS}\\\ltmidrule
+ 		  
+		\rowcolor{ltgray} & \textbf{Super Models}  & \\ 
+		5 & Super Models -- Best model, \textit{averaged} over all 15 environments & Table \ref{tbl:supermodels} Fig. \ref{fig:supermodels}\\
+		 & Super Models -- Best model, \textit{details} of all 15 environments & Appendix \ref{apx} - Table \ref{tbl:SuperModelsDetailedMetrics}\\\ltmidrule
+		 
+		\rowcolor{ltgray} & \textbf{Hypothesis tests and Training time results}  & \\ 
+		6 & Hypothesis tests -- p-value and t-statistic of REINFORCE versus other algorithms & Table \ref{tbl:ttest}\\
+		7 & Training time -- Averaged over 10 rounds and all 15 variants & Fig. \ref{fig:tr-time}\\\ltmidrule
 		
-		 \rowcolor{ltgray} & \textbf{Super Models}  & \\ 
-		6 & Super Models -- Best model, averaged over all 15 environments & Table \ref{tbl:supermodels} Fig. \ref{fig:supermodels}\\
-		 & Super Models -- Best model, details of all 15 environments & Appendix \ref{apx} - Table \ref{tbl:SuperModelsDetailedMetrics}\\\midrule
-		7 & Hypothesis tests -- p-value and t-statistic of REINFORCE versus other algorithms-- All 15 variants 
-		 & Table \ref{tbl:ttest}\\
-		8 & Training time -- Averaged over 10 rounds and all 15 variants & Fig. \ref{fig:tr-time}\\
+		\rowcolor{ltgray} & \textbf{Detailed Results} - Appendix \ref{apx} & \\
+		8 & Complete detailed results -- All 15 environments, averaged over 10 rounds & Appendix \ref{apx} - Table \ref{tbl:DetailedMetrics}\\\ltmidrule
+		
+		9 & Stability behavior plots over 10 rounds, Precision, Recall and F1\\
+		& \quad\quad Overall (all variants)  & Apx. \ref{apx} - Fig. \ref{fig:tr-overall}\\
+		& \quad\quad Simulated state & Apx. \ref{apx} - Fig. \ref{fig:tr-sim-env}\\
+		& \quad\quad Simple univariate state & Apx. \ref{apx} - Fig. \ref{fig:tr-ss-env}\\
+		& \quad\quad Complex multivariate state & Apx. \ref{apx} - Fig. \ref{fig:tr-ms-env}\\
 		\bottomrule
 	\end{tabular}
 	\caption{Reference table for results.}
 	\label{tbl:ref-results}
 \end{table*}
 
-
-
-
-\begin{enumerate}
-	\item Overall performance: Averaged over all 15 environments (Table \ref{tbl:ListEnvironments}, items 1--15)
-	\item Simulated environment: Averaged over 3 noise setting variants (Table \ref{tbl:ListEnvironments}, items 1--3)
-	\item Real data - simple univariate state: Averaged over 9 variants i.e. 3 PHM datasets (C01, C04 and C06) $\times$ 3 noise settings each (Table \ref{tbl:ListEnvironments}, items 4--12) 
-	\item Real data - complex multivariate state: Averaged over 3 PHM dataset variants i.e. C01, C04 and C06 (Table \ref{tbl:ListEnvironments}, items 13--15)
-\end{enumerate}
-
-\subsection{Overall summary performance}
+\subsection{Overall performance}
 \begin{table*}[h]\centering
 	\sffamily
 	\rowspace{1.3}
 	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
 		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F$_\beta$0.5} \\
 		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
 		
 		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
@@ -704,24 +704,24 @@ We first present the overall category-wise averaged metrics and averaged standar
 	\caption{Overall model performance summary}
 	\label{fig:OverallSummary}
 \end{figure}
-\hlc{Table {\ref{tbl:DetailedMetrics}} shows that the REINFORCE scores higher than the other algorithms most of the times. The notable exceptions are the PHM C01 single-state and no-noise variant where A2C and DQN do better, and then PHM C01 and PHM C06 univariate-state, low-noise variants where A2C performs better in every aspect and finally the PHM C04 and C06 multivariate variants where A2C again performs better on recall and which in turns drives the F1 score up. Barring these 3 complete cases and 2 cases where A2C recall was better, the REINFORCE performs best in 10 cases and in 2 cases its precision and therefore F-beta (0.5) is highest.}
+\hlc{At an aggregated level, Table {\ref{tbl:OverallSummary}} along with Fig. {\ref{fig:OverallSummary}}, show that the REINFORCE scores better than the other algorithms, on all four metrics. Tool replacement precision at 0.687, is highest of the four algorithms and better by 0.215 in absolute terms when compared to the next best, PPO. The standard deviation for precision is the lowest at 0.059. On recall, F1 and F$_\beta$0.5, REINFORCE is better by 0.125, 0.168 and 0.195 compared to the next best.}
 
-\hlc{This dominance is reflected in the summary Table {\ref{tbl:OverallSummary}} and Fig. {\ref{fig:OverallSummary}}, the REINFORCE scores much higher than the other algorithms, on all the four metrics. Tool replacement precision at 0.687, is highest of the four algorithms and better by 0.215 in absolute terms when compared to the next best, PPO. The standard deviation for precision is the lowest at 0.059. On recall, F1 and F-beta (0.5), REINFORCE is better by 0.125, 0.168 and 0.195 compared to the next best.} 
-
-Fig. \ref{fig:FbetaOverall} shows the error-bar plot of the overall F-beta (0.5) performance, across the 10 rounds of training. The blue line floating above the rest of the algorithms, for all metrics, is that of REINFORCE. The error-bars are also pretty small, indicating a comparatively small uncertainty. We notice that the other three algorithms are all centered closely around, roughly, 0.5.
+\hlc{These metrics were averaged over 10 rounds of training followed by validation. We visualize the behavior of our primary metric F$_\beta$0.5, \textit{individually} across the ten rounds in Fig. {\ref{fig:FbetaOverall}}. The blue line floating above the rest of the algorithms, for all metrics, is that of REINFORCE and appears fairly stable across the ten rounds. The error-bars are also pretty small, indicating lower uncertainty. We notice that the other three algorithms are all centered closely around, 0.4.}
 \begin{figure}[h]
-	\centering
-	\includegraphics[width=0.9\textwidth]{Overall_F05.pdf}  
-	\caption{Overall performance comparison of the F-beta (0.5) metric, over 10 rounds of training and testing.}
-	\label{fig:FbetaOverall}
+ 	\centering
+ 	\includegraphics[width=0.9\textwidth]{Overall_F05.pdf}  
+ 	\caption{Overall performance comparison of the F$_\beta$0.5 metric, over 10 rounds of training and testing.}
+ 	\label{fig:FbetaOverall}
 \end{figure}
+
+\hlc{We now dig into the detailed metrics Appendix {\ref{apx}} - Table {\ref{tbl:DetailedMetrics}} to better understand the aggregated summary. The largest values are typeset in {\textcolor{dblue}{blue}}. And a quick visual glance shows the dominance of REINFORCE. The notable exceptions are the PHM C01 single-state and no-noise variant where A2C and DQN do better, followed by PHM C01 and PHM C06 univariate-state, low-noise variants where A2C performs better in every aspect and finally the PHM C04 and C06 multivariate variants where A2C again performs better on recall and which in turns drives the F1 score up. Barring these three complete cases and two cases where A2C recall was better, the REINFORCE performs best in ten variants and in two cases its precision, and therefore F$_\beta$0.5, is highest. This corroborates the overall performance observed in Table {\ref{tbl:OverallSummary}}. Finally, Fig. {\ref{fig:tr-overall}} shows that the stability across multiple rounds is evident for other metrics as well.}
 
 \subsection{Simulated environment}
 \begin{table*}[h]\centering\sffamily
 	\rowspace{1.3}
 	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
 		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F$_\beta$0.5} \\
 		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
 		
 		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
@@ -742,28 +742,13 @@ Fig. \ref{fig:FbetaOverall} shows the error-bar plot of the overall F-beta (0.5)
 	\caption{Simulated environments - model performance summary.}
 	\label{fig:SimulatedEnv}
 \end{figure}
+The simulated tool-wear environment is relatively the simplest for the agent to learn, even with added noise and chance of breakdown. Table \ref{tbl:SimulatedEnv} shows the averaged performance over the three variants. The REINFORCE performs the best and in absolute terms it is better than the next best advanced algorithm by very high margins: precision by 0.306, recall by 0.405, F1 by 0.468 and F$_\beta$0.5 by 0.442, with standard deviation lower or marginally higher than others. F$_\beta$0.5 plot Fig. \ref{fig:FbetaSimulated} shows an exceptionally consistent performance, over all ten trained models, vis-a-vis the other algorithms. Plot Fig. \ref{fig:tr-sim-env} shows DQN fluctuating heavily, occasionally showing recalls at the REINFORCE levels (rounds 2 and 8).
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.9\textwidth]{Simulated_F05.pdf}  
-	\caption{Simulated environments - F-beta (0.5) metric, over 10 rounds of training and testing.}
+	\caption{Simulated environments - F$_\beta$0.5 metric, over 10 rounds of training and testing.}
 	\label{fig:FbetaSimulated}
 \end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.9\textwidth]{Singevariable_F05.pdf}  
-	\caption{Univariate simple state environments - F-beta (0.5) metric, over 10 rounds of training and testing.}
-	\label{fig:FbetaPHMSS}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.9\textwidth]{Multivariate_F05.pdf}  
-	\caption{Multivariate complex state environments - F-beta (0.5) metric, over 10 rounds of training and testing.}
-	\label{fig:FbetaPHMMS}
-\end{figure}
-
-The simulated tool-wear environment is relatively the simplest for the agent to learn. We added two levels of noise and chance of breakdown and averaged the performance over the three variants, Table \ref{tbl:SimulatedEnv}. The REINFORCE performs the best and in absolute terms it is better than the next best advanced algorithm by very high margins: precision by 0.306, recall by 0.405, F1 by 0.468 and F-beta (0.5) by 0.442, with standard deviation lower or marginally higher than others. Plot Fig. \ref{fig:tr-sim-env} shows DQN having very high fluctuations, occasionally showing recalls at the REINFORCE levels (rounds 2 and 8).
 
 \subsection{Real data - simple univariate environment}
 \begin{table*}[h]\centering
@@ -771,7 +756,7 @@ The simulated tool-wear environment is relatively the simplest for the agent to 
 	\rowspace{1.3}
 	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
 		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F$_\beta$0.5} \\
 		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
 		
 		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
@@ -791,7 +776,13 @@ The simulated tool-wear environment is relatively the simplest for the agent to 
 	\caption{PHM real data - Model performance summary for the simple single-variable environment.}
 	\label{fig:PHMSS}
 \end{figure}
-Real data offers a more challenging environment. Despite this, in Table \ref{tbl:PHMSS}, we notice that REINFORCE  still performs better than the other algorithms. The margins are understandably lower: precision by 0.155, recall by 0.097, F1 by 0.117 and F-beta (0.5) by 0.130. Fig. \ref{fig:tr-ss-env} shows the plots for the simple univariate state. While the REINFORCE precision is higher for most rounds, the recall seems to be occasionally surpassed slightly by DQN's (1, 8 and 9) and by a larger margin once (5).
+Real data offers a more challenging environment. Despite this, in Table \ref{tbl:PHMSS}, we notice that REINFORCE still performs better than the other algorithms. The margins are understandably lower: precision by 0.155, recall by 0.097, F1 by 0.117 and F$_\beta$0.5 by 0.130. For these variants the F$_\beta$0.5 plot Fig. \ref{fig:FbetaSimulated} shows a considerably higher performance over 9 of the 10 training rounds. Behavior of the other metrics is seen in Fig. \ref{fig:tr-ss-env}. While the REINFORCE precision is higher for most rounds, the recall seems to be occasionally surpassed slightly by DQN's (1, 8 and 9) and by a larger margin once (5).
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Singevariable_F05.pdf}  
+	\caption{Univariate simple state environments - F$_\beta$0.5 metric, over 10 rounds of training and testing.}
+	\label{fig:FbetaPHMSS}
+\end{figure}
 
 \subsection{Real data - complex multivariate state}
 \begin{table*}[!htb]\centering
@@ -799,7 +790,7 @@ Real data offers a more challenging environment. Despite this, in Table \ref{tbl
 	\rowspace{1.3}
 	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
 		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F$_\beta$0.5} \\
 		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
 		
 		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
@@ -818,7 +809,13 @@ Real data offers a more challenging environment. Despite this, in Table \ref{tbl
 	\caption{PHM real data - Model performance summary for the complex multivariate environment.}
 	\label{fig:PHMMS}
 \end{figure}
-This environment offers the highest difficulty. We use real data, from \textit{multiple} sensors. As with other scenarios, we used untuned, default settings of all algorithms. In Table \ref{tbl:PHMSS}, we see that the REINFORCE has the poorest recall at 0.421, however it demonstrates a surprisingly high tool replacement precision at 0.813, which dr ives the F1 and F-beta to the top of the table. The plot, Fig. \ref{fig:tr-ms-env} shows REINFORCE's high precision behavior. However, it is important to note that the error-bars are occasionally larger (rounds 0, 2, 4 and 6). The recall seemed higher at some points but lower half the times. The F1 appears to in range of all the other algorithms.
+This environment offers the highest difficulty. We use real data, from \textit{multiple} sensors. As with other scenarios, we used untuned, default settings of all algorithms. In Table \ref{tbl:PHMSS}, we see that the REINFORCE has the poorest recall at 0.421, however it demonstrates a surprisingly high tool replacement precision at 0.813, which drives the F1 and F$_\beta$0.5 to the top of the table. F$_\beta$0.5 performance is reflected in the Fig. \ref{fig:FbetaSimulated}; where it remains high for most rounds. The plot, in Appendix \ref{apx}, Fig. \ref{fig:tr-ms-env} shows REINFORCE's high precision behavior. However, it is important to note that the error-bars are occasionally larger (rounds 0, 2, 4 and 6). The recall seemed higher at some points but lower half the times. The F1 appears to be in range of all the other algorithms.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Multivariate_F05.pdf}  
+	\caption{Multivariate complex state environments - F$_\beta$0.5 metric, over 10 rounds of training and testing.}
+	\label{fig:FbetaPHMMS}
+\end{figure}
 
 \subsection{Super models}
 Finally, we look at performance of ``select'' models. Logically, one would choose the best model from a set of 10 trained models. Selecting models that produce the highest F1 with a minimum criteria for precision and recall allowed us to evaluate performance of ``super-models'' for each algorithm. In Table \ref{tbl:SuperModelsDetailedMetrics}, the REINFORCE performs better than the other three algorithms by a huge margin, for 14 of the 15 variants. For the PHM C06, univariate environment, the DQN performs the best, with extremely high metrics throughout and an F1 of 0.969 to 0.831 of REINFORCE.
@@ -829,7 +826,7 @@ As an overall average performance, Table \ref{tbl:supermodels} demonstrates the 
 	\rowspace{1.3}
 	\begin{tabular}{@{}l rr c rr c rr c rr@{}}
 		\arrayrulecolor{black!40}\toprule
-		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F-beta (0.5)} \\
+		& \multicolumn{2}{c}{Precision} & \phantom{i} & \multicolumn{2}{c}{Recall} & \phantom{i} & \multicolumn{2}{c}{F1-score} & \phantom{i} & \multicolumn{2}{c}{F$_\beta$0.5} \\
 		\cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-9} \cmidrule{11-12} 
 		
 		&Mean &SD & &Mean &SD & &Mean &SD& &Mean & SD\\ \midrule
@@ -1045,6 +1042,33 @@ The Appendix contains detailed tabulated results as well as validation plots.
 \restoregeometry 
 \newgeometry{left=1in, top=1in, right=1in, bottom=1in}
 
+%%%%%%%%%%%%% $$$ %%%%%%%%%%%%% $$$ 
+%\begin{figure}[h]
+%	\begin{subfigure}{0.5\textwidth}
+%		\centering
+%		\fbox{\includegraphics[width=\textwidth, trim=0cm 0cm 4cm 0cm]{Overall_Pr.pdf}}
+%		%\includegraphics[width=\textwidth]{O}  
+%		\caption{Precision}
+%		\label{fig:tr-ovr-pr}
+%	\end{subfigure}\hfill
+%	\begin{subfigure}{0.5\textwidth}
+%		\centering
+%		\includegraphics[width=\textwidth]{Overall_Rc.pdf}  
+%		\caption{Recall}
+%		\label{fig:tr-ovr-rc}
+%	\end{subfigure} 
+%	
+%	\begin{subfigure}{\textwidth}
+%		\centering
+%		\includegraphics[width=\linewidth]{Overall_F1.pdf}  
+%		\caption{F1-score}
+%		\label{fig:tr-ovr-f1}
+%	\end{subfigure}
+%	\caption{Overall performance -- Average over 10 models}
+%	\label{fig:tr-overall}
+%\end{figure}
+%%%%%%%%%%%%% $$$ %%%%%%%%%%%%% $$$ 
+
 \begin{figure}[h]
 	\begin{subfigure}{\textwidth}
 		\centering
@@ -1227,7 +1251,7 @@ The Appendix contains detailed tabulated results as well as validation plots.
 %\restoregeometry 
 %\newgeometry{left=1in, top=1in, right=1in, bottom=1in}
 \end{appendices}
-
+\clearpage
 %% References
 \singlespacing
 \bibliographystyle{plainnat}
