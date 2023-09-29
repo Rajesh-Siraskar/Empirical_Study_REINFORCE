@@ -1,6 +1,8 @@
 ## IMPROVEMENTS
 ----------------------
 
+autorl in stead of automl
+
 - Title shorter - removed "milling"
 - Abstract
 - Code replaced by Algo
