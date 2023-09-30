@@ -251,7 +251,7 @@ REINFORCE uses policy gradient (\ref{eq:REINFORCE}) to update the action probabi
 
 \section{Methodology}\label{sec:Method}
 \subsection{Implementation details}\label{sec:Implementation}
-RL requires an environment to function. In this section we describe the custom milling environment we built, which allows our agent to learn a policy for tool replacement. Fig. \ref{fig:environments} shows the stepped approach used to generate the fifteen environments, of varying complexity. We next describe each variant starting with the simulation-based, followed by real-data based; describing their sub-variants along the way.
+RL requires an environment to function. In this section we describe the custom ``milling'' environment we built, which allows our agent to learn a policy for tool replacement. Fig. \ref{fig:environments} shows the stepped approach used to generate the fifteen environments, of varying complexity. We next describe each variant starting with the simulation-based, followed by real-data based; describing their sub-variants along the way.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Environments.pdf}  
@@ -313,7 +313,7 @@ The IEEE\textit{DataPort} hosts the ``2010 PHM Society'' tool-wear data obtained
 In practice, state variables are often normalized to improve stability and convergence. Both the simulated and real data was normalized using min-max scaling such that the tool wear and other state features, $x \in [0,\;1] \subset \mathbb{R} $. We will see next how this allows adding white noise of similar magnitudes across different PHM datasets.
 
 \subsubsection*{Adding noise and chance of break-down}
-Fig. (\ref{fig:noise}) shows the effect of adding two levels of noise. ``Low noise'' is obtained by adding Gaussian noise with an order of magnitude of $-3$ i.e. $[0.0, 0.001]$ and ``high noise'' is of order $-2$ i.e. between $[0.0, 0.01]$. Since the tool wear is less than 0.24 mm, this adds significant perturbations as seen in Fig. (\ref{fig:LBD}) and (\ref{fig:HBD}). The noise affects the tool replacement decision (solid blue line) around the replacement threshold (dotted red line). The \textit{human} preventive maintenance policy replaces the tool if the wear exceeds the threshold and this decision boundary oscillates due to the noise. One can see that in the case of no noise (Fig. \ref{fig:NBD}), the decision boundary is clean.
+Fig. \ref{fig:noise} shows the effect of adding two levels of noise; a ``low'' level by adding Gaussian noise of order $-3$, $(0.0, 0.001]$ and ``high'' of order $-2$, $(0.0, 0.01]$. Since the tool wear is less than 0.24 mm, this adds significant perturbations as seen in Fig. \ref{fig:LBD} and \ref{fig:HBD}. The noise affects the tool replacement decision (solid blue line) around the replacement threshold (dotted red line). The \textit{human} preventive maintenance policy replaces the tool if the wear exceeds the threshold and this decision boundary oscillates due to the noise. One can see that in the case of no noise (Fig. \ref{fig:NBD}), the decision boundary is clean.
 
 \begin{figure}[h]
 	\begin{subfigure}[b]{\textwidth}
